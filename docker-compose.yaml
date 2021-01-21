@@ -1,5 +1,5 @@
 
-version: "1.0"
+version: "3.2"
 services:
   redis:
     restart: always
@@ -31,8 +31,6 @@ services:
     command : bash -c "python check_db.py --service-name db --ip db --port 3306 && 
                       python manage.py migrate &&
                       python manage.py runserver 0.0.0.0:8000"
-    env_file:
-      - ./mysite/settings.ini
     build:
       context: ./mysite/
       dockerfile: Dockerfile
@@ -44,12 +42,12 @@ services:
     networks:
       - db-net
 
-  frontend:
+  front-end:
     restart: always
     command : npm start
     container_name: front
     build:
-      context: ./frontend/
+      context: ./front-end/
       dockerfile: Dockerfile
     ports:
       - "3000:3000"
