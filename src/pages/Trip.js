@@ -4,17 +4,18 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
-import { Map, GoogleApiWrapper } from 'google-maps-react';
 import options from '../data/PlaceData';
 import Jumbotron from 'react-bootstrap/Jumbotron';
 import 'react-bootstrap-typeahead/css/Typeahead.css';
 import Autocomplete from '@material-ui/lab/Autocomplete';
+import InputGroup from 'react-bootstrap/InputGroup';
 import { Scrollbars } from 'react-custom-scrollbars';
 import {Typography,Button,Paper,Tab,Tabs,Box,TextField,Select,InputLabel,MenuItem,FormControl,Fab,IconButton,Card,CardContent,Divider,Avatar,Table,TableBody,TableCell,TableContainer,TableHead,TableRow,TableFooter,TablePagination} from "@material-ui/core";
 import PropTypes from 'prop-types';
 import placeOptions from '../data/PlaceData';
 import cityOptions from '../data/CityData';
 import modeOptions from '../data/modeOptions';
+import hotelOptions from '../data/hotelOptions';
 import { withStyles, makeStyles,useTheme } from '@material-ui/core/styles';
 import DeleteForeverRoundedIcon from '@material-ui/icons/DeleteForeverRounded';
 import EditRoundedIcon from '@material-ui/icons/EditRounded';
@@ -23,15 +24,8 @@ import KeyboardArrowLeft from '@material-ui/icons/KeyboardArrowLeft';
 import KeyboardArrowRight from '@material-ui/icons/KeyboardArrowRight';
 import LastPageIcon from '@material-ui/icons/LastPage';
 
-
-
-
-const mapStyles = {
-  width: '800px',
-  height: '500px',
-  marginTop: '55px',
-  marginLeft: '93px'
-};
+//Google Map
+import { Map, GoogleApiWrapper,Rectangle,HeatMap,Marker} from 'google-maps-react';
 
 
 export function CityName() {
@@ -40,7 +34,7 @@ export function CityName() {
     getOptionLabel: (option) => option.cname_th +" ("+ option.cname_en +")",
   }
   return (
-    <div style={{ width: 320 ,height:20}}>
+    <div style={{ width: '60%' ,height:'20%'}}>
       <Autocomplete
         {...defaultProps}
         id="cityName"
@@ -58,7 +52,7 @@ export function PlaceName() {
     getOptionLabel: (option) => option.pname,
   }
   return (
-    <div style={{ width: 320 ,height:30}}>
+    <div style={{ width: '60%' ,height:'20%'}}>
       <Autocomplete
         {...defaultProps}
         multiple
@@ -78,7 +72,7 @@ export function ModeName() {
     getOptionLabel: (option) => option.mname,
   }
   return (
-    <div style={{ width: 320 ,height:20}}>
+    <div style={{ width: '60%' ,height:'20%'}}>
       <Autocomplete
         {...defaultProps}
         id="modeName"
@@ -91,6 +85,26 @@ export function ModeName() {
 }
 
 
+export function HotelName() {
+  const defaultProps = {
+    options: hotelOptions,
+    getOptionLabel: (option) => option.hname,
+  }
+  return (
+    <div style={{ width: '60%' ,height:'20%'}}>
+      <Autocomplete
+        {...defaultProps}
+        id="hotelName"
+        autoComplete
+        includeInputInList
+        renderInput={(params) => <TextField {...params} label="โรงแรม/ที่พัก" style={{marginLeft:10}}/>}
+      />
+    </div>
+  );
+}
+
+
+
 export function DateStart() {
   return (
     <form noValidate>
@@ -98,6 +112,7 @@ export function DateStart() {
         id="dateStart"
         label="วันที่เริ่มต้น"
         type="date"
+        style={{width:'90%',height:'20%',marginLeft:'12%'}}
         defaultValue="2020-01-01"
         InputLabelProps={{
           shrink: true,
@@ -113,6 +128,7 @@ export function DateEnd() {
         id="dateEnd"
         label="วันที่สิ้นสุด"
         type="date"
+        style={{width:'90%',height:'20%',marginLeft:'5%'}}
         defaultValue="2020-01-01"
         InputLabelProps={{
           shrink: true,
@@ -137,7 +153,7 @@ export function StartTime() {
           id="selectStartTime"
           value={startTime}
           onChange={handleChange}
-          style={{width:120}}
+          style={{width:'120'}}
         >
           <MenuItem value={1}>00:00</MenuItem>
           <MenuItem value={2}>01:00</MenuItem>
@@ -327,11 +343,12 @@ const StyledTableCell = withStyles((theme) => ({
     backgroundColor: theme.palette.common.black,
     color: theme.palette.common.white,
     fontFamily: 'csPrajad',
-    fontSize: 20,
-    fontWeight: 'bold'
+    fontSize: 18,
+    fontWeight: 'bold',
+    width:'30%'
   },
   body: {
-    fontSize: 18,
+    fontSize: 16,
     fontFamily: 'csPrajad'
   },
 }))(TableCell);
@@ -349,7 +366,7 @@ function createData( tripName, dateAndTime, updateData ) {
 }
 const useStyles = makeStyles({
   table: {
-    Width: 640,
+    Width: '100%',
   },
 });
 const useStyles1 = makeStyles((theme) => ({
@@ -364,7 +381,6 @@ const rows = [
   createData('ชลบุรี', '30/01/2021 10:52AM'),
   createData('ทริป', '31/01/2021 18:21PM'),
   createData('ทริป101', '04/02/2021 01:23AM'),
-
 ];
 
 function TablePaginationActions(props) {
@@ -454,23 +470,27 @@ function CustomizedTables() {
               </StyledTableCell>
               <StyledTableCell align="center">{row.dateAndTime}</StyledTableCell>
               <StyledTableCell align="center">
-                <IconButton aria-label="edit" size="small"><EditRoundedIcon/></IconButton> /  <IconButton aria-label="delete" size="small"><DeleteForeverRoundedIcon/></IconButton>
+                <IconButton aria-label="edit" size="small"><EditRoundedIcon/></IconButton>   <IconButton aria-label="delete" size="small"><DeleteForeverRoundedIcon/></IconButton>
               </StyledTableCell>
             </StyledTableRow>
           ))}
           {emptyRows > 0 && (
-            <TableRow style={{ height: 53 * emptyRows }}>
+            <TableRow style={{ height: 63 * emptyRows }}>
               <TableCell colSpan={6} />
             </TableRow>
           )}
-           <TablePagination
-              count={rows.length}
-              rowsPerPage={rowsPerPage}
-              page={page}
-              onChangePage={handleChangePage}
-              ActionsComponent={TablePaginationActions}
-            />
         </TableBody>
+        <TableFooter>
+          <TablePagination
+                count={rows.length}
+                labelRowsPerPage=''
+                rowsPerPageOptions=''
+                rowsPerPage={rowsPerPage}
+                page={page}
+                onChangePage={handleChangePage}
+                ActionsComponent={TablePaginationActions}
+              />
+        </TableFooter>
       </Table>
     </TableContainer>
   );
@@ -492,43 +512,42 @@ export class MapContainer extends Component {
       </header>
 
       <section className="App-section">
-      <Container fluid style={{marginTop:50 , marginBottom:50}}>
+      <Container fluid >
         <Row>
-          <Paper elevation={5} style={{width:1200,height:600,marginTop:15,marginLeft:140}}>
+          <Paper elevation={5} style={{width:'90%',height:'50%',margin:'5%'}}>
             <Row>
             <Col>
             <Box p={5}>
-            <Card style={{backgroundColor:'#3C6E71',width:450}}>
+            <Card style={{backgroundColor:'#3C6E71',width:'90%',height:'auto'}}>
               <CardContent style={{color:'white'}}>
-              <Row style={{margin:5}}>
-                <Avatar alt="User" src="/" style={{width:60,height:60}}/>
-                <Typography style={{margin:10, fontFamily:"csPrajad" ,fontSize:24,fontWeight:'bold'}}>Profile</Typography>
+              <Row>
+                <Avatar alt="User" src="/" style={{maxWidth:'100%' , marginLeft:10}}/>
+                <Typography style={{fontFamily:"csPrajad" ,padding:5,fontSize:24,fontWeight:'bold'}}>Profile</Typography>
               </Row>
               <Divider style={{margin:10}}/>
-              <Typography style={{fontFamily:"csPrajad" ,fontSize:18}}>ชื่อในระบบ :</Typography>
-              <Typography style={{fontFamily:"csPrajad" ,fontSize:18}}> E-mail :</Typography>
+              <Typography style={{fontFamily:"csPrajad" ,fontSize: 18, marginTop:5}}>ชื่อในระบบ :</Typography>
+              <Typography style={{fontFamily:"csPrajad" ,fontSize: 18, marginTop:5}}> E-mail :</Typography>
               </CardContent>
             </Card>
             </Box>
-            <Box ml={14}>
+            <Box ml={'14%'}>
               <Button
                   variant="contained"
                   color="secondary"
-                  style={{width:300,height:50}}
+                  style={{width:'75%',height:50}}
               >My Trip</Button>
             </Box>
-            <Box ml={14} pt={2}>
+            <Box ml={'14%'} py={2}>
               <Button
                   variant="contained"
                   color="primary"
-                  size="large"
-                  style={{width:300,height:50}}
+                  style={{width:'75%',height:50}}
               >Recommended Trip</Button>
             </Box>
             </Col>
             <Col>
-            <Box pt={5} ml={-12}>
-            <Card style={{backgroundColor:'#284B63',width:640}}>
+            <Box py={5} ml={'-10%'}>
+            <Card style={{backgroundColor:'#284B63',width:'90%'}}>
               <CardContent style={{color:'white'}}>
                 <CustomizedTables/>
                 <Fab
@@ -536,7 +555,7 @@ export class MapContainer extends Component {
                     size="large"
                     color="secondary"
                     aria-label="Add"
-                    style={{width:150,height:60,margin:10}}
+                    style={{width:'30%',height:60,margin:10,marginLeft:'70%'}}
                    >
                       New Trip
                   </Fab>
@@ -547,39 +566,110 @@ export class MapContainer extends Component {
             </Row>
           </Paper> 
         </Row>
-        <Box p={10}/>
+
         <Row>
-          <Paper elevation={5} style={{width:400,height:600,marginTop:15,marginLeft:140}}>
+          <Paper elevation={5} style={{width:'30%',height:'100%',marginTop:'5%',marginBottom:'5%',marginLeft:'3%'}}>
             <Card style={{backgroundColor:'#284B63',width:'auto'}}>
               <CardContent style={{color:'white'}}>
                 <Typography style={{margin:10, fontFamily:"csPrajad" ,fontSize:20,fontWeight:'bold'}}>ข้อมูลทริป และเลือกที่พัก</Typography>
               </CardContent>
             </Card>
-            <Box p={2}>
-            <Typography style={{fontFamily:"csPrajad" ,fontSize:16,padding:5}}>ชื่อทริป :</Typography>
-            <Typography style={{fontFamily:"csPrajad" ,fontSize:16,padding:5}}>จังหวัด :</Typography>
-            <CityName/>
-            <br/>
-            <Typography style={{fontFamily:"csPrajad" ,fontSize:16,padding:5}}>วันที่ไป :</Typography>
-            <DateStart/>
-            <Typography style={{fontFamily:"csPrajad" ,fontSize:16,padding:5}}>วันที่กลับ :</Typography>
-            <DateEnd/>
-            <Typography style={{fontFamily:"csPrajad" ,fontSize:16,padding:5}}>ที่พัก :</Typography>
+            <Box p={1}>
+            <Typography style={{fontFamily:"csPrajad" ,fontSize:16,padding:5,marginTop:15,marginBottom:-15}}>ชื่อทริป :</Typography>
             </Box>
+            <Box p={1}>
+            <InputGroup>
+              <Typography style={{fontFamily:"csPrajad" ,fontSize:16,padding:5,marginTop:15}}>จังหวัด :</Typography>
+              <CityName/>
+            </InputGroup>
+            </Box>
+            <Box p={1}>
+            <InputGroup>
+            <Typography style={{fontFamily:"csPrajad" ,fontSize:16,padding:5,marginTop:15}}>วันที่ไป :</Typography>
+            <DateStart/>
+            </InputGroup>
+            </Box>
+            <Box p={1}>
+            <InputGroup>
+            <Typography style={{fontFamily:"csPrajad" ,fontSize:16,padding:5,marginTop:15}}>วันที่กลับ :</Typography>
+            <DateEnd/>
+            </InputGroup>
+            </Box>
+            <Box p={1}>
+            <InputGroup>
+            <Typography style={{fontFamily:"csPrajad" ,fontSize:16,padding:5,marginTop:15}}>ที่พัก :</Typography>
+            <HotelName/>
+            </InputGroup>
+            </Box>
+            <InputGroup style={{width:'100%',height:150}}>
+              {/*    Hotel Map    */}
+                <Map
+                google={this.props.google}
+                zoom={15}
+                style={{width:'95%',height:'100%',margin:'2.5%'}}
+                disableDefaultUI ={true}
+                scrollwheel={false}
+                disableDoubleClickZoom = {true}
+                draggable={false}
+                zoomControl={false}
+                onReady={this.handleMapReady}
+                onBounds_changed={this.handleMapMount}
+                initialCenter={
+                  {
+                    lat:  13.12,
+                    lng:  101.20
+                  }
+                }
+              >
+            {hotelOptions.map(hotelOptions=>(
+              <Marker key={hotelOptions.hname} position={{lat:hotelOptions.lat,lng:hotelOptions.lon}} />
+            ))}
+              </Map>     
+            </InputGroup>
+            <InputGroup style={{width:'80%'}}>
+              <Button
+                    variant="contained"
+                    color="primary"
+                    style={{width:'30%',height:'8%',margin:'5%',marginLeft:'45%'}}
+                >Submit</Button>
+            </InputGroup>
           </Paper>
-          <Paper elevation={5} style={{width:400,height:600,marginTop:15,marginLeft:20}}>
+
+          <Paper elevation={5} style={{width:'30%',height:620,marginTop:'5%',marginBottom:'5%',marginLeft:'2%'}}>
             <Card style={{backgroundColor:'#284B63',width:'auto'}}>
               <CardContent style={{color:'white'}}>
               <Typography style={{margin:10, fontFamily:"csPrajad" ,fontSize:20,fontWeight:'bold'}}>จัดการทริป</Typography>
               </CardContent>
             </Card>
           </Paper> 
-          <Paper elevation={5} style={{width:400,height:600,marginTop:15,marginLeft:20}}>
+
+          <Paper elevation={5} style={{width:'30%',height:620,marginTop:'5%',marginBottom:'5%',marginLeft:'2%'}}>
             <Card style={{backgroundColor:'#284B63',width:'auto'}}>
               <CardContent style={{color:'white'}}>
               <Typography style={{margin:10, fontFamily:"csPrajad" ,fontSize:20,fontWeight:'bold'}}>แผนที่ทริป</Typography>
               </CardContent>
             </Card>
+            <InputGroup style={{width:'100%',height:'85%'}}>
+              {/*    Hotel Map    */}
+                <Map
+                google={this.props.google}
+                zoom={13}
+                style={{width:'100%',height:'100%'}}
+                disableDefaultUI ={true}
+                scrollwheel={false}
+                disableDoubleClickZoom = {true}
+                draggable={false}
+                zoomControl={false}
+                onReady={this.handleMapReady}
+                onBounds_changed={this.handleMapMount}
+                initialCenter={
+                  {
+                    lat:  13.12,
+                    lng:  101.20
+                  }
+                }
+              />     
+            </InputGroup>
           </Paper>  
         </Row>  
       </Container>
