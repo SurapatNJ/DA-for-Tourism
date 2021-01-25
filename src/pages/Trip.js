@@ -112,7 +112,7 @@ export function DateStart() {
         id="dateStart"
         label="วันที่เริ่มต้น"
         type="date"
-        style={{width:'90%',height:'20%',marginLeft:'12%'}}
+        style={{width:'100%',marginLeft:'13%'}}
         defaultValue="2020-01-01"
         InputLabelProps={{
           shrink: true,
@@ -128,7 +128,7 @@ export function DateEnd() {
         id="dateEnd"
         label="วันที่สิ้นสุด"
         type="date"
-        style={{width:'90%',height:'20%',marginLeft:'5%'}}
+        style={{width:'100%',marginLeft:'5%'}}
         defaultValue="2020-01-01"
         InputLabelProps={{
           shrink: true,
