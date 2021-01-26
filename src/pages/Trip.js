@@ -10,7 +10,7 @@ import 'react-bootstrap-typeahead/css/Typeahead.css';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import InputGroup from 'react-bootstrap/InputGroup';
 import { Scrollbars } from 'react-custom-scrollbars';
-import {Typography,Button,Paper,Tab,Tabs,Box,TextField,Select,InputLabel,MenuItem,FormControl,Fab,IconButton,Card,CardContent,Divider,Avatar,Table,TableBody,TableCell,TableContainer,TableHead,TableRow,TableFooter,TablePagination} from "@material-ui/core";
+import {Typography,Button,Paper,Tab,Tabs,Box,TextField,Select,InputLabel,MenuItem,FormControl,Fab,IconButton,Card,CardContent,Divider,Avatar,Table,TableBody,TableCell,TableContainer,TableHead,TableRow,TableFooter,TablePagination,Accordion,AccordionSummary,AccordionDetails} from "@material-ui/core";
 import PropTypes from 'prop-types';
 import placeOptions from '../data/PlaceData';
 import cityOptions from '../data/CityData';
@@ -18,6 +18,7 @@ import modeOptions from '../data/modeOptions';
 import hotelOptions from '../data/hotelOptions';
 import { withStyles, makeStyles,useTheme } from '@material-ui/core/styles';
 import DeleteForeverRoundedIcon from '@material-ui/icons/DeleteForeverRounded';
+import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import EditRoundedIcon from '@material-ui/icons/EditRounded';
 import FirstPageIcon from '@material-ui/icons/FirstPage';
 import KeyboardArrowLeft from '@material-ui/icons/KeyboardArrowLeft';
@@ -40,7 +41,7 @@ export function CityName() {
         id="cityName"
         autoComplete
         includeInputInList
-        renderInput={(params) => <TextField {...params} label="ชื่อจังหวัด" style={{marginLeft:10}}/>}
+        renderInput={(params) => <TextField {...params} label="ชื่อจังหวัด"   required id="standard-required" style={{marginLeft:10}}/>}
       />
     </div>
   );
@@ -52,14 +53,13 @@ export function PlaceName() {
     getOptionLabel: (option) => option.pname,
   }
   return (
-    <div style={{ width: '60%' ,height:'20%'}}>
+    <div style={{ width: '75%' ,height:'20%'}}>
       <Autocomplete
         {...defaultProps}
-        multiple
         id="placeName"
-        limitTags={1}
         autoComplete
-        renderInput={(params) => <TextField  {...params} label="ชื่อสถานที่ท่องเที่ยว" style={{marginLeft:10}}/>}
+        includeInputInList
+        renderInput={(params) => <TextField  {...params} label="ชื่อสถานที่ท่องเที่ยว"  style={{marginLeft:10}}/>}
       />
     </div>
   );
@@ -78,7 +78,7 @@ export function ModeName() {
         id="modeName"
         autoComplete
         includeInputInList
-        renderInput={(params) => <TextField {...params} label="โหมดสถานที่" style={{marginLeft:10}}/>}
+        renderInput={(params) => <TextField {...params} label="โหมดสถานที่"  required id="standard-required"  style={{marginLeft:10}}/>}
       />
     </div>
   );
@@ -97,7 +97,7 @@ export function HotelName() {
         id="hotelName"
         autoComplete
         includeInputInList
-        renderInput={(params) => <TextField {...params} label="โรงแรม/ที่พัก" style={{marginLeft:10}}/>}
+        renderInput={(params) => <TextField {...params} label="โรงแรม/ที่พัก"  required id="standard-required"  style={{marginLeft:10}}/>}
       />
     </div>
   );
@@ -112,8 +112,8 @@ export function DateStart() {
         id="dateStart"
         label="วันที่เริ่มต้น"
         type="date"
+        required id="standard-required" 
         style={{width:'100%',marginLeft:'13%'}}
-        defaultValue="2020-01-01"
         InputLabelProps={{
           shrink: true,
         }}
@@ -128,8 +128,8 @@ export function DateEnd() {
         id="dateEnd"
         label="วันที่สิ้นสุด"
         type="date"
+        required id="standard-required" 
         style={{width:'100%',marginLeft:'5%'}}
-        defaultValue="2020-01-01"
         InputLabelProps={{
           shrink: true,
         }}
@@ -496,6 +496,132 @@ function CustomizedTables() {
   );
 }
 
+
+function CreateAccordion(){
+  const [expanded, setExpanded] = React.useState(false);
+  const handleChange = (panel) => (event, isExpanded) => {
+    setExpanded(isExpanded ? panel : false);
+  };
+  return (
+    <div>
+      <Accordion expanded={expanded === 'panel1'} onChange={handleChange('panel1')}>
+        <AccordionSummary
+          expandIcon={<ExpandMoreIcon />}
+          aria-controls="panel1bh-content"
+          id="panel1bh-header"
+          style={{backgroundColor:'#3C6E71',color:'white'}}
+        >
+          <Typography style={{fontFamily:'csPrajad',fontSize:'18',fontWeight:'bold'}}>วันที่ 1</Typography>
+        </AccordionSummary>
+        <AccordionDetails>
+        <Paper elevation={0} style={{width:'100%'}}>
+                  <InputGroup>
+                      <Button
+                          variant="contained"
+                          color="primary"
+                          style={{margin:'5%',width:100}}
+                      >สุ่มทริป</Button>
+                  </InputGroup>
+                  <InputGroup>
+                    <Typography style={{fontFamily:"csPrajad" ,fontSize:16,padding:5,marginTop:15,marginBottom:15}}>08.00-11.00</Typography>
+                    <PlaceName/>
+                  </InputGroup>
+                  <InputGroup>
+                    <Typography style={{fontFamily:"csPrajad" ,fontSize:16,padding:5,marginTop:15,marginBottom:15}}>11.00-12.00</Typography>
+                    <PlaceName/>
+                  </InputGroup>
+                  <InputGroup>
+                    <Typography style={{fontFamily:"csPrajad" ,fontSize:16,padding:5,marginTop:15,marginBottom:15}}>12.00-15.00</Typography>
+                    <PlaceName/>
+                  </InputGroup>
+                </Paper>
+        </AccordionDetails>
+      </Accordion>
+      <Accordion expanded={expanded === 'panel2'} onChange={handleChange('panel2')}>
+        <AccordionSummary
+          expandIcon={<ExpandMoreIcon />}
+          aria-controls="panel1bh-content"
+          id="panel1bh-header"
+          style={{backgroundColor:'#3C6E71',color:'white'}}
+        >
+          <Typography style={{fontFamily:'csPrajad',fontSize:'18',fontWeight:'bold'}}>วันที่ 2</Typography>
+        </AccordionSummary>
+        <AccordionDetails>
+        <Paper elevation={0} style={{width:'100%'}}>
+                  <InputGroup>
+                      <Button
+                          variant="contained"
+                          color="primary"
+                          style={{margin:'5%',width:100}}
+                      >สุ่มทริป</Button>
+                  </InputGroup>
+                  <InputGroup>
+                    <Typography style={{fontFamily:"csPrajad" ,fontSize:16,padding:5,marginTop:15,marginBottom:15}}>08.00-11.00</Typography>
+                    <PlaceName/>
+                  </InputGroup>
+                  <InputGroup>
+                    <Typography style={{fontFamily:"csPrajad" ,fontSize:16,padding:5,marginTop:15,marginBottom:15}}>11.00-12.00</Typography>
+                    <PlaceName/>
+                  </InputGroup>
+                  <InputGroup>
+                    <Typography style={{fontFamily:"csPrajad" ,fontSize:16,padding:5,marginTop:15,marginBottom:15}}>12.00-15.00</Typography>
+                    <PlaceName/>
+                  </InputGroup>
+                </Paper>
+        </AccordionDetails>
+      </Accordion>
+      <Accordion expanded={expanded === 'panel3'} onChange={handleChange('panel3')}>
+      <AccordionSummary
+          expandIcon={<ExpandMoreIcon />}
+          aria-controls="panel1bh-content"
+          id="panel1bh-header"
+          style={{backgroundColor:'#3C6E71',color:'white'}}
+        >
+          <Typography style={{fontFamily:'csPrajad',fontSize:'18',fontWeight:'bold'}}>วันที่ 3</Typography>
+        </AccordionSummary>
+        <AccordionDetails>
+        <Paper elevation={0} style={{width:'100%'}}>
+                  <InputGroup>
+                      <Button
+                          variant="contained"
+                          color="primary"
+                          style={{margin:'5%',width:100}}
+                      >สุ่มทริป</Button>
+                  </InputGroup>
+                  <InputGroup>
+                    <Typography style={{fontFamily:"csPrajad" ,fontSize:16,padding:5,marginTop:15,marginBottom:15}}>08.00-11.00</Typography>
+                    <PlaceName/>
+                  </InputGroup>
+                  <InputGroup>
+                    <Typography style={{fontFamily:"csPrajad" ,fontSize:16,padding:5,marginTop:15,marginBottom:15}}>11.00-12.00</Typography>
+                    <PlaceName/>
+                  </InputGroup>
+                  <InputGroup>
+                    <Typography style={{fontFamily:"csPrajad" ,fontSize:16,padding:5,marginTop:15,marginBottom:15}}>12.00-15.00</Typography>
+                    <PlaceName/>
+                  </InputGroup>
+                </Paper>
+        </AccordionDetails>
+      </Accordion>
+      <Row>
+            <InputGroup style={{marginLeft:'5%',marginTop:5}}>
+            <Button
+                    variant="contained"
+                    color="primary"
+                >สุ่มทริป</Button>
+            <Button
+                    variant="contained"
+                    color="primary"
+                    style={{marginLeft:'60%'}}
+                >บันทึก</Button>
+            </InputGroup>
+            </Row>
+    </div>
+  );
+}
+
+
+
 {/*     ////////       main     ///////    */ }
 export class MapContainer extends Component {
   render() {
@@ -575,7 +701,10 @@ export class MapContainer extends Component {
               </CardContent>
             </Card>
             <Box p={1}>
-            <Typography style={{fontFamily:"csPrajad" ,fontSize:16,padding:5,marginTop:15,marginBottom:-15}}>ชื่อทริป :</Typography>
+            <InputGroup>
+              <Typography style={{fontFamily:"csPrajad" ,fontSize:16,padding:5,marginTop:15,marginBottom:-15}}>ชื่อทริป :</Typography>
+              <TextField required id="standard-required" label="ชื่อทริป"/>
+            </InputGroup>
             </Box>
             <Box p={1}>
             <InputGroup>
@@ -641,6 +770,10 @@ export class MapContainer extends Component {
               <Typography style={{margin:10, fontFamily:"csPrajad" ,fontSize:20,fontWeight:'bold'}}>จัดการทริป</Typography>
               </CardContent>
             </Card>
+
+            {/*test Accordion--------*/}
+            <CreateAccordion/>
+    
           </Paper> 
 
           <Paper elevation={5} style={{width:'30%',height:620,marginTop:'5%',marginBottom:'5%',marginLeft:'2%'}}>
