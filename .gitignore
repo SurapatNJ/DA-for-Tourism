@@ -129,3 +129,15 @@ myvenv
 migrations/
 # End of https://www.gitignore.io/api/django
 *.pyc
+mysite/app/__pycache__/__init__.cpython-38.pyc
+mysite/app/__pycache__/admin.cpython-38.pyc
+mysite/app/__pycache__/models.cpython-38.pyc
+mysite/app/__pycache__/serializers.cpython-38.pyc
+mysite/app/__pycache__/urls.cpython-38.pyc
+mysite/app/__pycache__/views.cpython-38.pyc
+mysite/app/migrations/__pycache__/__init__.cpython-38.pyc
+mysite/mysite/__pycache__/__init__.cpython-38.pyc
+mysite/mysite/__pycache__/settings.cpython-38.pyc
+mysite/mysite/__pycache__/urls.cpython-38.pyc
+mysite/mysite/__pycache__/wsgi.cpython-38.pyc
+mysite/db.sqlite3
