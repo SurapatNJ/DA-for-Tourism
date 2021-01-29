@@ -25,8 +25,7 @@ const mapStyles = {
   marginLeft: '-150px'
 };
 
-export class MapContainer extends Component {
-  render() {
+export default function Home() {
     return (
       <div className="Home">
       <link
@@ -35,80 +34,16 @@ export class MapContainer extends Component {
         integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk"
         crossorigin="anonymous"
       />
-      <header></header>
+    
+      <header> 
+      </header>
 
       <section className="App-section">
         <Container fluid style={{marginTop:50}}>
             <h5 style={{marginTop:20}}>dashboard page</h5>
         </Container>
       </section>
-   
     </div>
     );
-  }
-}
-
-export default GoogleApiWrapper({
-    apiKey: 'AIzaSyDf8sqiZUNBWHSQkw3Tqpt5R6LIb4kLdbc'
-  })(MapContainer);
   
-/*
-function App() {
-  
-  return (
-    <div className="App">
-      <link
-        rel="stylesheet"
-        href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"
-        integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk"
-        crossorigin="anonymous"
-      />
-   
-      <header className="App-header">
-
-      </header>
-
-      <section className="App-section">
-      <Container>
-        <Row>
-          <Tabs defaultActiveKey="dashboard" className="tabsetting">
-            <Tab eventKey="dashboard" title="Dashboard"></Tab>
-            <Tab eventKey="poi" title="สถานที่ท่องเที่ยวยอดนิยม"></Tab>
-            <Tab eventKey="trip" title="ทริปยอดนิยม"></Tab>
-          </Tabs>
-
-        </Row>
-        <Row></Row>
-
-      </Container>
-      </section>
-
-    </div>
-  );
 }
-
-export default App; */
-
-/*
-import React,{Component} from "react";
-import { BrowserRouter as Router, Route , Switch } from "react-router-dom";
-import Poi from "./pages/Poi";
-import Navigation from "./Navigation";
-import "bootstrap/dist/css/bootstrap.min.css";
-class App extends Component {
-  render() {
-    return (      
-       <Router>
-        <div>
-          <Navigation />
-            <Switch>
-             <Route path="/" component={Poi} exact/>
-           </Switch>
-        </div> 
-      </Router>
-    );
-  }
-}
- 
-export default App;
-*/
