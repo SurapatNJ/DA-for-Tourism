@@ -1,8 +1,7 @@
-
 version: "3.2"
 services:
  
-  front-end:
+  sut:
     restart: always
     command : npm start
     container_name: FrontEnd
@@ -14,5 +13,3 @@ services:
     stdin_open: true
     depends_on:
       - mysite
-    networks:
-      - db-net

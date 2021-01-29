@@ -1,6 +1,6 @@
 version: "3.2"
 services:
-  mysite:
+  sut:
     restart: always
     container_name: BackEnd
     command : bash -c " 
