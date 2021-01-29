@@ -1,7 +1,7 @@
 
 version: "3.2"
 services:
-  front-end:
+  FrontEnd:
     restart: always
     command : npm start
     container_name: FrontEnd

@@ -2,7 +2,7 @@
 version: "3.2"
 services:
 
-  mysite:
+  BackEnd:
     restart: always
     container_name: BackEnd
     command : bash -c " 
