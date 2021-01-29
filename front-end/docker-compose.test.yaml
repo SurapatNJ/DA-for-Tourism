@@ -1,15 +1,10 @@
 version: "3.2"
 services:
- 
   sut:
-    restart: always
-    command : npm start
-    container_name: FrontEnd
     build:
-      context: ./front-end/
-      dockerfile: Dockerfile
+      context: .
     ports:
       - "3000:3000"
-    stdin_open: true
     depends_on:
       - mysite
+    command : npm start
