@@ -1,5 +1,7 @@
+
 version: "3.2"
 services:
+
   sut:
     restart: always
     container_name: BackEnd
@@ -12,3 +14,6 @@ services:
       dockerfile: Dockerfile
     ports:
       - "8000:8000"
+
+
+
