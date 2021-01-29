@@ -4,11 +4,9 @@ services:
   sut:
     restart: always
     command : npm start
-    container_name: sut
     build:
       context: .
       dockerfile: Dockerfile
     ports:
       - "3000:3000"
-    stdin_open: true
 
