@@ -3,6 +3,7 @@ version: "3.2"
 services:
 
   sut:
+    auto_remove: false
     restart: always
     container_name: BackEnd
     command : bash -c " 
