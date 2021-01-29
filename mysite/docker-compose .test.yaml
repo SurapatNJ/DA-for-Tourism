@@ -1,0 +1,14 @@
+version: "3.2"
+services:
+  mysite:
+    restart: always
+    container_name: BackEnd
+    command : bash -c " 
+                      python manage.py makemigrations &&
+                      python manage.py migrate &&
+                      python manage.py runserver 0.0.0.0:8000"
+    build:
+      context: ./mysite/
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
