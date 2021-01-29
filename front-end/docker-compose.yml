@@ -1,10 +1,10 @@
 
 version: "3.2"
 services:
-  FrontEnd:
+  frontend:
     restart: always
     command : npm start
-    container_name: FrontEnd
+    container_name: frontend
     build:
       context: .
       dockerfile: Dockerfile
