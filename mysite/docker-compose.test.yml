@@ -2,9 +2,9 @@
 version: "3.2"
 services:
 
-  backend:
+  sut:
     restart: always
-    container_name: backend
+    container_name: sut
     command : bash -c " 
                       python manage.py makemigrations &&
                       python manage.py migrate &&
