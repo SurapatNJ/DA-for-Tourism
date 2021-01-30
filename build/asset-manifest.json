@@ -1,0 +1,25 @@
+{
+  "files": {
+    "main.css": "/DA-for-Tourism/static/css/main.163fa0b7.chunk.css",
+    "main.js": "/DA-for-Tourism/static/js/main.a51cf6db.chunk.js",
+    "main.js.map": "/DA-for-Tourism/static/js/main.a51cf6db.chunk.js.map",
+    "runtime-main.js": "/DA-for-Tourism/static/js/runtime-main.cf8bec23.js",
+    "runtime-main.js.map": "/DA-for-Tourism/static/js/runtime-main.cf8bec23.js.map",
+    "static/css/2.d9ad5f5c.chunk.css": "/DA-for-Tourism/static/css/2.d9ad5f5c.chunk.css",
+    "static/js/2.b6aa03f8.chunk.js": "/DA-for-Tourism/static/js/2.b6aa03f8.chunk.js",
+    "static/js/2.b6aa03f8.chunk.js.map": "/DA-for-Tourism/static/js/2.b6aa03f8.chunk.js.map",
+    "index.html": "/DA-for-Tourism/index.html",
+    "precache-manifest.416267f32a3d0e3db96d9e395e834230.js": "/DA-for-Tourism/precache-manifest.416267f32a3d0e3db96d9e395e834230.js",
+    "service-worker.js": "/DA-for-Tourism/service-worker.js",
+    "static/css/2.d9ad5f5c.chunk.css.map": "/DA-for-Tourism/static/css/2.d9ad5f5c.chunk.css.map",
+    "static/css/main.163fa0b7.chunk.css.map": "/DA-for-Tourism/static/css/main.163fa0b7.chunk.css.map",
+    "static/js/2.b6aa03f8.chunk.js.LICENSE.txt": "/DA-for-Tourism/static/js/2.b6aa03f8.chunk.js.LICENSE.txt"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.cf8bec23.js",
+    "static/css/2.d9ad5f5c.chunk.css",
+    "static/js/2.b6aa03f8.chunk.js",
+    "static/css/main.163fa0b7.chunk.css",
+    "static/js/main.a51cf6db.chunk.js"
+  ]
+}
