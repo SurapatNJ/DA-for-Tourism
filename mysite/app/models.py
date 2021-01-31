@@ -4,6 +4,8 @@ from django.utils import timezone
 
 import datetime as dt
 # Create your models here.
+
+#API model
 class Heatmap(models.Model):
     lat_en = models.IntegerField(default=0)
     lng_en = models.IntegerField(default=0)
@@ -17,13 +19,16 @@ class gridMap(models.Model):
     lng_en = models.IntegerField(default=0)
     lat_ws = models.IntegerField(default=0)
     lng_ws = models.IntegerField(default=0)
-    lat_c = models.IntegerField(default=0)
-    lng_c = models.IntegerField(default=0)
+
+class tourist_place_detail(models.Model):
+    lat_en = models.IntegerField(default=0)
+    lng_en = models.IntegerField(default=0)
+    lat_ws = models.IntegerField(default=0)
+    lng_ws = models.IntegerField(default=0)
     datetime_start = models.DateTimeField(default=dt.datetime.now())
     datetime_end = models.DateTimeField(default=dt.datetime.now() + dt.timedelta(days=1))
 
-#User System
-
+#User System model
 class User(models.Model):
     email = models.EmailField(verbose_name='email address', max_length=255, unique=True)
     username = models.CharField(max_length=250, null=True, blank=True)
