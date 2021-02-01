@@ -8,7 +8,7 @@ class HeatmapSerializer(serializers.ModelSerializer):
     class Meta:
         model = Heatmap
         fields = ['lat_en', 'lng_en', 'lat_ws', 'lng_ws', 
-        'datetime_start', 'datetime_end']
+        'date_start', 'date_end']
 
 class GridSerializer(serializers.ModelSerializer):
 
@@ -21,5 +21,5 @@ class tourist_placeSerializer(serializers.ModelSerializer):
     class Meta:
         model = tourist_place_detail
         fields = ['lat_en', 'lng_en', 'lat_ws', 'lng_ws', 
-        'datetime_start', 'datetime_end']
+        'date_start', 'date_end']
         

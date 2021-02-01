@@ -11,8 +11,8 @@ class Heatmap(models.Model):
     lng_en = models.IntegerField(default=0)
     lat_ws = models.IntegerField(default=0)
     lng_ws = models.IntegerField(default=0)
-    datetime_start = models.DateTimeField(default=dt.datetime.now())
-    datetime_end = models.DateTimeField(default=dt.datetime.now() + dt.timedelta(days=1))
+    date_start = models.DateField(default=dt.datetime.now())
+    date_end = models.DateField(default=dt.datetime.now() + dt.timedelta(days=1))
 
 class gridMap(models.Model):
     lat_en = models.IntegerField(default=0)
@@ -25,8 +25,8 @@ class tourist_place_detail(models.Model):
     lng_en = models.IntegerField(default=0)
     lat_ws = models.IntegerField(default=0)
     lng_ws = models.IntegerField(default=0)
-    datetime_start = models.DateTimeField(default=dt.datetime.now())
-    datetime_end = models.DateTimeField(default=dt.datetime.now() + dt.timedelta(days=1))
+    date_start = models.DateField(default=dt.datetime.now())
+    date_end = models.DateField(default=dt.datetime.now() + dt.timedelta(days=1))
 
 #User System model
 class User(models.Model):
