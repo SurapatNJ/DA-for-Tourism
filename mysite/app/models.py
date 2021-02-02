@@ -28,6 +28,20 @@ class tourist_place_detail(models.Model):
     date_start = models.DateField(default=dt.datetime.now())
     date_end = models.DateField(default=dt.datetime.now() + dt.timedelta(days=1))
 
+class trip_title_api(models.Model):
+    user_id = models.IntegerField(default=0)
+    trip_name = models.CharField(max_length=100, null=True, blank=True)
+    date_start = models.DateField(default=dt.datetime.now())
+    date_end = models.DateField(default=dt.datetime.now() + dt.timedelta(days=1))
+    hotal_id = models.CharField(max_length=100, null=True, blank=True)
+    trip_data = models.TextField(max_length=1000, null=True, blank=True)
+
+class trip_detail_analysis(models.Model):
+    date_start = models.DateField(default=dt.datetime.now())
+    date_end = models.DateField(default=dt.datetime.now() + dt.timedelta(days=1))
+    hotal_id = models.CharField(max_length=100, null=True, blank=True)
+    trip_data = models.TextField(max_length=1000, null=True, blank=True)
+
 #User System model
 class User(models.Model):
     email = models.EmailField(verbose_name='email address', max_length=255, unique=True)

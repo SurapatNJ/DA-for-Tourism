@@ -5,8 +5,8 @@ from django.core import serializers
 from rest_framework import filters, viewsets, permissions, status, views
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from .models import Heatmap, gridMap, tourist_place_detail
-from .serializers import HeatmapSerializer, GridSerializer, tourist_placeSerializer
+from .models import Heatmap, gridMap, tourist_place_detail, trip_title_api, trip_detail_analysis
+from .serializers import HeatmapSerializer, GridSerializer, tourist_placeSerializer, trip_title_apiSerializer, trip_detail_analysisSerializer
 
 #anaconda lib 
 import numpy as np
@@ -106,11 +106,11 @@ class GridViewSet(viewsets.ModelViewSet):
 
 # tourist place detail
 class tourist_placeViewSet(viewsets.ModelViewSet):
-    #Set heatmap model 
+    #Set model 
     queryset = tourist_place_detail.objects.all()
     serializer_class = tourist_placeSerializer
 
-    #Post position for heatmap in Time period
+    #Post tourist_place data
     def create(self, request):
         #Get input
         searchData = request.data
@@ -169,5 +169,15 @@ class tourist_placeViewSet(viewsets.ModelViewSet):
             return Response("Error!!! en <= ws")
 
     
-    
+# trip_title_api
+class trip_title_apiViewSet(viewsets.ModelViewSet):
+    #Set model 
+    queryset = trip_title_api.objects.all()
+    serializer_class = trip_title_apiSerializer    
+
+# trip_detail_analysis
+class trip_detail_analysisViewSet(viewsets.ModelViewSet):
+    #Set model 
+    queryset = trip_detail_analysis.objects.all()
+    serializer_class = trip_detail_analysisSerializer 
 
