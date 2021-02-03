@@ -2,6 +2,7 @@ from django.contrib.auth.models import Group
 from rest_framework import serializers
 from rest_framework.validators import UniqueTogetherValidator
 from .models import Heatmap, gridMap, tourist_place_detail, trip_title_api, trip_detail_analysis
+from .models import signup_model, login_model
 
 class HeatmapSerializer(serializers.ModelSerializer):
 
@@ -32,4 +33,16 @@ class trip_detail_analysisSerializer(serializers.ModelSerializer):
     class Meta:
         model = trip_detail_analysis
         fields = ['date_start', 'date_end', 'hotal_id', 'trip_data']
+
+class signup_Serializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = signup_model
+        fields = ['username', 'email', 'password', 'confirm_password']
+
+class login_Serializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = login_model
+        fields = ['username', 'email', 'password']
 
