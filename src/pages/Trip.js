@@ -8,9 +8,13 @@ import options from '../data/PlaceData';
 import Jumbotron from 'react-bootstrap/Jumbotron';
 import 'react-bootstrap-typeahead/css/Typeahead.css';
 import Autocomplete from '@material-ui/lab/Autocomplete';
+import { Link } from 'react-router-dom';
 import InputGroup from 'react-bootstrap/InputGroup';
 import { Scrollbars } from 'react-custom-scrollbars';
-import {Typography,Button,Paper,Tab,Tabs,Box,TextField,Select,InputLabel,MenuItem,FormControl,Fab,IconButton,Card,CardContent,Divider,Avatar,Table,TableBody,TableCell,TableContainer,TableHead,TableRow,TableFooter,TablePagination,Accordion,AccordionSummary,AccordionDetails} from "@material-ui/core";
+import {Typography,Button,Paper,Tab,Tabs,Box,TextField,Select,InputLabel,MenuItem,FormControl,Fab,IconButton,Card,CardContent,Divider,Avatar,Table,TableBody,TableCell,TableContainer,TableHead,TableRow,TableFooter,TablePagination,Collapse} from "@material-ui/core";
+import MuiAccordion from '@material-ui/core/Accordion';
+import MuiAccordionSummary from '@material-ui/core/AccordionSummary';
+import MuiAccordionDetails from '@material-ui/core/AccordionDetails';
 import PropTypes from 'prop-types';
 import placeOptions from '../data/PlaceData';
 import cityOptions from '../data/CityData';
@@ -29,6 +33,9 @@ import LastPageIcon from '@material-ui/icons/LastPage';
 import { Map, GoogleApiWrapper,Rectangle,HeatMap,Marker} from 'google-maps-react';
 
 
+
+
+//------------------ Input -----------------------//
 export function CityName() {
   const defaultProps = {
     options: cityOptions,
@@ -103,8 +110,6 @@ export function HotelName() {
   );
 }
 
-
-
 export function DateStart() {
   return (
     <form noValidate>
@@ -121,6 +126,7 @@ export function DateStart() {
     </form>
   );
 }
+
 export function DateEnd() {
   return (
     <form noValidate>
@@ -139,6 +145,7 @@ export function DateEnd() {
 }
 
 
+/*
 export function StartTime() {
   const [startTime, setStartTime] = React.useState('');
   const handleChange = (event) => {
@@ -230,112 +237,9 @@ export function EndTime() {
     </div>
   );
 }
+*/
 
 
-function TabPanel(props) {
-  const { children, value, index, ...other } = props;
-
-  return (
-    <div
-      role="tabpanel"
-      hidden={value !== index}
-      id={`full-width-tabpanel-${index}`}
-      aria-labelledby={`full-width-tab-${index}`}
-      {...other}
-    >
-      {value === index && (
-        <Box p={3}>
-          <Typography>{children}</Typography>
-        </Box>
-      )}
-    </div>
-  );
-}
-
-TabPanel.propTypes = {
-  children: PropTypes.node,
-  index: PropTypes.any.isRequired,
-  value: PropTypes.any.isRequired,
-};
-
-function a11yProps(index) {
-  return {
-    id: `full-width-tab-${index}`,
-    'aria-controls': `full-width-tabpanel-${index}`,
-  };
-}
-function ChooseTabs() {
-  const [value, setValue] = React.useState(0);
-  const handleChange = (event, newValue) => {
-    setValue(newValue);
-  };
-  return (
-    <Paper elevation={0} style={{width:386,marginTop:10,marginLeft:-16}}>
-      <Tabs
-        value={value}
-        indicatorColor="secondary"
-        style={{backgroundColor:'#3C6E71'}}
-        variant="fullWidth"
-        onChange={handleChange}
-      >
-        <Tab style={{fontFamily:"csPrajad" ,fontSize:18,color:'white'}} label="สถานที่ท่องเที่ยว" {...a11yProps(0)}/>
-        <Tab style={{fontFamily:"csPrajad" ,fontSize:18,color:'white'}} label="โรงแรม/ที่พัก" {...a11yProps(1)}/>
-      </Tabs>
-        <Scrollbars style={{ width: 382, height: 300,marginTop:5}}>
-          <TabPanel value={value} index={0} >
-              <Typography style={{fontFamily:"csPrajad",fontSize:20}}>
-                ชื่อจังหวัด : 
-              </Typography>
-              <CityName/>
-              <br/>
-              <Divider style={{marginTop:20}}/>
-              <Typography style={{fontFamily:"csPrajad",fontSize:20}}>
-              <br/>
-                ชื่อสถานที่ : 
-              </Typography>
-              <PlaceName/>
-              <br/>
-              <Divider style={{marginTop:20}}/>
-              <Typography style={{fontFamily:"csPrajad",fontSize:20}}>
-              <br/>
-                หมวดสถานที่ : 
-              </Typography>
-              <ModeName/>
-              <br/>
-              <Divider style={{marginTop:20}}/>
-              <Typography style={{fontFamily:"csPrajad",fontSize:20}}>
-              <br/>
-                วันที่เริ่มต้น : 
-              </Typography>
-              <Row style={{marginLeft:10}}><DateStart/><StartTime/></Row>
-              <Divider style={{marginTop:20}}/>
-              <Typography style={{fontFamily:"csPrajad",fontSize:20}}>
-              <br/>
-                วันที่สิ้นสุด : 
-              </Typography>
-              <Row style={{marginLeft:10}}><DateEnd/><EndTime/></Row>              
-          </TabPanel>
-          <TabPanel value={value} index={1} >
-              <Typography style={{fontFamily:"csPrajad",fontSize:20}}>
-              <br/>
-                โรงแรม/ที่พัก : 
-                <Fab
-                    variant="extended"
-                    size="large"
-                    color="secondary"
-                    aria-label="Add"
-                    style={{width:150,height:50,marginLeft:20,fontFamily:'csPrajad',fontSize:16}}
-                   >
-                      เลือกโรงแรม/ที่พัก
-              </Fab>
-              </Typography>
-              
-          </TabPanel>
-        </Scrollbars>
-    </Paper>
-    
-  );
-}
 
 //----------------- Table ----------------//
 const StyledTableCell = withStyles((theme) => ({
@@ -361,9 +265,10 @@ const StyledTableRow = withStyles((theme) => ({
   },
 }))(TableRow);
 
-function createData( tripName, dateAndTime, updateData ) {
+function createData(tripName, dateAndTime, updateData) {
   return { tripName, dateAndTime, updateData };
 }
+
 const useStyles = makeStyles({
   table: {
     Width: '100%',
@@ -377,7 +282,7 @@ const useStyles1 = makeStyles((theme) => ({
 }));
 
 const rows = [
-  //ex data
+  /////ex data
   createData('ชลบุรี', '30/01/2021 10:52AM'),
   createData('ทริป', '31/01/2021 18:21PM'),
   createData('ทริป101', '04/02/2021 01:23AM'),
@@ -497,14 +402,61 @@ function CustomizedTables() {
 }
 
 
-function CreateAccordion(){
+
+//--------------- Accordion ------------------/
+
+const Accordion = withStyles({
+  root: {
+    border: '1px solid rgba(0, 0, 0, .125)',
+    boxShadow: 'none',
+    '&:not(:last-child)': {
+      borderBottom: 0,
+    },
+    '&:before': {
+      display: 'none',
+    },
+    '&$expanded': {
+      margin: 'auto',
+    },
+  },
+  expanded: {},
+})(MuiAccordion);
+
+const AccordionSummary = withStyles({
+  root: {
+    backgroundColor: 'rgba(0, 0, 0, .03)',
+    borderBottom: '1px solid rgba(0, 0, 0, .125)',
+    marginBottom: -1,
+    minHeight: 56,
+    '&$expanded': {
+      minHeight: 56,
+    },
+  },
+  content: {
+    '&$expanded': {
+      margin: '12px 0',
+    },
+  },
+  expanded: {},
+})(MuiAccordionSummary);
+
+const AccordionDetails = withStyles((theme) => ({
+  root: {
+    padding: theme.spacing(2),
+  },
+}))(MuiAccordionDetails);
+
+export function CreateAccordion(){
   const [expanded, setExpanded] = React.useState(false);
-  const handleChange = (panel) => (event, isExpanded) => {
-    setExpanded(isExpanded ? panel : false);
+  const handleChange = (panel) => (event, newExpanded) => {
+    setExpanded(newExpanded ? panel : false);
   };
+
   return (
     <div>
-      <Accordion expanded={expanded === 'panel1'} onChange={handleChange('panel1')}>
+      <Paper elevation={0} style={{height:'50%'}}>
+
+      <Accordion square expanded={expanded === 'panel1'} onChange={handleChange('panel1')}> 
         <AccordionSummary
           expandIcon={<ExpandMoreIcon />}
           aria-controls="panel1bh-content"
@@ -523,21 +475,22 @@ function CreateAccordion(){
                       >สุ่มทริป</Button>
                   </InputGroup>
                   <InputGroup>
-                    <Typography style={{fontFamily:"csPrajad" ,fontSize:16,padding:5,marginTop:15,marginBottom:15}}>08.00-11.00</Typography>
+                    <Typography style={{fontFamily:"csPrajad" ,fontSize:14,padding:5,marginTop:15,marginBottom:15}}>08.00-11.00</Typography>
                     <PlaceName/>
                   </InputGroup>
                   <InputGroup>
-                    <Typography style={{fontFamily:"csPrajad" ,fontSize:16,padding:5,marginTop:15,marginBottom:15}}>11.00-12.00</Typography>
+                    <Typography style={{fontFamily:"csPrajad" ,fontSize:14,padding:5,marginTop:15,marginBottom:15}}>11.00-12.00</Typography>
                     <PlaceName/>
                   </InputGroup>
                   <InputGroup>
-                    <Typography style={{fontFamily:"csPrajad" ,fontSize:16,padding:5,marginTop:15,marginBottom:15}}>12.00-15.00</Typography>
+                    <Typography style={{fontFamily:"csPrajad" ,fontSize:14,padding:5,marginTop:15,marginBottom:15}}>12.00-15.00</Typography>
                     <PlaceName/>
                   </InputGroup>
                 </Paper>
         </AccordionDetails>
       </Accordion>
-      <Accordion expanded={expanded === 'panel2'} onChange={handleChange('panel2')}>
+    
+      <Accordion square expanded={expanded === 'panel2'} onChange={handleChange('panel2')}>
         <AccordionSummary
           expandIcon={<ExpandMoreIcon />}
           aria-controls="panel1bh-content"
@@ -556,21 +509,23 @@ function CreateAccordion(){
                       >สุ่มทริป</Button>
                   </InputGroup>
                   <InputGroup>
-                    <Typography style={{fontFamily:"csPrajad" ,fontSize:16,padding:5,marginTop:15,marginBottom:15}}>08.00-11.00</Typography>
+                    <Typography style={{fontFamily:"csPrajad" ,fontSize:14,padding:5,marginTop:15,marginBottom:15}}>08.00-11.00</Typography>
                     <PlaceName/>
                   </InputGroup>
                   <InputGroup>
-                    <Typography style={{fontFamily:"csPrajad" ,fontSize:16,padding:5,marginTop:15,marginBottom:15}}>11.00-12.00</Typography>
+                    <Typography style={{fontFamily:"csPrajad" ,fontSize:14,padding:5,marginTop:15,marginBottom:15}}>11.00-12.00</Typography>
                     <PlaceName/>
                   </InputGroup>
                   <InputGroup>
-                    <Typography style={{fontFamily:"csPrajad" ,fontSize:16,padding:5,marginTop:15,marginBottom:15}}>12.00-15.00</Typography>
+                    <Typography style={{fontFamily:"csPrajad" ,fontSize:14,padding:5,marginTop:15,marginBottom:15}}>12.00-15.00</Typography>
                     <PlaceName/>
                   </InputGroup>
                 </Paper>
         </AccordionDetails>
       </Accordion>
-      <Accordion expanded={expanded === 'panel3'} onChange={handleChange('panel3')}>
+      
+
+      <Accordion square expanded={expanded === 'panel3'} onChange={handleChange('panel3')}>
       <AccordionSummary
           expandIcon={<ExpandMoreIcon />}
           aria-controls="panel1bh-content"
@@ -589,112 +544,67 @@ function CreateAccordion(){
                       >สุ่มทริป</Button>
                   </InputGroup>
                   <InputGroup>
-                    <Typography style={{fontFamily:"csPrajad" ,fontSize:16,padding:5,marginTop:15,marginBottom:15}}>08.00-11.00</Typography>
+                    <Typography style={{fontFamily:"csPrajad" ,fontSize:14,padding:5,marginTop:15,marginBottom:1}}>08.00-11.00</Typography>
                     <PlaceName/>
                   </InputGroup>
                   <InputGroup>
-                    <Typography style={{fontFamily:"csPrajad" ,fontSize:16,padding:5,marginTop:15,marginBottom:15}}>11.00-12.00</Typography>
+                    <Typography style={{fontFamily:"csPrajad" ,fontSize:14,padding:5,marginTop:15,marginBottom:15}}>11.00-12.00</Typography>
                     <PlaceName/>
                   </InputGroup>
                   <InputGroup>
-                    <Typography style={{fontFamily:"csPrajad" ,fontSize:16,padding:5,marginTop:15,marginBottom:15}}>12.00-15.00</Typography>
+                    <Typography style={{fontFamily:"csPrajad" ,fontSize:14,padding:5,marginTop:15,marginBottom:15}}>12.00-15.00</Typography>
                     <PlaceName/>
                   </InputGroup>
                 </Paper>
         </AccordionDetails>
       </Accordion>
-      <Row>
-            <InputGroup style={{marginLeft:'5%',marginTop:5}}>
+      
+        <Row>
+        <Col md={{ span: 6, offset: 6 }}>
+            <InputGroup style={{margin:'5%'}}>
             <Button
-                    variant="contained"
+                    variant="outlined"
                     color="primary"
+                    
                 >สุ่มทริป</Button>
             <Button
                     variant="contained"
                     color="primary"
-                    style={{marginLeft:'60%'}}
+                    style={{marginInline:'10%'}}
                 >บันทึก</Button>
             </InputGroup>
-            </Row>
+            </Col>
+        </Row>
+      </Paper>
     </div>
   );
 }
 
 
+export function NewTripClick(){
+  const [clicked, setClicked] = React.useState(false);
+  const handleClick = () => {
+    setClicked(true);
+  };
 
-{/*     ////////       main     ///////    */ }
-export class MapContainer extends Component {
-  render() {
-    return (
-      <div className="Trip">
-      <link
-        rel="stylesheet"
-        href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"
-        integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk"
-        crossorigin="anonymous"
-      />
-   
-      <header className="App-header">
-      </header>
-
-      <section className="App-section">
-      <Container fluid >
+  return (
+    <div>
+      <Fab
+        variant="extended"
+        size="large"
+        color="secondary"
+        aria-label="Add"
+        style={{minWidth:80,width:'30%',height:60,margin:10,marginLeft:'65%'}}
+        onClick={handleClick}
+        >
+          New Trip
+        </Fab>
+        {clicked? (
+        <Collapse in={clicked}>
+                 
+               
         <Row>
-          <Paper elevation={5} style={{width:'90%',height:'50%',margin:'5%'}}>
-            <Row>
-            <Col>
-            <Box p={5}>
-            <Card style={{backgroundColor:'#3C6E71',width:'90%',height:'auto'}}>
-              <CardContent style={{color:'white'}}>
-              <Row>
-                <Avatar alt="User" src="/" style={{maxWidth:'100%' , marginLeft:10}}/>
-                <Typography style={{fontFamily:"csPrajad" ,padding:5,fontSize:24,fontWeight:'bold'}}>Profile</Typography>
-              </Row>
-              <Divider style={{margin:10}}/>
-              <Typography style={{fontFamily:"csPrajad" ,fontSize: 18, marginTop:5}}>ชื่อในระบบ :</Typography>
-              <Typography style={{fontFamily:"csPrajad" ,fontSize: 18, marginTop:5}}> E-mail :</Typography>
-              </CardContent>
-            </Card>
-            </Box>
-            <Box ml={'14%'}>
-              <Button
-                  variant="contained"
-                  color="secondary"
-                  style={{width:'75%',height:50}}
-              >My Trip</Button>
-            </Box>
-            <Box ml={'14%'} py={2}>
-              <Button
-                  variant="contained"
-                  color="primary"
-                  style={{width:'75%',height:50}}
-              >Recommended Trip</Button>
-            </Box>
-            </Col>
-            <Col>
-            <Box py={5} ml={'-10%'}>
-            <Card style={{backgroundColor:'#284B63',width:'90%'}}>
-              <CardContent style={{color:'white'}}>
-                <CustomizedTables/>
-                <Fab
-                    variant="extended"
-                    size="large"
-                    color="secondary"
-                    aria-label="Add"
-                    style={{width:'30%',height:60,margin:10,marginLeft:'70%'}}
-                   >
-                      New Trip
-                  </Fab>
-              </CardContent>
-            </Card>
-            </Box>
-            </Col>
-            </Row>
-          </Paper> 
-        </Row>
-
-        <Row>
-          <Paper elevation={5} style={{width:'30%',height:'100%',marginTop:'5%',marginBottom:'5%',marginLeft:'3%'}}>
+          <Paper elevation={3} style={{width:'30%',height:'100%',marginTop:'5%',marginBottom:'5%',marginLeft:'3%'}}>
             <Card style={{backgroundColor:'#284B63',width:'auto'}}>
               <CardContent style={{color:'white'}}>
                 <Typography style={{margin:10, fontFamily:"csPrajad" ,fontSize:20,fontWeight:'bold'}}>ข้อมูลทริป และเลือกที่พัก</Typography>
@@ -732,28 +642,7 @@ export class MapContainer extends Component {
             </Box>
             <InputGroup style={{width:'100%',height:150}}>
               {/*    Hotel Map    */}
-                <Map
-                google={this.props.google}
-                zoom={15}
-                style={{width:'95%',height:'100%',margin:'2.5%'}}
-                disableDefaultUI ={true}
-                scrollwheel={false}
-                disableDoubleClickZoom = {true}
-                draggable={false}
-                zoomControl={false}
-                onReady={this.handleMapReady}
-                onBounds_changed={this.handleMapMount}
-                initialCenter={
-                  {
-                    lat:  13.12,
-                    lng:  101.20
-                  }
-                }
-              >
-            {hotelOptions.map(hotelOptions=>(
-              <Marker key={hotelOptions.hname} position={{lat:hotelOptions.lat,lng:hotelOptions.lon}} />
-            ))}
-              </Map>     
+
             </InputGroup>
             <InputGroup style={{width:'80%'}}>
               <Button
@@ -764,7 +653,7 @@ export class MapContainer extends Component {
             </InputGroup>
           </Paper>
 
-          <Paper elevation={5} style={{width:'30%',height:620,marginTop:'5%',marginBottom:'5%',marginLeft:'2%'}}>
+          <Paper elevation={3} style={{width:'30%',minHeight:637,height:'90%',marginTop:'5%',marginBottom:'5%',marginLeft:'1%'}}>
             <Card style={{backgroundColor:'#284B63',width:'auto'}}>
               <CardContent style={{color:'white'}}>
               <Typography style={{margin:10, fontFamily:"csPrajad" ,fontSize:20,fontWeight:'bold'}}>จัดการทริป</Typography>
@@ -773,38 +662,104 @@ export class MapContainer extends Component {
 
             {/*test Accordion--------*/}
             <CreateAccordion/>
-    
           </Paper> 
 
-          <Paper elevation={5} style={{width:'30%',height:620,marginTop:'5%',marginBottom:'5%',marginLeft:'2%'}}>
+          <Paper elevation={3} style={{width:'30%',minHeight:637,height:'90%',marginTop:'5%',marginBottom:'5%',marginLeft:'1%'}}>
             <Card style={{backgroundColor:'#284B63',width:'auto'}}>
               <CardContent style={{color:'white'}}>
               <Typography style={{margin:10, fontFamily:"csPrajad" ,fontSize:20,fontWeight:'bold'}}>แผนที่ทริป</Typography>
               </CardContent>
             </Card>
-            <InputGroup style={{width:'100%',height:'85%'}}>
+            <InputGroup style={{width:'100%',minHeight:547}}>
               {/*    Hotel Map    */}
-                <Map
-                google={this.props.google}
-                zoom={13}
-                style={{width:'100%',height:'100%'}}
-                disableDefaultUI ={true}
-                scrollwheel={false}
-                disableDoubleClickZoom = {true}
-                draggable={false}
-                zoomControl={false}
-                onReady={this.handleMapReady}
-                onBounds_changed={this.handleMapMount}
-                initialCenter={
-                  {
-                    lat:  13.12,
-                    lng:  101.20
-                  }
-                }
-              />     
+                 
             </InputGroup>
           </Paper>  
         </Row>  
+        </Collapse>
+        ) : null}
+    </div>
+  );
+}
+
+
+
+{/*     ////////       main     ///////    */ }
+export class MapContainer extends Component {
+  render() {
+    return (
+      <div className="Trip">
+      <link
+        rel="stylesheet"
+        href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"
+        integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk"
+        crossorigin="anonymous"
+      />
+   
+      <header className="App-header">
+      </header>
+
+      <section className="App-section">
+      <Container fluid >
+        <Row >
+          <Paper elevation={5} style={{width:'90%',height:'50%',margin:'5%'}}>
+            <Row>
+            <Col>
+            <Box p={5}>
+            <Card style={{backgroundColor:'#3C6E71',width:'90%',height:'auto'}}>
+              <CardContent style={{color:'white'}}>
+              <Row>
+                <Avatar alt="User" src="/" style={{maxWidth:'100%' , marginLeft:10}}/>
+                <Typography style={{fontFamily:"csPrajad" ,padding:5,fontSize:24,fontWeight:'bold'}}>Profile</Typography>
+              </Row>
+              <Divider style={{margin:10}}/>
+              <Typography style={{fontFamily:"csPrajad" ,fontSize: 18, marginTop:5}}>ชื่อในระบบ :</Typography>
+              <Typography style={{fontFamily:"csPrajad" ,fontSize: 18, marginTop:5}}> E-mail :</Typography>
+              </CardContent>
+            </Card>
+            </Box>
+            <Box ml={'14%'}>
+              <Button
+                  variant="contained"
+                  color="secondary"
+                  style={{width:'75%',height:50}}
+              >My Trip</Button>
+            </Box>
+            <Box ml={'14%'} py={2}>
+              <Button
+                  variant="contained"
+                  color="primary"
+                  style={{width:'75%',height:50}}
+              >Recommended Trip</Button>
+            </Box>
+            </Col>
+            <Col>
+            <Box py={5} ml={'-10%'}>
+            <Card style={{backgroundColor:'#284B63',width:'90%'}}>
+              <CardContent style={{color:'white'}}>
+                <CustomizedTables/>
+              </CardContent>
+            </Card>
+           
+            <Button
+              variant="contained"
+              size="large"
+              color="secondary"
+              aria-label="Add"
+              style={{width:'30%',height:60,margin:10,marginLeft:'60%',borderRadius:50}}
+              component={Link}
+              to="/pages/Planner" 
+              >
+                New Trip
+              </Button>
+
+            </Box>
+            </Col>
+            </Row>
+          {/*<NewTripClick/>*/}
+
+          </Paper> 
+        </Row>
       </Container>
       </section>
     </div>
@@ -817,3 +772,5 @@ export default GoogleApiWrapper({
   language:'th',
   libraries: ["visualization"]
 })(MapContainer);
+
+
