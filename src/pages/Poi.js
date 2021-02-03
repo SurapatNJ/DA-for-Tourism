@@ -9,7 +9,8 @@ import Jumbotron from 'react-bootstrap/Jumbotron';
 import placeOptions from '../data/PlaceData';
 import cityOptions from '../data/CityData';
 import poiOptions from '../data/PoiData';
-import {Typography,Paper,TextField,Select,InputLabel,MenuItem,FormControl,Fab,Card,CardContent,Divider} from "@material-ui/core";
+import {Typography,Paper,TextField,Button,Select,InputLabel,MenuItem,FormControl,Fab,Card,CardContent,Divider,Box} from "@material-ui/core";
+import Skeleton from '@material-ui/lab/Skeleton';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import RoomIcon from '@material-ui/icons/Room';
 import AccountBalanceIcon from '@material-ui/icons/AccountBalance';
@@ -22,10 +23,9 @@ import { Map, GoogleApiWrapper,Rectangle,HeatMap,Marker} from 'google-maps-react
 
 
 const mapStyles = {
-  width: '800px',
-  height: '500px',
-  marginTop: '40px',
-  marginLeft: '93px'
+  width: '80%',
+  height: '50%',
+  margin:'5%'
 };
 
 
@@ -36,7 +36,7 @@ export function CityName() {
     getOptionLabel: (option) => option.cname_th +" ("+ option.cname_en +")",
   }
   return (
-    <div style={{ width: 400 ,height:20,marginTop:-10}}>
+    <div style={{ width:'25%' ,height:20,marginTop:-10}}>
       <Autocomplete
         {...defaultProps}
         id="cityName"
@@ -54,7 +54,7 @@ export function PlaceName() {
     getOptionLabel: (option) => option.pname,
   }
   return (
-    <div style={{ width: 800 ,height:20,marginTop:-10}}>
+    <div style={{ width: '40%',marginTop:-10}}>
       <Autocomplete
         {...defaultProps}
         id="placeName"
@@ -69,16 +69,17 @@ export function PlaceName() {
 export function DateStart() {
   return (
     <form noValidate>
-      <TextField
-        id="dateStart"
-        label="วันที่เริ่มต้น"
-        type="date"
-        defaultValue="2020-01-01"
-        InputLabelProps={{
-          shrink: true,
-        }}
-      />
-    </form>
+    <TextField
+      id="dateStart"
+      label="วันที่เริ่มต้น"
+      type="date"
+      required id="standard-required" 
+      style={{width:'100%',marginLeft:'2%'}}
+      InputLabelProps={{
+        shrink: true,
+      }}
+    />
+  </form>
   );
 }
 export function DateEnd() {
@@ -88,7 +89,8 @@ export function DateEnd() {
         id="dateEnd"
         label="วันที่สิ้นสุด"
         type="date"
-        defaultValue="2020-01-01"
+        required id="standard-required" 
+        style={{ width:'100%',marginLeft:'2%'}}
         InputLabelProps={{
           shrink: true,
         }}
@@ -105,14 +107,14 @@ export function StartTime() {
   };
   return (
     <div>
-      <FormControl style={{marginLeft:10}}>
+      <FormControl style={{marginLeft:10,marginRight:'5%'}}>
         <InputLabel id="startTime">เวลาเริ่มต้น</InputLabel>
         <Select
           labelId="selectStartTime"
           id="selectStartTime"
           value={startTime}
           onChange={handleChange}
-          style={{width:120}}
+          style={{width:'100%',minWidth:100}}
         >
           <MenuItem value={1}>00:00</MenuItem>
           <MenuItem value={2}>01:00</MenuItem>
@@ -151,14 +153,14 @@ export function EndTime() {
   };
   return (
     <div>
-      <FormControl style={{marginLeft:10}}>
+      <FormControl style={{marginLeft:20,marginRight:'5%'}}>
         <InputLabel id="endTime">เวลาสิ้นสุด</InputLabel>
         <Select
           labelId="selectEndTime"
           id="selectEndTime"
           value={endTime}
           onChange={handleChange}
-          style={{width:120}}
+          style={{width:'100%',minWidth:100}}
         >
           <MenuItem value={1}>00:00</MenuItem>
           <MenuItem value={2}>01:00</MenuItem>
@@ -225,106 +227,107 @@ export class MapContainer extends React.Component  {
 
       <section className="App-section">
 
-      <Container fluid style={{marginTop:60}} noGutters={true}>
-        <Paper elevation={5} style={{width:1200,height:180,marginTop:-15,marginLeft:140}}> 
-        <Row style={{marginTop:20,marginLeft:40}} noGutters={true}>
-        <Col md="auto">
+      <Container fluid noGutters={true}>
+      <Paper elevation={5} style={{width:'90%',margin:'5%'}}>
+
+        <Row style={{margin:'1%'}} noGutters={true}>
+   
             <InputGroup style={{marginTop:15}}>
                 <InputGroup.Prepend>
                   <InputGroup.Text style={{backgroundColor:"#284B63",color:"#FFFFFF",borderRadius:5}}>City</InputGroup.Text>
                 </InputGroup.Prepend>
                 <CityName/>
             </InputGroup>
-          </Col>
+ 
         </Row>
-        <Row style={{marginLeft:40}} noGutters={true}>
-          <Col md="auto">
+        <Row style={{margin:'1%'}} noGutters={true}>
+          
             <InputGroup style={{marginTop:15}}>
                 <InputGroup.Prepend>
                   <InputGroup.Text style={{backgroundColor:"#284B63",color:"#FFFFFF",borderRadius:5}}>Point of Interest</InputGroup.Text>
                 </InputGroup.Prepend>
               <PlaceName/>
             </InputGroup>
-          </Col>
         </Row>
-        <Row style={{marginTop:-5,marginLeft:40}}>
-            <InputGroup style={{width:1000,marginTop:15}}>
-                <InputGroup.Prepend>
-                  <InputGroup.Text style={{backgroundColor:"#284B63",color:"#FFFFFF",marginTop:10,marginRight:10,height:40,borderRadius:5}}>From</InputGroup.Text>
-                </InputGroup.Prepend>
+        <Row style={{margin:'1%'}} noGutters={true}>
+          <InputGroup style={{marginTop:15}}>
+            <InputGroup.Prepend>
+                  <InputGroup.Text style={{backgroundColor:"#284B63",color:"#FFFFFF",marginTop:10,marginRight:'5%',borderRadius:5}}>From</InputGroup.Text>
                   <DateStart/>
                   <StartTime/>
+              </InputGroup.Prepend>
+          </InputGroup>
+        </Row>
+        <Row style={{margin:'1%'}} noGutters={true}>
+          <Col>
+            <InputGroup style={{marginTop:15}}>
                 <InputGroup.Prepend>
-                  <InputGroup.Text style={{backgroundColor:"#284B63",color:"#FFFFFF",marginTop:10,marginLeft:50,marginRight:10,height:40,borderRadius:5}}>To</InputGroup.Text>
-                </InputGroup.Prepend>
+                  <InputGroup.Text style={{backgroundColor:"#284B63",color:"#FFFFFF",marginTop:10,marginRight:'5%',borderRadius:5}}>To</InputGroup.Text>
                   <DateEnd/>
-                  <EndTime/>
+                  <EndTime/>          
+                </InputGroup.Prepend>
             </InputGroup>
-                <InputGroup.Append style={{marginTop:-40,marginLeft:15}}>
-                  {/*Submit Button        */ }
-                  <Fab
-                    variant="extended"
+
+            </Col>
+            <Col>
+              {/*Submit Button        */ }
+              <Button
+                    variant="contained"
                     size="large"
                     color="secondary"
-                    aria-label="Add"
-                    style={{width:100,height:60}}
-                   >
-                      Submit
-                  </Fab>
-                </InputGroup.Append>
+                    style={{width:'20%',height:60,margin:'2%',marginLeft:'75%',borderRadius:50}}
+              >
+                Submit
+              </Button>
+            </Col>
         </Row>
         </Paper>
         
-        <Row style={{marginTop:20}}>
-
-          {/*   /////   Map detail //////   */}
-
-          <Col md="auto">
-            <Map
-            google={this.props.google}
-            zoom={9.5}
-            style={mapStyles}
-            disableDefaultUI ={true}
-            scrollwheel={false}
-            disableDoubleClickZoom = {true}
-            draggable={false}
-            zoomControl={false}
-            onReady={this.handleMapReady}
-            onBounds_changed={this.handleMapMount}
-            initialCenter={
-              {
-                lat:  13.12,
-                lng:  101.20
-              }
-            }
-          >     
-          {placeOptions.map(placeOptions=>(
+        <Paper elevation={5} style={{width:'90%',height:'35%',margin:'5%',marginTop:'-4%'}}>
+          <InputGroup style={{width:'100%' ,height:'90%'}}>
+          <Map
+                google={this.props.google}
+                zoom={9}
+                style={{width:'100%',height:'auto'}}
+                disableDefaultUI ={true}
+                scrollwheel={false}
+                disableDoubleClickZoom = {true}
+                draggable={false}
+                zoomControl={false}
+                onReady={this.handleMapReady}
+                onBounds_changed={this.handleMapMount}
+                initialCenter={
+                  {
+                    lat:  13.12,
+                    lng:  101.20
+                  }
+                }
+              >      
+              {placeOptions.map(placeOptions=>(
             <Marker key={placeOptions.pname} position={{lat:placeOptions.lat,lng:placeOptions.lon}} />
           ))}
      
-        
-            <Paper style={{width:875,height:575,marginLeft:57,marginTop:20}} elevation={5}/>
-                <Fab
-                        variant="extended"
+          </Map>
+          </InputGroup>
+          <Button
+                        variant="contained"
                         size="large"
                         color="secondary"
-                        aria-label="Add"
-                        style={{width:800,height:40,marginLeft:95,marginTop:-97}}
+                        style={{width:'100%',height:'10%'}}
                         onClick={this.toggleHeatmap}
                       >
                           Open Heat Map
-                </Fab>
-
-            </Map>
-
-          </Col>
-
-          {/*      /////     card     ///////    */}
-          <Col style={{marginLeft:800}} md="auto">
-            <Jumbotron style={{backgroundSize:'cover', backgroundColor:'#3C6E71', marginTop:20, marginLeft:150 , width:450}}>
-              <Card >
+                </Button>
+        </Paper>
+        <Paper elevation={5} style={{width:'90%',minHeight:'20%',height:'auto',margin:'5%',marginTop:'-4%',marginBottom:'30%'}}>
+          <Row>
+            <Col>
+                <Skeleton style={{margin:'5%',width:'90%',height:'95%',marginTop:'-1%'}} />
+            </Col>
+            <Col>
+              <Card>
                 <CardContent >
-                  <Typography style={{fontFamily:"csPrajad" ,fontSize:24}}>
+                  <Typography style={{fontFamily:"csPrajad" ,fontSize:18}}>
                     สถิติของสถานที่ท่องเที่ยว
                   </Typography>
                   <Typography color="textSecondary" style={{fontFamily:"csPrajad",fontSize:16}}>
@@ -332,21 +335,21 @@ export class MapContainer extends React.Component  {
                   </Typography>
                   <br />
                   <Divider/>
-                  <Typography style={{fontFamily:"csPrajad",fontSize:20}}>
+                  <Typography style={{fontFamily:"csPrajad",fontSize:16}}>
                     <br />
                     <AccountBalanceIcon />
                     ชื่อสถานที่ : 
                   </Typography>
                   <br />
                   <Divider/>
-                  <Typography style={{fontFamily:"csPrajad",fontSize:20}}>
+                  <Typography style={{fontFamily:"csPrajad",fontSize:16}}>
                     <br />
                     <RoomIcon/>
                     ละติจูด-ลองจิจูด : 
                   </Typography>
                   <br />
                   <Divider/>
-                  <Typography style={{fontFamily:"csPrajad",fontSize:20}}>
+                  <Typography style={{fontFamily:"csPrajad",fontSize:16}}>
                     <br />
                     <LoyaltyIcon />
                     ความนิยม : 
@@ -355,10 +358,10 @@ export class MapContainer extends React.Component  {
                   <Divider/>
                 </CardContent>
               </Card>
-            </Jumbotron>
-          </Col>
-        </Row>
-        <Row><br/><br/><br/><br/><br/></Row>
+
+            </Col>
+          </Row>
+        </Paper>
         </Container>
 
 
