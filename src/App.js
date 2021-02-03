@@ -115,6 +115,7 @@ import { Route, BrowserRouter, Switch, Link } from "react-router-dom";
 import Poi from "./pages/Poi";
 import Trip from "./pages/Trip";
 import Home from './pages/Home';
+import Planner from "./pages/Planner";
 import { makeStyles } from '@material-ui/core/styles';
 import "bootstrap/dist/css/bootstrap.min.css";
 import logo from './location.svg';
@@ -159,7 +160,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function App() {
-const routes = ["/","/pages/Poi", "/pages/Trip"];
+const routes = ["/","/pages/Poi", "/pages/Trip","/pages/Planner"];
 const classes = useStyles();
   return (
     <div className="App">
@@ -221,6 +222,7 @@ const classes = useStyles();
           <Route path="/" component={Home} exact/>
           <Route path="/pages/Poi" component={Poi} exact/>
           <Route path="/pages/Trip" component={Trip} exact/>
+          <Route path="/pages/Planner" component={Planner} exact/>
         </Switch>
       </BrowserRouter>
     </div>
