@@ -1,6 +1,7 @@
 from django.conf import settings
 from django.db import models
 from django.utils import timezone
+from django.contrib.auth.models import User, Group
 
 import datetime as dt
 # Create your models here.
@@ -56,15 +57,6 @@ class login_model(models.Model):
     password = models.CharField(max_length=250, null=True, blank=True)
 
 #User System model
-class User(models.Model):
-    email = models.EmailField(verbose_name='email address', max_length=255, unique=True)
-    username = models.CharField(max_length=250, null=True, blank=True)
-    password = models.CharField(max_length=250, null=True, blank=True)
-    last_updated = models.DateTimeField(auto_now=True, editable=False)
-    date_joined = models.DateTimeField(default=timezone.now, editable=False)
-
-    def __str__(self):
-        return self.email
 
 class trip_titles(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
