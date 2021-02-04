@@ -22,8 +22,10 @@ from random import random
 import re #for validating
 import json
 
+
 # Create your views here.
-main_path = r'G:\.shortcut-targets-by-id\1-YxyJafS8Gh2naQK5PO5DlwZGcPbKd-X\Project1_DA_Tourism\\'
+#main_path = r'G:\.shortcut-targets-by-id\1-YxyJafS8Gh2naQK5PO5DlwZGcPbKd-X\Project1_DA_Tourism\\'
+main_path = r'database\\'
 
 # Heatmap 
 class HeatmapViewSet(viewsets.ModelViewSet):
@@ -128,8 +130,8 @@ class tourist_placeViewSet(viewsets.ModelViewSet):
 
         if lat_en > lat_ws and lng_en > lng_ws:
             #Read all_popular tourist place
-            _pop_tourism = pd.read_csv(main_path + "data_car_stop\all_popular.csv", encoding='TIS620')
-            all_date_tourism = pd.read_csv(main_path + "data_car_stop\all_date_tourism.csv", encoding='TIS620')
+            _pop_tourism = pd.read_csv(main_path + "data_car_stop\\all_popular.csv", encoding='TIS620')
+            all_date_tourism = pd.read_csv(main_path + "data_car_stop\\all_date_tourism.csv", encoding='TIS620')
             pop_tourism = _pop_tourism[_pop_tourism.lat > lat_ws][_pop_tourism.lon > lng_ws][_pop_tourism.lat < lat_en][_pop_tourism.lon < lng_en].copy()
             del _pop_tourism
             poi_ = pop_tourism.sort_values('poi').poi.unique()
