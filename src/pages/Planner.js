@@ -95,7 +95,7 @@ export function ModeName() {
 export function HotelName() {
   const defaultProps = {
     options: hotelOptions,
-    getOptionLabel: (option) => option.hname,
+    getOptionLabel: (option) => option.Hotel_name,
   }
   return (
     <div style={{ width: '60%' ,height:'20%'}}>
@@ -743,7 +743,7 @@ export class MapContainer extends Component {
               {/*    Hotel Map    */}
                 <Map
                 google={this.props.google}
-                zoom={15}
+                zoom={17}
                 style={{width:'95%',height:'100%',margin:'2.5%'}}
                 disableDefaultUI ={true}
                 scrollwheel={false}
@@ -754,13 +754,13 @@ export class MapContainer extends Component {
                 onBounds_changed={this.handleMapMount}
                 initialCenter={
                   {
-                    lat:  13.12,
-                    lng:  101.20
+                    lat:  12.9346861,
+                    lng:  100.901878
                   }
                 }
               >
             {hotelOptions.map(hotelOptions=>(
-              <Marker key={hotelOptions.hname} position={{lat:hotelOptions.lat,lng:hotelOptions.lon}} />
+              <Marker key={hotelOptions.Hotel_name[1]} position={{lat:hotelOptions.lat,lng:hotelOptions.lng}} />
             ))}
               </Map>     
             </InputGroup>
