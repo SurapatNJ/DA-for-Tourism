@@ -21,11 +21,13 @@ import datetime as dt
 from random import random
 import re #for validating
 import json
+import os
 
 
 # Create your views here.
 #main_path = r'G:\.shortcut-targets-by-id\1-YxyJafS8Gh2naQK5PO5DlwZGcPbKd-X\Project1_DA_Tourism\\'
-main_path = r'database\\'
+#main_path = r'database\\'
+main_path = os.getcwd()
 
 # Heatmap 
 class HeatmapViewSet(viewsets.ModelViewSet):
@@ -49,7 +51,7 @@ class HeatmapViewSet(viewsets.ModelViewSet):
             date1 = dt.datetime.strptime(date_start, "%Y-%m-%d")
             date2 = dt.datetime.strptime(date_end, "%Y-%m-%d")
             date_all = [date1.date() + dt.timedelta(days=x) for x in range((date2.date()-date1.date()).days + 1)]
-            _path = main_path + "data_car_stop_pname" # use your path
+            _path = main_path + "\database\data_car_stop_pname" # use your path
             all_files = []
             for d in date_all:
                 _file = glob.glob(_path + "/pname_date_*" + str(d)[4:] + '.csv')
@@ -94,7 +96,7 @@ class GridViewSet(viewsets.ModelViewSet):
 
         if lat_en > lat_ws and lng_en > lng_ws:
             #Read tourism data
-            _tourism = pd.read_csv(main_path + "data_car_stop\cbi_data.csv", encoding='TIS620')
+            _tourism = pd.read_csv(main_path + "\database\data_car_stop\cbi_data.csv", encoding='TIS620')
             ghash_en = str(round(lat_en,3)) + "-" + str(round(lng_en,3)) #Set geohash east-north
             ghash_ws = str(round(lat_ws,3)) + "-" + str(round(lng_ws,3)) #Set geohash west-south
             tourism = _tourism[_tourism.ghash <= ghash_en][_tourism.ghash >= ghash_ws].copy() #tourism data in scope
@@ -106,7 +108,7 @@ class GridViewSet(viewsets.ModelViewSet):
                 del index
                 data = {'ghash':row['ghash'], 'poi':row['poi'], 'pname_en':row['pname_en'], 'pname_th':row['pname_th'], 'gtype':row['gtype']}
                 results.append(data)
-            return Response(results)
+            return Response(main_path)
         else:
             #Error input
             return Response("Error!!! en <= ws")
@@ -130,8 +132,8 @@ class tourist_placeViewSet(viewsets.ModelViewSet):
 
         if lat_en > lat_ws and lng_en > lng_ws:
             #Read all_popular tourist place
-            _pop_tourism = pd.read_csv(main_path + "data_car_stop\\all_popular.csv", encoding='TIS620')
-            all_date_tourism = pd.read_csv(main_path + "data_car_stop\\all_date_tourism.csv", encoding='TIS620')
+            _pop_tourism = pd.read_csv(main_path + "\database\data_car_stop\\all_popular.csv", encoding='TIS620')
+            all_date_tourism = pd.read_csv(main_path + "\database\data_car_stop\\all_date_tourism.csv", encoding='TIS620')
             pop_tourism = _pop_tourism[_pop_tourism.lat > lat_ws][_pop_tourism.lon > lng_ws][_pop_tourism.lat < lat_en][_pop_tourism.lon < lng_en].copy()
             del _pop_tourism
             poi_ = pop_tourism.sort_values('poi').poi.unique()
@@ -212,8 +214,8 @@ class trip_detail_analysisViewSet(viewsets.ModelViewSet):
         trip_data = searchData['trip_data'] # trip details
 
         #pop data in year
-        _date_tourism = pd.read_csv(main_path + "data_car_stop\\all_date_tourism.csv", encoding='TIS620')
-        hotal_list = pd.read_csv(main_path + "data_car_stop\\cbi_hotels_data.csv", encoding='utf8')
+        _date_tourism = pd.read_csv(main_path + "\database\data_car_stop\\all_date_tourism.csv", encoding='TIS620')
+        hotal_list = pd.read_csv(main_path + "\database\data_car_stop\\cbi_hotels_data.csv", encoding='utf8')
 
         #get trip_data to json
         jTrip = json.loads(trip_data)
@@ -340,11 +342,7 @@ class signupViewSet(viewsets.ModelViewSet):
         confirm_password = searchData['confirm_password']
 
         user_list = User.objects.all()
-        user_all = pd.DataFrame(columns=('user_id', 'username', 'email'))
-        for user in user_list:
-            _user = {'user_id': user.id, 'username': user.username, 'email': user.email} 
-            user_all = user_all.append(_user, ignore_index=True)
-            del _user
+        user_all = pd.DataFrame(list(user_list.values()))
 
         if username == '':
             resp = {'status':'Error' ,'text': "The given username must be set"} 
@@ -390,15 +388,11 @@ class loginViewSet(viewsets.ModelViewSet):
         password = searchData['password']
 
         user_list = User.objects.all()
-        user_all = pd.DataFrame(columns=('user_id', 'username', 'email'))
-        for user in user_list:
-            _user = {'user_id': user.id, 'username': user.username, 'email': user.email} 
-            user_all = user_all.append(_user, ignore_index=True)
-            del _user
+        user_all = pd.DataFrame(list(user_list.values()))
         
         #check username
         if username in list(user_all.username) or email in list(user_all.email):
-            user_id = user_all[user_all.username == username].user_id.max()
+            user_id = user_all[user_all.username == username].id.max()
             _user = User.objects.get(id = user_id)
 
             #check password
