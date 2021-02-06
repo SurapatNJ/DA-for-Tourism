@@ -108,7 +108,7 @@ class GridViewSet(viewsets.ModelViewSet):
                 del index
                 data = {'ghash':row['ghash'], 'poi':row['poi'], 'pname_en':row['pname_en'], 'pname_th':row['pname_th'], 'gtype':row['gtype']}
                 results.append(data)
-            return Response(main_path)
+            return Response(results)
         else:
             #Error input
             return Response("Error!!! en <= ws")
