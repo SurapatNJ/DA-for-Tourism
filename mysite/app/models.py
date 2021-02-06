@@ -86,3 +86,5 @@ class trip_details(models.Model):
         return str(self.trip_id) + "-" + str(self.datetime_start)
 
 
+
+
