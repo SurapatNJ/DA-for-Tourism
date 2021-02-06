@@ -45,6 +45,7 @@ class trip_detail_analysis(models.Model):
     hotal_id = models.CharField(max_length=100, null=True, blank=True)
     trip_data = models.TextField(max_length=1000, null=True, blank=True)
 
+#User System model
 class signup_model(models.Model):
     username = models.CharField(max_length=250, null=True, blank=True)
     email = models.EmailField(verbose_name='email address', max_length=255, unique=True)
@@ -56,8 +57,7 @@ class login_model(models.Model):
     email = models.EmailField(verbose_name='email address', max_length=255, unique=True)
     password = models.CharField(max_length=250, null=True, blank=True)
 
-#User System model
-
+#database model
 class trip_titles(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     trip_name = models.CharField(max_length=250, null=True, blank=True)
@@ -83,4 +83,6 @@ class trip_details(models.Model):
     created = models.DateTimeField(auto_now_add=True, editable=False)
 
     def __str__(self):
-        return str(self.trip_id) + "-" + str(self.trip_date)
+        return str(self.trip_id) + "-" + str(self.datetime_start)
+
+
