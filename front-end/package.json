@@ -27,7 +27,7 @@
     "react-router-dom": "^5.2.0",
     "react-scripts": "3.4.3",
     "react-scrollbar": "^0.5.6",
-    "react-tag-autocomplete": "^6.1.0"
+    "react-tag-autocomplete": "^6.1.0",
     "immer": "7.0.9"
   },
   "scripts": {
