@@ -110,14 +110,17 @@ export default App;
 
 import React from "react";
 import './App.css';
-import { Tabs, Tab, AppBar, Toolbar,Typography ,IconButton} from "@material-ui/core";
+import { Tabs, Tab, AppBar, Toolbar,Typography ,IconButton,Button} from "@material-ui/core";
 import { Route, BrowserRouter, Switch, Link } from "react-router-dom";
 import Poi from "./pages/Poi";
 import Trip from "./pages/Trip";
 import Home from './pages/Home';
+import Planner from "./pages/Planner";
+import Login from "./pages/Login";
 import { makeStyles } from '@material-ui/core/styles';
 import "bootstrap/dist/css/bootstrap.min.css";
 import logo from './location.svg';
+import { render } from "@testing-library/react";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -148,6 +151,7 @@ const useStyles = makeStyles((theme) => ({
       width: 'auto',
     },
     backgroundColor: '#353535',
+    flexGrow: 1,
   },
   tab:{
     '&:hover': {
@@ -155,12 +159,24 @@ const useStyles = makeStyles((theme) => ({
       textDecoration: "underline transparent"
     }
   },
+  button:{
+    marginRight: theme.spacing(2),
 
+  }
 }));
 
 export default function App() {
-const routes = ["/","/pages/Poi", "/pages/Trip"];
+const routes = ["/","/pages/Poi", "/pages/Trip","/pages/Planner","/pages/Login"];
 const classes = useStyles();
+
+const [auth, setAuth] = React.useState(true);
+const [anchorEl, setAnchorEl] = React.useState(null);
+const open = Boolean(anchorEl);
+
+const handleChange = (event) => {
+  setAuth(false);
+};
+
   return (
     <div className="App">
       <BrowserRouter>
@@ -169,7 +185,7 @@ const classes = useStyles();
           render={(history) => (
             <AppBar position="fixed">
               <Toolbar className={classes.toolbar}>
-                <IconButton edge="start" className={classes.menuButton} color="inherit" href="/">
+                <IconButton edge="start" className={classes.menuButton} color="inherit" href="/pages/Poi">
                     <img
                         alt=""
                         src={logo}
@@ -189,14 +205,8 @@ const classes = useStyles();
                       : false
                   }
                   className={classes.tabs}
+                  
                 >
-                  <Tab
-                    value={routes[0]}
-                    label="Home"
-                    component={Link}
-                    to={routes[0]}
-                    className={classes.tab}
-                  />
                   <Tab
                     value={routes[1]}
                     label="Point of Interest"
@@ -207,20 +217,33 @@ const classes = useStyles();
                   <Tab
                     value={routes[2]}
                     label="Trip Planner"
+                    disabled={!auth}
                     component={Link}
                     to={routes[2]}
                     className={classes.tab}
                   />
                 </Tabs>
+                {!auth && (
+                    <div>
+                    <Button color="inherit" className={classes.button} component={Link} to="/pages/Login" >Log in</Button>
+                    </div>
+                  )}
+                {auth && (
+                    <div>
+                    <Button color="inherit" className={classes.button}  onClick={handleChange}>Log out</Button>
+                    </div>
+                  )}
                 </Toolbar>
             </AppBar>
           )}
         />
 
         <Switch>
-          <Route path="/" component={Home} exact/>
+          <Route path="/" component={Poi} exact/>
           <Route path="/pages/Poi" component={Poi} exact/>
           <Route path="/pages/Trip" component={Trip} exact/>
+          <Route path="/pages/Planner" component={Planner} exact/>
+          <Route path="/pages/Login" component={Login} exact/>
         </Switch>
       </BrowserRouter>
     </div>
