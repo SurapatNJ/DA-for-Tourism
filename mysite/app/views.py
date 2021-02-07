@@ -454,7 +454,7 @@ class signupViewSet(viewsets.ModelViewSet):
             return Response(resp)
 
         #check email
-        regex = '^[a-z0-9]+[/._]?[a-z0-9]+[@]/w+[.]/w{2,3}$'
+        regex = '^[a-z0-9]+[\._]?[a-z0-9]+[@]\w+[.]\w{2,3}$'
         if email in list(user_all.email):
             resp = {'status':'Error' ,'text': "This email (" + email + ") is already in the system."} 
             return Response(resp)
