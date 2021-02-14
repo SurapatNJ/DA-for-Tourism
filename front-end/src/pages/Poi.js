@@ -9,7 +9,9 @@ import Jumbotron from 'react-bootstrap/Jumbotron';
 import placeOptions from '../data/PlaceData';
 import cityOptions from '../data/CityData';
 import poiOptions from '../data/PoiData';
-import {Typography,Paper,TextField,Button,Select,InputLabel,MenuItem,FormControl,Fab,Card,List,ListItem,CardContent,Divider,Box,CardHeader} from "@material-ui/core";
+import CssBaseline from '@material-ui/core/CssBaseline';
+import { makeStyles } from '@material-ui/core/styles';
+import {Typography,Paper,Grid,TextField,Button,Select,InputLabel,MenuItem,FormControl,Fab,Card,List,ListItem,CardContent,Divider,Box,CardHeader} from "@material-ui/core";
 import Skeleton from '@material-ui/lab/Skeleton';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import RoomIcon from '@material-ui/icons/Room';
@@ -19,6 +21,7 @@ import TodayIcon from '@material-ui/icons/Today';
 import DateRangeIcon from '@material-ui/icons/DateRange';
 import AccessTimeIcon from '@material-ui/icons/AccessTime';
 import CommuteIcon from '@material-ui/icons/Commute';
+import TimelapseIcon from '@material-ui/icons/Timelapse';
 //import axios from "axios";
 
 //Google Map
@@ -40,13 +43,13 @@ export function CityName() {
     getOptionLabel: (option) => option.cname_th +" ("+ option.cname_en +")",
   }
   return (
-    <div style={{ width:'50%' ,height:20,marginTop:-10}}>
+    <div style={{ width:'100%',marginTop:-18}}>
       <Autocomplete
         {...defaultProps}
         id="cityName"
         autoComplete
         includeInputInList
-        renderInput={(params) => <TextField {...params} label="ชื่อจังหวัด" style={{marginLeft:10}}/>}
+        renderInput={(params) => <TextField {...params} label="ชื่อจังหวัด"/>}
       />
     </div>
   );
@@ -58,13 +61,13 @@ export function PlaceName() {
     getOptionLabel: (option) => option.pname,
   }
   return (
-    <div style={{ width: '60%',marginTop:-10}}>
+    <div style={{ width: '100%',marginTop:-18}}>
       <Autocomplete
         {...defaultProps}
         id="placeName"
         autoComplete
         includeInputInList
-        renderInput={(params) => <TextField  {...params} label="ชื่อสถานที่ท่องเที่ยว" style={{marginLeft:10}}/>}
+        renderInput={(params) => <TextField  {...params} label="ชื่อสถานที่ท่องเที่ยว"/>}
       />
     </div>
   );
@@ -78,7 +81,7 @@ export function DateStart() {
       label="วันที่เริ่มต้น"
       type="date"
       required id="standard-required" 
-      style={{width:'100%',marginLeft:'2%',marginTop:'-6%'}}
+      style={{width:'100%'}}
       InputLabelProps={{
         shrink: true,
       }}
@@ -94,7 +97,7 @@ export function DateEnd() {
         label="วันที่สิ้นสุด"
         type="date"
         required id="standard-required" 
-        style={{ width:'100%',marginLeft:'2%',marginTop:'-6%'}}
+        style={{ width:'100%'}}
         InputLabelProps={{
           shrink: true,
         }}
@@ -102,6 +105,8 @@ export function DateEnd() {
     </form>
   );
 }
+
+
 
 
 export function PoiRec() {
@@ -117,6 +122,69 @@ export function PoiRec() {
 
 }
 
+
+const useStyles = makeStyles((theme) => ({
+  paper: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+  },
+  form: {
+    width: '80%', // Fix IE 11 issue.
+    marginTop: theme.spacing(3),
+    marginBottom: theme.spacing(5),
+  },
+
+}));
+
+
+export function PoiForm() {
+  const classes = useStyles();
+  return(
+    <Container fluid noGutters={true}>
+    <Paper elevation={5} style={{width:'50%',height:'auto',marginLeft:'25%',marginTop:'5%'}}>
+    <div className={classes.paper}>
+      <Typography style={{fontFamily:'csPrajad' ,fontSize:22,marginTop:'5%'}}>สถิติของสถานที่ท่องเที่ยว</Typography>
+      <form className={classes.form} noValidate>
+        <Grid container spacing={3}>
+          <Grid item xs={3}>
+            <Typography style={{fontFamily:'csPrajad' ,fontSize:18}}>จังหวัด :</Typography>
+          </Grid>
+          <Grid item xs={9}>
+              <CityName/>
+          </Grid>
+          <Grid item xs={3}>
+            <Typography style={{fontFamily:'csPrajad' ,fontSize:17}}>สถานที่ท่องเที่ยว :</Typography>
+          </Grid>
+          <Grid item xs={9}>
+              <PlaceName/>
+          </Grid>
+          <Grid item xs={6}>
+            <DateStart/>
+          </Grid>
+          <Grid item xs={6}>
+             <DateEnd/>
+          </Grid>
+          <Grid item xs={12}>
+              {/*Submit Button        */ }
+              <Button
+                    variant="contained"
+                    size="large"
+                    color="secondary"
+                    style={{width:'20%',height:60,marginLeft:'80%',borderRadius:50}}
+              >
+                Submit
+              </Button>
+
+          </Grid>
+        </Grid>
+      </form>
+    </div>
+    </Paper>
+  </Container>
+
+  );
+}
 
 
 
@@ -139,98 +207,55 @@ export class MapContainer extends React.Component  {
       <section className="App-section">
 
       <Container fluid noGutters={true}>
-      <Paper elevation={5} style={{width:'90%',height:'auto',margin:'5%'}}>
-        <Row noGutters>
-        <Col sm={5}>
-        <Card style={{height:'auto'}}>
-        <CardHeader style={{backgroundColor:'#284B63',color:'white',textAlign:'center'}} title="Tourism Statistics"/>
-        <CardContent>
-            <InputGroup style={{marginTop:15}}>
-               <Typography style={{fontFamily:'csPrajad' ,fontSize:20,margin:'1%'}}>จังหวัด :</Typography>
-                <CityName/>
-            </InputGroup>
-
-            <InputGroup style={{marginTop:15}}>
-              <Typography style={{fontFamily:'csPrajad' ,fontSize:20,margin:'1%'}}>สถานที่ท่องเที่ยว :</Typography>
-              <PlaceName/>
-            </InputGroup>
-
-          <InputGroup style={{marginTop:15}}>
-            <Typography style={{fontFamily:'csPrajad' ,fontSize:20,margin:'1%'}}>วันที่ :</Typography>
-              <DateStart/>
-          </InputGroup>
-
-          <InputGroup style={{marginTop:15}}>
-            <Typography style={{fontFamily:'csPrajad' ,fontSize:20,margin:'1%'}}>ถึงวันที่ :</Typography>
-              <DateEnd/>
-          </InputGroup>
-
-              {/*Submit Button        */ }
-              <Button
-                    variant="contained"
-                    size="large"
-                    color="secondary"
-                    style={{width:'20%',height:60,margin:'10%',marginLeft:'75%',borderRadius:50}}
-              >
-                Submit
-              </Button>
-
-        </CardContent>
-        </Card>
-        </Col>
-
-        <Col sm={7}>
-          <InputGroup style={{width:'100%',height:'90%'}}>
-            <Map
-                  google={this.props.google}
-                  zoom={9}
-                  disableDefaultUI ={true}
-                  scrollwheel={false}
-                  disableDoubleClickZoom = {true}
-                  draggable={false}
-                  zoomControl={false}
-                  onReady={this.handleMapReady}
-                  onBounds_changed={this.handleMapMount}
-                  initialCenter={
-                    {
-                      lat:  13.12,
-                      lng:  101.20
-                    }
-                  }
-                >      
-                {placeOptions.map(placeOptions=>(
-              <Marker key={placeOptions.pname} position={{lat:placeOptions.lat,lng:placeOptions.lon}} />
-            ))}
-            </Map>
-            </InputGroup>
-            <InputGroup style={{height:'10%'}}>
-            <Button
-                          variant="contained"
-                          size="large"
-                          color="secondary"
-                          style={{width:'100%'}}
-                          onClick={this.toggleHeatmap}
-                        >
-                            Open Heat Map
-            </Button>
-            </InputGroup>
-          </Col>
-          </Row>
-        </Paper>
+        <PoiForm/>
         
         
         <Paper elevation={5} style={{width:'90%',height:'auto',margin:'5%'}}>
-          <Row>
-            <Col sm={5}>
-                <Skeleton style={{margin:'5%',width:'90%',height:'95%',marginTop:'-1%'}} />
+          <Row noGutters>
+            <Col xs={6}>
+              <InputGroup style={{width:'100%',height:'90%'}}>
+              <Map
+                    style={{borderRadius:'1%'}}
+                    google={this.props.google}
+                    zoom={9}
+                    disableDefaultUI ={true}
+                    scrollwheel={false}
+                    disableDoubleClickZoom = {true}
+                    draggable={false}
+                    zoomControl={false}
+                    onReady={this.handleMapReady}
+                    onBounds_changed={this.handleMapMount}
+                    initialCenter={
+                      {
+                        lat:  13.12,
+                        lng:  101.20
+                      }
+                    }
+                  >      
+                  {placeOptions.map(placeOptions=>(
+                <Marker key={placeOptions.pname} position={{lat:placeOptions.lat,lng:placeOptions.lon}} />
+              ))}
+              </Map>
+              </InputGroup>
+              <InputGroup style={{height:'10%'}}>
+              <Button
+                            variant="contained"
+                            size="large"
+                            color="secondary"
+                            style={{width:'100%'}}
+                            onClick={this.toggleHeatmap}
+                          >
+                              Open Heat Map
+              </Button>
+              </InputGroup>
             </Col>
-            <Col sm={7}>
+            <Col xs={6}>
               <Card>
                 <CardContent>
-                  <Typography style={{fontFamily:"csPrajad" ,fontSize:18}}>
+                  <Typography style={{fontFamily:"csPrajad" ,fontSize:20}}>
                     สถิติของสถานที่ท่องเที่ยว
                   </Typography>
-                  <Typography color="textSecondary" style={{fontFamily:"csPrajad",fontSize:16}}>
+                  <Typography color="textSecondary" style={{fontFamily:"csPrajad",fontSize:18}}>
                     Tourism Statistics
                   </Typography>
                   <br />
@@ -276,8 +301,14 @@ export class MapContainer extends React.Component  {
                     </ListItem>
                     <ListItem>
                         <Typography style={{fontFamily:"csPrajad",fontSize:16}}>
-                        <AccessTimeIcon />
+                        <TimelapseIcon />
                         Time Ranges :
+                      </Typography>
+                    </ListItem>
+                    <ListItem>
+                        <Typography style={{fontFamily:"csPrajad",fontSize:16}}>
+                        <AccessTimeIcon />
+                        Times of the Day :
                       </Typography>
                     </ListItem>
                   </List>
