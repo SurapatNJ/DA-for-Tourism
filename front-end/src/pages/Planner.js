@@ -11,7 +11,9 @@ import Autocomplete from '@material-ui/lab/Autocomplete';
 import { Link } from 'react-router-dom';
 import InputGroup from 'react-bootstrap/InputGroup';
 import { Scrollbars } from 'react-custom-scrollbars';
-import {Typography,Button,Paper,Tab,Tabs,Box,TextField,Select,InputLabel,MenuItem,FormControl,Fab,IconButton,Card,CardContent,Divider,Avatar,Table,TableBody,TableCell,TableContainer,TableHead,TableRow,TableFooter,TablePagination,Collapse,Portal,Checkbox,FormControlLabel,Radio,RadioGroup,FormGroup} from "@material-ui/core";
+import {Typography,Button,Paper,Grid,Tab,Tabs,Box,TextField,Select,InputLabel,MenuItem,FormControl,Fab,IconButton,Card,CardContent,Divider,Avatar,Table,TableBody,TableCell,TableContainer,TableHead,TableRow,TableFooter,TablePagination,Collapse,Portal,Checkbox,FormControlLabel,Radio,RadioGroup,FormGroup} from "@material-ui/core";
+
+
 import MuiAccordion from '@material-ui/core/Accordion';
 import MuiAccordionSummary from '@material-ui/core/AccordionSummary';
 import MuiAccordionDetails from '@material-ui/core/AccordionDetails';
@@ -41,7 +43,6 @@ import { ThumbDownAltRounded, ThumbsUpDownOutlined } from '@material-ui/icons';
 
 
 
-
 //------------------ Input -----------------------//
 export function CityName() {
   const defaultProps = {
@@ -49,13 +50,13 @@ export function CityName() {
     getOptionLabel: (option) => option.cname_th +" ("+ option.cname_en +")",
   }
   return (
-    <div style={{ width: '60%' ,height:'20%'}}>
+    <div style={{ width: '100%'}}>
       <Autocomplete
         {...defaultProps}
         id="cityName"
         autoComplete
         includeInputInList
-        renderInput={(params) => <TextField {...params} label="ชื่อจังหวัด"   required id="standard-required" style={{marginLeft:10}}/>}
+        renderInput={(params) => <TextField {...params} label="ชื่อจังหวัด"   required id="standard-required" style={{marginTop:-18}}/>}
       />
     </div>
   );
@@ -67,13 +68,13 @@ export function PlaceName() {
     getOptionLabel: (option) => option.pname,
   }
   return (
-    <div style={{ width: '75%' ,height:'20%'}}>
+    <div style={{ width: '100%',marginTop:-22}}>
       <Autocomplete
         {...defaultProps}
         id="placeName"
         autoComplete
         includeInputInList
-        renderInput={(params) => <TextField  {...params} label="ชื่อสถานที่ท่องเที่ยว"  style={{marginLeft:10,marginTop:-3}}/>}
+        renderInput={(params) => <TextField  {...params} label="ชื่อสถานที่ท่องเที่ยว" />}
       />
     </div>
   );
@@ -105,13 +106,13 @@ export function HotelName() {
     getOptionLabel: (option) => option.Hotel_name,
   }
   return (
-    <div style={{ width: '60%' ,height:'20%'}}>
+    <div style={{ width: '100%',marginTop:-19}}>
       <Autocomplete
         {...defaultProps}
         id="hotelName"
         autoComplete
         includeInputInList
-        renderInput={(params) => <TextField {...params} label="โรงแรม/ที่พัก"  required id="standard-required"  style={{marginLeft:10,marginTop:5}}/>}
+        renderInput={(params) => <TextField {...params} label="ชื่อโรงแรม/ที่พัก"  required id="standard-required"/>}
       />
     </div>
   );
@@ -125,7 +126,7 @@ export function DateStart() {
         label="วันที่เริ่มต้น"
         type="date"
         required id="standard-required" 
-        style={{width:'100%',marginLeft:'13%'}}
+        style={{width:'55%',marginTop:-18}}
         InputLabelProps={{
           shrink: true,
         }}
@@ -142,7 +143,7 @@ export function DateEnd() {
         label="วันที่สิ้นสุด"
         type="date"
         required id="standard-required" 
-        style={{width:'100%',marginLeft:'5%'}}
+        style={{width:'55%',marginTop:-18}}
         InputLabelProps={{
           shrink: true,
         }}
@@ -176,7 +177,7 @@ export function Place_cat() {
     getOptionLabel: (option) => option.pcat,
   }
   return (
-    <div style={{ width: '80%' ,height:'20%'}}>
+    <div style={{ width: '100%'}}>
       <Autocomplete
         {...defaultProps}
         multiple
@@ -495,20 +496,20 @@ const AccordionDetails = withStyles((theme) => ({
 
 export function CreateAccordion(){
   const classes = useStyles1();
+  const classes2 = plannerUseStyles();
   const [expanded, setExpanded] = React.useState(false);
   const handleChange = (panel) => (event, newExpanded) => {
     setExpanded(newExpanded ? panel : false);
   };
-  const [show, setShow] = React.useState(false);
-  const container = React.useRef(null);
-  const handleClick = () => {
-    setShow(false);
-    setShow(true);
+  const [selectedDate, setSelectedDate] = React.useState(new Date('2014-08-18T21:11:54'));
+
+  const handleDateChange = (date) => {
+    setSelectedDate(date);
   };
   return (
     <div>
-      <Paper elevation={0} style={{height:'50%'}}>
-
+      <Paper elevation={0}>
+      <Scrollbars style={{height:550}}>
       <Accordion square expanded={expanded === 'panel1'} onChange={handleChange('panel1')} > 
         <AccordionSummary
           expandIcon={<ExpandMoreIcon />}
@@ -520,45 +521,47 @@ export function CreateAccordion(){
         </AccordionSummary>
         <AccordionDetails>
         <Paper elevation={0} style={{width:'100%'}}>
+            <div ClassName={classes2.paper}>
+            <form className={classes2.form} noValidate>
+              <Grid container spacing={2} style={{marginTop:-20}}>
+                <Grid item xs={12}>
                   <InputGroup>
-                    <AssistantOutlinedIcon style={{marginTop:8}}/>
-                    <Typography style={{fontFamily:"csPrajad" ,fontSize:20,padding:5}}>แนะนำทริป</Typography>
+                    <AssistantOutlinedIcon/>
+                    <Typography style={{fontFamily:"csPrajad" ,fontSize:20}}>แนะนำทริป</Typography>
                   </InputGroup>
-                  <InputGroup>
-                    <Typography style={{fontFamily:"csPrajad" ,fontSize:16,padding:5,marginTop:10,marginBottom:15}}>ประเภท</Typography>
+                </Grid>
+                <Grid item xs={12}>
                     <Place_cat/>
-                  </InputGroup>
-                  <InputGroup>
-                      <Button
-                          variant="outlined"
-                          color="primary"
-                          style={{width:100,height:'30%'}}
-                          onClick={handleClick}
-                      >สุ่มทริป</Button>
-                     
-                  </InputGroup>
+                </Grid>
+                <Grid item xs={12}>
+                     <RatingClick/>
+                </Grid>
                   <Divider style={{marginTop:5}}/>
-                  
-                  <InputGroup>
-                    <Typography style={{fontFamily:"csPrajad" ,fontSize:14,padding:5,marginTop:15,marginBottom:15}}>08.00-11.00</Typography>
+                <Grid item xs={4}>
+                <Typography style={{fontFamily:"csPrajad" ,fontSize:14,marginBottom:15}}>8.00.00-11.00</Typography>
+                </Grid>
+                <Grid item xs={8}>   
                     <PlaceName/>
-                  </InputGroup>
-                  <InputGroup>
-                    <Typography style={{fontFamily:"csPrajad" ,fontSize:14,padding:5,marginTop:15,marginBottom:15}}>11.00-12.00</Typography>
+                </Grid>
+                <Grid item xs={4}>
+                    <Typography style={{fontFamily:"csPrajad" ,fontSize:14,marginBottom:15}}>11.00-12.00</Typography>
+                </Grid>    
+                <Grid item xs={8}>   
                     <PlaceName/>
-                  </InputGroup>
-                  <InputGroup>
-                    <Typography style={{fontFamily:"csPrajad" ,fontSize:14,padding:5,marginTop:15,marginBottom:15}}>12.00-15.00</Typography>
+                </Grid>
+                <Grid item xs={4}>
+                    <Typography style={{fontFamily:"csPrajad" ,fontSize:14,marginBottom:15}}>12.00-15.00</Typography>
+                </Grid>
+                <Grid item xs={8}>   
                     <PlaceName/>
-                  </InputGroup>
-                  
+                </Grid>
                   <Divider style={{marginTop:15}}/>
-                  
-                </Paper>
+                </Grid>
+              </form>
+              </div>
+              </Paper>
         </AccordionDetails>
       </Accordion>
-
-
 
       <Accordion square expanded={expanded === 'panel2'} onChange={handleChange('panel2')} > 
         <AccordionSummary
@@ -571,74 +574,205 @@ export function CreateAccordion(){
         </AccordionSummary>
         <AccordionDetails>
         <Paper elevation={0} style={{width:'100%'}}>
+            <div ClassName={classes2.paper}>
+            <form className={classes2.form} noValidate>
+              <Grid container spacing={2} style={{marginTop:-20}}>
+                <Grid item xs={12}>
                   <InputGroup>
-                    <AssistantOutlinedIcon style={{marginTop:8}}/>
-                    <Typography style={{fontFamily:"csPrajad" ,fontSize:20,padding:5}}>แนะนำทริป</Typography>
+                    <AssistantOutlinedIcon/>
+                    <Typography style={{fontFamily:"csPrajad" ,fontSize:20}}>แนะนำทริป</Typography>
                   </InputGroup>
-                  <InputGroup>
-                    <Typography style={{fontFamily:"csPrajad" ,fontSize:16,padding:5,marginTop:10,marginBottom:15}}>ประเภท</Typography>
+                </Grid>
+                <Grid item xs={12}>
                     <Place_cat/>
-                  </InputGroup>
-                  <InputGroup>
-                      <Button
-                          variant="outlined"
-                          color="primary"
-                          style={{width:100,height:'30%'}}
-                          onClick={handleClick}
-                      >สุ่มทริป</Button>
-                     
-                  </InputGroup>
-                  <Divider style={{marginTop:5}}/>
-                  
-                  <InputGroup>
-                    <Typography style={{fontFamily:"csPrajad" ,fontSize:14,padding:5,marginTop:15,marginBottom:15}}>08.00-11.00</Typography>
+                </Grid>
+                <Grid item xs={12}>
+                     <RatingClick/>
+                </Grid>
+                <Grid item xs={4}>
+                    <Typography style={{fontFamily:"csPrajad" ,fontSize:14,marginBottom:15}}>08.00-11.00</Typography>
+                </Grid>
+                <Grid item xs={8}>   
                     <PlaceName/>
-                  </InputGroup>
-                  <InputGroup>
-                    <Typography style={{fontFamily:"csPrajad" ,fontSize:14,padding:5,marginTop:15,marginBottom:15}}>11.00-12.00</Typography>
+                </Grid>
+                <Grid item xs={4}>
+                    <Typography style={{fontFamily:"csPrajad" ,fontSize:14,marginBottom:15}}>11.00-12.00</Typography>
+                </Grid>    
+                <Grid item xs={8}>   
                     <PlaceName/>
-                  </InputGroup>
-                  <InputGroup>
-                    <Typography style={{fontFamily:"csPrajad" ,fontSize:14,padding:5,marginTop:15,marginBottom:15}}>12.00-15.00</Typography>
+                </Grid>
+                <Grid item xs={4}>
+                    <Typography style={{fontFamily:"csPrajad" ,fontSize:14,marginBottom:15}}>12.00-15.00</Typography>
+                </Grid>
+                <Grid item xs={8}>   
                     <PlaceName/>
-                  </InputGroup>
-                  
+                </Grid>
                   <Divider style={{marginTop:15}}/>
-                  
-                </Paper>
+                </Grid>
+              </form>
+              </div>
+              </Paper>
         </AccordionDetails>
       </Accordion>
-      
-        <Row>
-        <Col >
-        <div>
-          {show ? (
-            <Portal container={container.current}>             
-              <InputGroup style={{width:'100%',marginTop:'5%'}}>
-                <Typography style={{fontSize:'12',fontFamily:'csPrajad',marginRight:'5%'}}>ให้คะแนนทริป </Typography>
-                <RadioGroup row>
-                <FormControlLabel style={{marginTop:'-5%'}} control={<Checkbox icon={<FavoriteBorder />} checkedIcon={<Favorite />} />}/>
-                <FormControlLabel style={{marginTop:'-5%'}} control={<Checkbox icon={<ThumbUpAltOutlinedIcon/>} checkedIcon={<ThumbUpAltIcon />} />}/>
-                <FormControlLabel style={{marginTop:'-5%'}} control={<Checkbox icon={<ThumbDownOutlinedIcon />} checkedIcon={<ThumbDownIcon />} />}/>
-                </RadioGroup>
-                <Button
-                    variant="contained"
-                    color="Secondary"
-                    >บันทึก</Button>
-                </InputGroup>
 
-                </Portal>
-                ) : null}
-                </div>
-                <div ref={container} className={classes.alert}/>
-            </Col>
-        </Row>
+        <Divider/>
+        <div className={classes2.paper}>
+        <form className={classes2.form} noValidate>
+        <Grid container>
+        <Grid item xs={10}><RatingAllClick/></Grid>
+        <Grid item xs={2}>
+        <Button
+              variant="contained"
+              color="Secondary"
+              style={{height:30}}
+          >บันทึก</Button>
+          </Grid>
+          </Grid>
+        </form>
+        </div>
+        </Scrollbars>
       </Paper>
     </div>
   );
 }
 
 
+export function RatingClick() {
+  const [show, setShow] = React.useState(false);
+  const container = React.useRef(null);
+  const handleClick = () => {
+    setShow(true);
+  };
+  return(
+    <div>
+      <Grid container spacing={2}>
+        <Grid item xs={3}>
+        <Button
+        variant="outlined"
+        color="primary"
+        style={{width:80,height:30}}
+        onClick={handleClick}
+      >สุ่มทริป</Button>
+      </Grid>
+      <Grid item xs={9}>
+        {show ? (
+          <Portal container={container.current}>     
+              <InputGroup>
+                <Typography style={{fontSize:'12',fontFamily:'csPrajad',marginRight:'3%'}}>ให้คะแนนทริป </Typography>
+                  <RadioGroup row>
+                    <FormControlLabel style={{marginTop:'-5%'}} control={<Checkbox icon={<FavoriteBorder />} checkedIcon={<Favorite />} />}/>
+                    <FormControlLabel style={{marginTop:'-5%'}} control={<Checkbox icon={<ThumbUpAltOutlinedIcon/>} checkedIcon={<ThumbUpAltIcon />} />}/>
+                    <FormControlLabel style={{marginTop:'-5%'}} control={<Checkbox icon={<ThumbDownOutlinedIcon />} checkedIcon={<ThumbDownIcon />} />}/>
+                  </RadioGroup>
+              </InputGroup>
+          </Portal>
+          ) : null}
+        <div ref={container} />
+        </Grid>
+        </Grid>
+    </div>
+
+  );
+}
+
+
+export function RatingAllClick() {
+  const [show, setShow] = React.useState(false);
+  const container = React.useRef(null);
+  const handleClick = () => {
+    setShow(true);
+  };
+  return(
+    <div>
+      <Grid container spacing={2}>
+        <Grid item xs={3}>
+        <Button
+        variant="outlined"
+        color="primary"
+        style={{width:95,height:30}}
+        onClick={handleClick}
+      >สุ่มทั้งหมด</Button>
+      </Grid>
+      <Grid item xs={9}>
+        {show ? (
+          <Portal container={container.current}>     
+              <InputGroup>
+                <Typography style={{fontSize:'12',fontFamily:'csPrajad',marginRight:'3%',marginLeft:10,marginTop:3}}>ให้คะแนนทริป </Typography>
+                  <RadioGroup row>
+                    <FormControlLabel style={{marginTop:'-5%'}} control={<Checkbox icon={<FavoriteBorder />} checkedIcon={<Favorite />} />}/>
+                    <FormControlLabel style={{marginTop:'-5%'}} control={<Checkbox icon={<ThumbUpAltOutlinedIcon/>} checkedIcon={<ThumbUpAltIcon />} />}/>
+                    <FormControlLabel style={{marginTop:'-5%'}} control={<Checkbox icon={<ThumbDownOutlinedIcon />} checkedIcon={<ThumbDownIcon />} />}/>
+                  </RadioGroup>
+              </InputGroup>
+          </Portal>
+          ) : null}
+        <div ref={container} />
+        </Grid>
+        </Grid>
+    </div>
+
+  );
+}
+
+
+const plannerUseStyles = makeStyles((theme) => ({
+  paper: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+  },
+  form: {
+    width: '90%', // Fix IE 11 issue.
+    marginTop: theme.spacing(3),
+    marginBottom: theme.spacing(2),
+  },
+
+}));
+
+export function PlannerForm() {
+  const classes = plannerUseStyles();
+  return(
+    <Container fluid noGutters={true}>
+    <div className={classes.paper}>
+      <form className={classes.form} noValidate>
+        <Grid container spacing={3}>
+          <Grid item xs={3}>
+            <Typography style={{fontFamily:"csPrajad" ,fontSize:16}}>ชื่อทริป :</Typography>
+          </Grid>
+          <Grid item xs={9}>
+            <TextField required id="standard-required" label="ชื่อทริป" style={{width:'100%',marginTop:-18}}/>
+          </Grid>
+          <Grid item xs={3}>
+            <Typography style={{fontFamily:"csPrajad" ,fontSize:16}}>ชื่อจังหวัด :</Typography>
+          </Grid>
+          <Grid item xs={9}>
+            <CityName/>
+          </Grid>
+          <Grid item xs={3}>
+            <Typography style={{fontFamily:"csPrajad" ,fontSize:16}}>วันที่ไป :</Typography>
+          </Grid>
+          <Grid item xs={9}>
+            <DateStart/>
+          </Grid>
+          <Grid item xs={3}>
+            <Typography style={{fontFamily:"csPrajad" ,fontSize:16}}>วันที่กลับ :</Typography>
+          </Grid>
+          <Grid item xs={9}>
+            <DateEnd/>
+          </Grid>
+          <Grid item xs={3}>
+            <Typography style={{fontFamily:"csPrajad" ,fontSize:16}}>ที่พัก :</Typography>
+          </Grid>
+          <Grid item xs={9}>
+            <HotelName/>
+          </Grid>
+        </Grid>
+      </form>
+    </div>
+  </Container>
+
+  );
+}
 
 
 
@@ -661,43 +795,14 @@ export class MapContainer extends Component {
       <Container fluid >
              
       <Row>
-          <Paper elevation={5} style={{width:'30%',height:'100%',marginTop:'5%',marginBottom:'5%',marginLeft:'3%'}}>
+          <Paper elevation={5} style={{width:'30%',minHeight:637,height:'90%',marginTop:'5%',marginBottom:'5%',marginLeft:'3%'}}>
             <Card style={{backgroundColor:'#284B63',width:'auto'}}>
               <CardContent style={{color:'white'}}>
                 <Typography style={{margin:10, fontFamily:"csPrajad" ,fontSize:20,fontWeight:'bold'}}>ข้อมูลทริป และเลือกที่พัก</Typography>
               </CardContent>
             </Card>
-            <Box p={1}>
-            <InputGroup>
-              <Typography style={{fontFamily:"csPrajad" ,fontSize:16,padding:5,marginTop:15,marginBottom:-15}}>ชื่อทริป :</Typography>
-              <TextField required id="standard-required" label="ชื่อทริป"/>
-            </InputGroup>
-            </Box>
-            <Box p={1}>
-            <InputGroup>
-              <Typography style={{fontFamily:"csPrajad" ,fontSize:16,padding:5,marginTop:15}}>จังหวัด :</Typography>
-              <CityName/>
-            </InputGroup>
-            </Box>
-            <Box p={1}>
-            <InputGroup>
-            <Typography style={{fontFamily:"csPrajad" ,fontSize:16,padding:5,marginTop:15}}>วันที่ไป :</Typography>
-            <DateStart/>
-            </InputGroup>
-            </Box>
-            <Box p={1}>
-            <InputGroup>
-            <Typography style={{fontFamily:"csPrajad" ,fontSize:16,padding:5,marginTop:15}}>วันที่กลับ :</Typography>
-            <DateEnd/>
-            </InputGroup>
-            </Box>
-            <Box p={1}>
-            <InputGroup>
-            <Typography style={{fontFamily:"csPrajad" ,fontSize:16,padding:5,marginTop:15}}>ที่พัก :</Typography>
-            <HotelName/>
-            </InputGroup>
-            </Box>
-            <InputGroup style={{width:'100%',height:150}}>
+            <PlannerForm/>
+            <InputGroup style={{width:'100%',height:180}}>
               {/*    Hotel Map    */}
                 <Map
                 google={this.props.google}
@@ -726,7 +831,7 @@ export class MapContainer extends Component {
               <Button
                     variant="contained"
                     color="primary"
-                    style={{width:'30%',height:'8%',margin:'5%',marginLeft:'45%'}}
+                    style={{width:'30%',height:'8%',margin:'5%',marginLeft:'45%',marginTop:'7%'}}
                 >Submit</Button>
             </InputGroup>
           </Paper>
@@ -737,7 +842,6 @@ export class MapContainer extends Component {
               <Typography style={{margin:10, fontFamily:"csPrajad" ,fontSize:20,fontWeight:'bold'}}>จัดการทริป</Typography>
               </CardContent>
             </Card>
-
             {/*test Accordion--------*/}
             <CreateAccordion/>
           </Paper> 
