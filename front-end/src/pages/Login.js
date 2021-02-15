@@ -52,6 +52,11 @@ const useStyles = makeStyles((theme) => ({
       margin: theme.spacing(2),
       backgroundColor: '#284B63'
     },
+    form: {
+      width: '80%', // Fix IE 11 issue.
+      marginTop: theme.spacing(1),
+      marginBottom: theme.spacing(3),
+    },
 
   }));
   
@@ -83,10 +88,55 @@ export default function LogIn() {
                 Log in
               </Typography>
               <Divider style={{width:'90%',marginTop:'3%'}}/>
-              <Box my={'20%'}>
-              <Typography style={{fontFamily:'csPrajad',fontWeight:'bold',fontSize:12}}>
-                Log in require*
-              </Typography>
+              <form className={classes.form} noValidate>
+              <Grid container>
+                <Grid item xs={12}>
+          <TextField
+            variant="outlined"
+            margin="normal"
+            required
+            fullWidth
+            id="username"
+            label="Username"
+            name="username"
+            autoComplete="username"
+            autoFocus
+          />
+          </Grid>
+          <Grid item xs={12}>
+          <TextField
+            variant="outlined"
+            margin="normal"
+            required
+            fullWidth
+            name="password"
+            label="Password"
+            type="password"
+            id="password"
+            autoComplete="current-password"
+          />
+          </Grid>
+          <Grid item xs={12}>
+          <Button
+            type="submit"
+            fullWidth
+            style={{marginTop:'2%'}}
+            variant="contained"
+            color="secondary"
+            className={classes.submit}
+          >
+            Sign In
+          </Button>
+          </Grid>
+            <Grid item xs={7}>
+            </Grid>
+            <Grid item xs={5}>
+              <Link href="/pages/SignUp" variant="body2">
+                {"Sign Up a new Account"}
+              </Link>
+            </Grid>
+          </Grid>
+          </form>
                 <GoogleLogin
                 // change client id
                     clientId="658977310896-knrl3gka66fldh83dao2rhgbblmd4un9.apps.googleusercontent.com"
@@ -95,7 +145,6 @@ export default function LogIn() {
                     onFailure={responseGoogle}
                     cookiePolicy={'single_host_origin'}
                   />
-              </Box>
             </CardContent>
             </Card>
           </Paper>
