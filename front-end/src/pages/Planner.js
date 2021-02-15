@@ -11,8 +11,8 @@ import Autocomplete from '@material-ui/lab/Autocomplete';
 import { Link } from 'react-router-dom';
 import InputGroup from 'react-bootstrap/InputGroup';
 import { Scrollbars } from 'react-custom-scrollbars';
-import {Typography,Button,Paper,Grid,Tab,Tabs,Box,TextField,Select,InputLabel,MenuItem,FormControl,Fab,IconButton,Card,CardContent,Divider,Avatar,Table,TableBody,TableCell,TableContainer,TableHead,TableRow,TableFooter,TablePagination,Collapse,Portal,Checkbox,FormControlLabel,Radio,RadioGroup,FormGroup} from "@material-ui/core";
-
+import {Typography,Button,Paper,Grid,Tab,Tabs,Box,TextField,InputLabel,MenuItem,FormControl,Select,Fab,IconButton,Card,CardContent,Divider,Avatar,List,ListItem,ListItemIcon,Table,TableBody,TableCell,TableContainer,TableHead,TableRow,TableFooter,TablePagination,Collapse,Portal,Checkbox,FormControlLabel,Radio,RadioGroup,FormGroup} from "@material-ui/core";
+import { green } from '@material-ui/core/colors';
 
 import MuiAccordion from '@material-ui/core/Accordion';
 import MuiAccordionSummary from '@material-ui/core/AccordionSummary';
@@ -37,6 +37,9 @@ import ThumbUpAltIcon from '@material-ui/icons/ThumbUpAlt';
 import ThumbDownIcon from '@material-ui/icons/ThumbDown';
 import ThumbDownOutlinedIcon from '@material-ui/icons/ThumbDownOutlined';
 import AssistantOutlinedIcon from '@material-ui/icons/AssistantOutlined';
+import AddBoxIcon from '@material-ui/icons/AddBox';
+import IndeterminateCheckBoxIcon from '@material-ui/icons/IndeterminateCheckBox';
+
 //Google Map
 import { Map, GoogleApiWrapper,Rectangle,HeatMap,Marker} from 'google-maps-react';
 import { ThumbDownAltRounded, ThumbsUpDownOutlined } from '@material-ui/icons';
@@ -177,7 +180,7 @@ export function Place_cat() {
     getOptionLabel: (option) => option.pcat,
   }
   return (
-    <div style={{ width: '100%'}}>
+    <div style={{ width: '100%',marginLeft:'3%',marginTop:'-2%'}}>
       <Autocomplete
         {...defaultProps}
         multiple
@@ -189,16 +192,15 @@ export function Place_cat() {
     </div>
   );
 }
-/*
-export function StartTime() {
-  const [startTime, setStartTime] = React.useState('');
+
+export function SetTime() {
+  const [startTime, setStartTime] = React.useState(1);
   const handleChange = (event) => {
     setStartTime(event.target.value);
   };
   return (
     <div>
-      <FormControl style={{marginLeft:10}}>
-        <InputLabel id="startTime">เวลาเริ่มต้น</InputLabel>
+      <FormControl  size="small" >
         <Select
           labelId="selectStartTime"
           id="selectStartTime"
@@ -236,88 +238,6 @@ export function StartTime() {
   );
 }
 
-export function EndTime() {
-  const [endTime, setEndTime] = React.useState('');
-  const handleChange = (event) => {
-    setEndTime(event.target.value);
-  };
-  return (
-    <div>
-      <FormControl style={{marginLeft:10}}>
-        <InputLabel id="endTime">เวลาสิ้นสุด</InputLabel>
-        <Select
-          labelId="selectEndTime"
-          id="selectEndTime"
-          value={endTime}
-          onChange={handleChange}
-          style={{width:120}}
-        >
-          <MenuItem value={1}>00:00</MenuItem>
-          <MenuItem value={2}>01:00</MenuItem>
-          <MenuItem value={3}>02:00</MenuItem>
-          <MenuItem value={4}>03:00</MenuItem>
-          <MenuItem value={5}>04:00</MenuItem>
-          <MenuItem value={6}>05:00</MenuItem>
-          <MenuItem value={7}>06:00</MenuItem>
-          <MenuItem value={8}>07:00</MenuItem>
-          <MenuItem value={9}>08:00</MenuItem>
-          <MenuItem value={10}>09:00</MenuItem>
-          <MenuItem value={11}>10:00</MenuItem>
-          <MenuItem value={12}>11:00</MenuItem>
-          <MenuItem value={13}>12:00</MenuItem>
-          <MenuItem value={14}>13:00</MenuItem>
-          <MenuItem value={15}>14:00</MenuItem>
-          <MenuItem value={16}>15:00</MenuItem>
-          <MenuItem value={17}>16:00</MenuItem>
-          <MenuItem value={18}>17:00</MenuItem>
-          <MenuItem value={19}>18:00</MenuItem>
-          <MenuItem value={20}>19:00</MenuItem>
-          <MenuItem value={21}>20:00</MenuItem>
-          <MenuItem value={22}>21:00</MenuItem>
-          <MenuItem value={23}>22:00</MenuItem>
-          <MenuItem value={24}>23:00</MenuItem>
-        </Select>
-      </FormControl>
-    </div>
-  );
-}
-*/
-
-
-
-//----------------- Table ----------------//
-const StyledTableCell = withStyles((theme) => ({
-  head: {
-    backgroundColor: theme.palette.common.black,
-    color: theme.palette.common.white,
-    fontFamily: 'csPrajad',
-    fontSize: 18,
-    fontWeight: 'bold',
-    width:'30%'
-  },
-  body: {
-    fontSize: 16,
-    fontFamily: 'csPrajad'
-  },
-}))(TableCell);
-
-const StyledTableRow = withStyles((theme) => ({
-  root: {
-    '&:nth-of-type(odd)': {
-      backgroundColor: theme.palette.action.hover,
-    },
-  },
-}))(TableRow);
-
-function createData(tripName, dateAndTime, updateData) {
-  return { tripName, dateAndTime, updateData };
-}
-
-const useStyles = makeStyles({
-  table: {
-    Width: '100%',
-  },
-});
 const useStyles1 = makeStyles((theme) => ({
   root: {
     flexShrink: 0,
@@ -328,127 +248,6 @@ const useStyles1 = makeStyles((theme) => ({
     margin: theme.spacing(1, 3),
   },
 }));
-
-const rows = [
-  /////ex data
-  createData('ชลบุรี', '30/01/2021 10:52AM'),
-  createData('ทริป', '31/01/2021 18:21PM'),
-  createData('ทริป101', '04/02/2021 01:23AM'),
-];
-
-function TablePaginationActions(props) {
-  const classes = useStyles1();
-  const theme = useTheme();
-  const { count, page, rowsPerPage, onChangePage } = props;
-
-  const handleFirstPageButtonClick = (event) => {
-    onChangePage(event, 0);
-  };
-
-  const handleBackButtonClick = (event) => {
-    onChangePage(event, page - 1);
-  };
-
-  const handleNextButtonClick = (event) => {
-    onChangePage(event, page + 1);
-  };
-
-  const handleLastPageButtonClick = (event) => {
-    onChangePage(event, Math.max(0, Math.ceil(count / rowsPerPage) - 1));
-  };
-
-  return (
-    <div className={classes.root}>
-      <IconButton
-        onClick={handleFirstPageButtonClick}
-        disabled={page === 0}
-        aria-label="first page"
-      >
-        {theme.direction === 'rtl' ? <LastPageIcon /> : <FirstPageIcon />}
-      </IconButton>
-      <IconButton onClick={handleBackButtonClick} disabled={page === 0} aria-label="previous page">
-        {theme.direction === 'rtl' ? <KeyboardArrowRight /> : <KeyboardArrowLeft />}
-      </IconButton>
-      <IconButton
-        onClick={handleNextButtonClick}
-        disabled={page >= Math.ceil(count / rowsPerPage) - 1}
-        aria-label="next page"
-      >
-        {theme.direction === 'rtl' ? <KeyboardArrowLeft /> : <KeyboardArrowRight />}
-      </IconButton>
-      <IconButton
-        onClick={handleLastPageButtonClick}
-        disabled={page >= Math.ceil(count / rowsPerPage) - 1}
-        aria-label="last page"
-      >
-        {theme.direction === 'rtl' ? <FirstPageIcon /> : <LastPageIcon />}
-      </IconButton>
-    </div>
-  );
-}
-TablePaginationActions.propTypes = {
-  count: PropTypes.number.isRequired,
-  onChangePage: PropTypes.func.isRequired,
-  page: PropTypes.number.isRequired,
-  rowsPerPage: PropTypes.number.isRequired,
-};
-
-function CustomizedTables() {
-  const classes = useStyles();
-  const [page, setPage] = React.useState(0);
-  const [rowsPerPage] = React.useState(5);
-  const emptyRows = rowsPerPage - Math.min(rowsPerPage, rows.length - page * rowsPerPage);
-  const handleChangePage = (event, newPage) => {
-    setPage(newPage);
-  }
-
-  return (
-    <TableContainer component={Paper}>
-      <Table className={classes.table} aria-label="customized table">
-        <TableHead>
-          <TableRow>
-            <StyledTableCell>ชื่อทริป</StyledTableCell>
-            <StyledTableCell align="center">วัน-เวลาที่สร้าง</StyledTableCell>
-            <StyledTableCell align="center">แก้ไข/ลบ</StyledTableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {(rowsPerPage > 0
-            ? rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-            : rows
-          ).map((row) => (
-            <StyledTableRow key={row.name}>
-              <StyledTableCell component="th" scope="row">
-                {row.tripName}
-              </StyledTableCell>
-              <StyledTableCell align="center">{row.dateAndTime}</StyledTableCell>
-              <StyledTableCell align="center">
-                <IconButton aria-label="edit" size="small"><EditRoundedIcon/></IconButton>   <IconButton aria-label="delete" size="small"><DeleteForeverRoundedIcon/></IconButton>
-              </StyledTableCell>
-            </StyledTableRow>
-          ))}
-          {emptyRows > 0 && (
-            <TableRow style={{ height: 63 * emptyRows }}>
-              <TableCell colSpan={6} />
-            </TableRow>
-          )}
-        </TableBody>
-        <TableFooter>
-          <TablePagination
-                count={rows.length}
-                labelRowsPerPage=''
-                rowsPerPageOptions=''
-                rowsPerPage={rowsPerPage}
-                page={page}
-                onChangePage={handleChangePage}
-                ActionsComponent={TablePaginationActions}
-              />
-        </TableFooter>
-      </Table>
-    </TableContainer>
-  );
-}
-
 
 
 //--------------- Accordion ------------------/
@@ -501,15 +300,33 @@ export function CreateAccordion(){
   const handleChange = (panel) => (event, newExpanded) => {
     setExpanded(newExpanded ? panel : false);
   };
-  const [selectedDate, setSelectedDate] = React.useState(new Date('2014-08-18T21:11:54'));
+  const [added, setAdded] = React.useState([]);
+  const handleToggle= () => {
+    return (
+      <Typography>ddd</Typography>
+    );
+  }
 
-  const handleDateChange = (date) => {
-    setSelectedDate(date);
-  };
   return (
     <div>
       <Paper elevation={0}>
       <Scrollbars style={{height:550}}>
+      <div ClassName={classes2.paper}>
+        <form className={classes2.form} noValidate>
+          <Grid container spacing={2}>
+            <Grid item xs={12}>
+              <InputGroup style={{marginLeft:'5%'}}>
+                <AssistantOutlinedIcon/>
+                <Typography style={{fontFamily:"csPrajad" ,fontSize:20}}>แนะนำทริป</Typography>
+              </InputGroup>
+            </Grid>
+           <Grid item xs={12}>
+            <Place_cat/>
+           </Grid>
+          </Grid>
+        </form>
+        </div>
+
       <Accordion square expanded={expanded === 'panel1'} onChange={handleChange('panel1')} > 
         <AccordionSummary
           expandIcon={<ExpandMoreIcon />}
@@ -522,39 +339,46 @@ export function CreateAccordion(){
         <AccordionDetails>
         <Paper elevation={0} style={{width:'100%'}}>
             <div ClassName={classes2.paper}>
-            <form className={classes2.form} noValidate>
+            <form className={classes2.form2} noValidate>
               <Grid container spacing={2} style={{marginTop:-20}}>
-                <Grid item xs={12}>
-                  <InputGroup>
-                    <AssistantOutlinedIcon/>
-                    <Typography style={{fontFamily:"csPrajad" ,fontSize:20}}>แนะนำทริป</Typography>
-                  </InputGroup>
-                </Grid>
-                <Grid item xs={12}>
-                    <Place_cat/>
-                </Grid>
                 <Grid item xs={12}>
                      <RatingClick/>
                 </Grid>
                   <Divider style={{marginTop:5}}/>
-                <Grid item xs={4}>
-                <Typography style={{fontFamily:"csPrajad" ,fontSize:14,marginBottom:15}}>8.00.00-11.00</Typography>
-                </Grid>
-                <Grid item xs={8}>   
-                    <PlaceName/>
-                </Grid>
-                <Grid item xs={4}>
-                    <Typography style={{fontFamily:"csPrajad" ,fontSize:14,marginBottom:15}}>11.00-12.00</Typography>
-                </Grid>    
-                <Grid item xs={8}>   
-                    <PlaceName/>
-                </Grid>
-                <Grid item xs={4}>
-                    <Typography style={{fontFamily:"csPrajad" ,fontSize:14,marginBottom:15}}>12.00-15.00</Typography>
-                </Grid>
-                <Grid item xs={8}>   
-                    <PlaceName/>
-                </Grid>
+                <List style={{width:'100%'}}>
+                  <ListItem>
+                    <Grid item xs={5}>
+                    <InputGroup><SetTime/><Typography style={{marginTop:2,fontSize:20,marginLeft:5,marginRight:5}}>-</Typography><SetTime/></InputGroup>
+                    </Grid>
+                    <Grid item xs={6}>   
+                        <PlaceName/>
+                    </Grid>
+                    <Grid item xs={1}/>
+                  </ListItem>
+                  <ListItem>
+                    <Grid item xs={5}>
+                    <InputGroup><SetTime/><Typography style={{marginTop:2,fontSize:20,marginLeft:5,marginRight:5}}>-</Typography><SetTime/></InputGroup>
+                    </Grid>
+                    <Grid item xs={6}>   
+                        <PlaceName/>
+                    </Grid>
+                    <Grid item xs={1}/>
+                  </ListItem>
+                  <ListItem>
+                    <Grid item xs={5}>
+                    <InputGroup><SetTime/><Typography style={{marginTop:2,fontSize:20,marginLeft:5,marginRight:5}}>-</Typography><SetTime/></InputGroup>
+                    </Grid>
+                    <Grid item xs={6}>   
+                        <PlaceName/>
+                    </Grid>
+                    <Grid item xs={1}>
+                      <ListItemIcon>
+                        <IconButton size="small"><AddBoxIcon style={{ color: green[500]}} onClick={handleToggle}/></IconButton>
+                        <IconButton size="small"><IndeterminateCheckBoxIcon color="action"/></IconButton>
+                      </ListItemIcon>
+                    </Grid>
+                  </ListItem>
+                </List>
                   <Divider style={{marginTop:15}}/>
                 </Grid>
               </form>
@@ -563,6 +387,7 @@ export function CreateAccordion(){
         </AccordionDetails>
       </Accordion>
 
+      
       <Accordion square expanded={expanded === 'panel2'} onChange={handleChange('panel2')} > 
         <AccordionSummary
           expandIcon={<ExpandMoreIcon />}
@@ -575,38 +400,46 @@ export function CreateAccordion(){
         <AccordionDetails>
         <Paper elevation={0} style={{width:'100%'}}>
             <div ClassName={classes2.paper}>
-            <form className={classes2.form} noValidate>
+            <form className={classes2.form2} noValidate>
               <Grid container spacing={2} style={{marginTop:-20}}>
-                <Grid item xs={12}>
-                  <InputGroup>
-                    <AssistantOutlinedIcon/>
-                    <Typography style={{fontFamily:"csPrajad" ,fontSize:20}}>แนะนำทริป</Typography>
-                  </InputGroup>
-                </Grid>
-                <Grid item xs={12}>
-                    <Place_cat/>
-                </Grid>
                 <Grid item xs={12}>
                      <RatingClick/>
                 </Grid>
-                <Grid item xs={4}>
-                    <Typography style={{fontFamily:"csPrajad" ,fontSize:14,marginBottom:15}}>08.00-11.00</Typography>
-                </Grid>
-                <Grid item xs={8}>   
-                    <PlaceName/>
-                </Grid>
-                <Grid item xs={4}>
-                    <Typography style={{fontFamily:"csPrajad" ,fontSize:14,marginBottom:15}}>11.00-12.00</Typography>
-                </Grid>    
-                <Grid item xs={8}>   
-                    <PlaceName/>
-                </Grid>
-                <Grid item xs={4}>
-                    <Typography style={{fontFamily:"csPrajad" ,fontSize:14,marginBottom:15}}>12.00-15.00</Typography>
-                </Grid>
-                <Grid item xs={8}>   
-                    <PlaceName/>
-                </Grid>
+                  <Divider style={{marginTop:5}}/>
+                <List style={{width:'100%'}}>
+                  <ListItem>
+                    <Grid item xs={5}>
+                    <InputGroup><SetTime/><Typography style={{marginTop:2,fontSize:20,marginLeft:5,marginRight:5}}>-</Typography><SetTime/></InputGroup>
+                    </Grid>
+                    <Grid item xs={6}>   
+                        <PlaceName/>
+                    </Grid>
+                    <Grid item xs={1}/>
+                  </ListItem>
+                  <ListItem>
+                    <Grid item xs={5}>
+                    <InputGroup><SetTime/><Typography style={{marginTop:2,fontSize:20,marginLeft:5,marginRight:5}}>-</Typography><SetTime/></InputGroup>
+                    </Grid>
+                    <Grid item xs={6}>   
+                        <PlaceName/>
+                    </Grid>
+                    <Grid item xs={1}/>
+                  </ListItem>
+                  <ListItem>
+                    <Grid item xs={5}>
+                    <InputGroup><SetTime/><Typography style={{marginTop:2,fontSize:20,marginLeft:5,marginRight:5}}>-</Typography><SetTime/></InputGroup>
+                    </Grid>
+                    <Grid item xs={6}>   
+                        <PlaceName/>
+                    </Grid>
+                    <Grid item xs={1}>
+                      <ListItemIcon>
+                        <IconButton size="small"><AddBoxIcon style={{ color: green[500]}} onClick={handleToggle}/></IconButton>
+                        <IconButton size="small"><IndeterminateCheckBoxIcon color="action"/></IconButton>
+                      </ListItemIcon>
+                    </Grid>
+                  </ListItem>
+                </List>
                   <Divider style={{marginTop:15}}/>
                 </Grid>
               </form>
@@ -726,6 +559,11 @@ const plannerUseStyles = makeStyles((theme) => ({
     marginTop: theme.spacing(3),
     marginBottom: theme.spacing(2),
   },
+  form2: {
+    width: '100%', // Fix IE 11 issue.
+    marginTop: theme.spacing(3),
+    marginBottom: theme.spacing(2),
+  },
 
 }));
 
@@ -832,7 +670,7 @@ export class MapContainer extends Component {
                     variant="contained"
                     color="primary"
                     style={{width:'30%',height:'8%',margin:'5%',marginLeft:'45%',marginTop:'7%'}}
-                >Submit</Button>
+                >ยืนยัน</Button>
             </InputGroup>
           </Paper>
 

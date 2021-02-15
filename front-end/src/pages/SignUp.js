@@ -54,7 +54,7 @@ const useStyles = makeStyles((theme) => ({
     },
     form: {
       width: '80%', // Fix IE 11 issue.
-      marginTop: theme.spacing(1),
+      marginTop: theme.spacing(2),
       marginBottom: theme.spacing(3),
     },
 
@@ -85,12 +85,19 @@ export default function LogIn() {
               <VpnKeyOutlinedIcon />
               </Avatar>
               <Typography variant="h5" style={{fontFamily:'csPrajad',fontWeight:'bold'}}>
-                Log in
+                Sign Up
               </Typography>
               <Divider style={{width:'90%',marginTop:'3%'}}/>
               <form className={classes.form} noValidate>
-              <Grid container>
-                <Grid item xs={12}>
+              <TextField
+                variant="outlined"
+                required
+                fullWidth
+                id="email"
+                label="Email Address"
+                name="email"
+                autoComplete="email"
+              />
           <TextField
             variant="outlined"
             margin="normal"
@@ -102,8 +109,6 @@ export default function LogIn() {
             autoComplete="username"
             autoFocus
           />
-          </Grid>
-          <Grid item xs={12}>
           <TextField
             variant="outlined"
             margin="normal"
@@ -115,8 +120,17 @@ export default function LogIn() {
             id="password"
             autoComplete="current-password"
           />
-          </Grid>
-          <Grid item xs={12}>
+          <TextField
+            variant="outlined"
+            margin="normal"
+            required
+            fullWidth
+            name="confirmpassword"
+            label="Confirm Password"
+            type="password"
+            id="confirmpassword"
+            autoComplete="current-password"
+          />
           <Button
             type="submit"
             fullWidth
@@ -125,26 +139,19 @@ export default function LogIn() {
             color="secondary"
             className={classes.submit}
           >
-            Sign In
+            Sign Up
           </Button>
-          </Grid>
-            <Grid item xs={7}>
+          <Grid container>
+            <Grid item xs>
             </Grid>
-            <Grid item xs={5}>
-              <Link href="/pages/SignUp" variant="body2">
-                {"Sign Up a new Account"}
+            <Grid item>
+              <Link href="/pages/Login" variant="body2">
+                {"Log in"}
               </Link>
             </Grid>
           </Grid>
           </form>
-                <GoogleLogin
-                // change client id
-                    clientId="658977310896-knrl3gka66fldh83dao2rhgbblmd4un9.apps.googleusercontent.com"
-                    buttonText="Login with Google Account"
-                    onSuccess={responseGoogle}
-                    onFailure={responseGoogle}
-                    cookiePolicy={'single_host_origin'}
-                  />
+
             </CardContent>
             </Card>
           </Paper>

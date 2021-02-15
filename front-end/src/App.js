@@ -117,6 +117,7 @@ import Trip from "./pages/Trip";
 import Home from './pages/Home';
 import Planner from "./pages/Planner";
 import Login from "./pages/Login";
+import SignUp from "./pages/SignUp";
 import { makeStyles } from '@material-ui/core/styles';
 import "bootstrap/dist/css/bootstrap.min.css";
 import logo from './location.svg';
@@ -166,7 +167,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function App() {
-const routes = ["/","/pages/Poi", "/pages/Trip","/pages/Planner","/pages/Login"];
+const routes = ["/","/pages/Poi", "/pages/Trip","/pages/Planner","/pages/Login","/pages/SignUp"];
 const classes = useStyles();
 
 const [auth, setAuth] = React.useState(true);
@@ -244,6 +245,7 @@ const handleChange = (event) => {
           <Route path="/pages/Trip" component={Trip} exact/>
           <Route path="/pages/Planner" component={Planner} exact/>
           <Route path="/pages/Login" component={Login} exact/>
+          <Route path="/pages/SignUp" component={SignUp} exact/>
         </Switch>
       </BrowserRouter>
     </div>
