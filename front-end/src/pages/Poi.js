@@ -130,7 +130,7 @@ const useStyles = makeStyles((theme) => ({
     alignItems: 'center',
   },
   form: {
-    width: '80%', // Fix IE 11 issue.
+    width: '60%', // Fix IE 11 issue.
     marginTop: theme.spacing(3),
     marginBottom: theme.spacing(5),
   },
@@ -142,7 +142,7 @@ export function PoiForm() {
   const classes = useStyles();
   return(
     <Container fluid noGutters={true}>
-    <Paper elevation={5} style={{width:'50%',height:'auto',marginLeft:'25%',marginTop:'5%'}}>
+    <Paper elevation={5} style={{width:'90%',height:'auto',margin:'5%'}}>
     <div className={classes.paper}>
       <Typography style={{fontFamily:'csPrajad' ,fontSize:22,marginTop:'5%'}}>สถิติของสถานที่ท่องเที่ยว</Typography>
       <form className={classes.form} noValidate>
