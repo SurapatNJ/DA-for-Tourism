@@ -5,3 +5,4 @@ Pillow==7.1.2
 djangorestframework
 django-rest-swagger
 django-filter
+django-cors-headers
