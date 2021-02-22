@@ -139,7 +139,7 @@ class tourist_placeViewSet(viewsets.ModelViewSet):
             poi_ = pop_tourism.sort_values('poi').poi.unique()
 
             #Set days in year
-            pop_tourism['days'] = pop_tourism.apply(lambda x: (dt.datetime(2020, int(x.date.split('/')[1]), int(x.date.split('/')[0]))-dt.datetime(2020,1,1)).days, axis=1)
+            pop_tourism['days'] = pop_tourism.apply(lambda x: (dt.datetime(2020, int(x.date.split('-')[1]), int(x.date.split('-')[2]))-dt.datetime(2020,1,1)).days, axis=1)
             day_s = (dt.datetime(2020, int(date_start[5:7]), int(date_start[8:10]))-dt.datetime(2020,1,1)).days
             day_e = (dt.datetime(2020, int(date_end[5:7]), int(date_end[8:10]))-dt.datetime(2020,1,1)).days
 
