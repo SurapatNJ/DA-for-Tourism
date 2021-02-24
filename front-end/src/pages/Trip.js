@@ -1,4 +1,4 @@
-import React , {Component, Fragment, useRef } from 'react';
+import React , {Component, Fragment, useRef ,useEffect } from 'react';
 import '../App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Container from 'react-bootstrap/Container';
@@ -147,101 +147,6 @@ export function DateEnd() {
 }
 
 
-/*
-export function StartTime() {
-  const [startTime, setStartTime] = React.useState('');
-  const handleChange = (event) => {
-    setStartTime(event.target.value);
-  };
-  return (
-    <div>
-      <FormControl style={{marginLeft:10}}>
-        <InputLabel id="startTime">เวลาเริ่มต้น</InputLabel>
-        <Select
-          labelId="selectStartTime"
-          id="selectStartTime"
-          value={startTime}
-          onChange={handleChange}
-          style={{width:'120'}}
-        >
-          <MenuItem value={1}>00:00</MenuItem>
-          <MenuItem value={2}>01:00</MenuItem>
-          <MenuItem value={3}>02:00</MenuItem>
-          <MenuItem value={4}>03:00</MenuItem>
-          <MenuItem value={5}>04:00</MenuItem>
-          <MenuItem value={6}>05:00</MenuItem>
-          <MenuItem value={7}>06:00</MenuItem>
-          <MenuItem value={8}>07:00</MenuItem>
-          <MenuItem value={9}>08:00</MenuItem>
-          <MenuItem value={10}>09:00</MenuItem>
-          <MenuItem value={11}>10:00</MenuItem>
-          <MenuItem value={12}>11:00</MenuItem>
-          <MenuItem value={13}>12:00</MenuItem>
-          <MenuItem value={14}>13:00</MenuItem>
-          <MenuItem value={15}>14:00</MenuItem>
-          <MenuItem value={16}>15:00</MenuItem>
-          <MenuItem value={17}>16:00</MenuItem>
-          <MenuItem value={18}>17:00</MenuItem>
-          <MenuItem value={19}>18:00</MenuItem>
-          <MenuItem value={20}>19:00</MenuItem>
-          <MenuItem value={21}>20:00</MenuItem>
-          <MenuItem value={22}>21:00</MenuItem>
-          <MenuItem value={23}>22:00</MenuItem>
-          <MenuItem value={24}>23:00</MenuItem>
-        </Select>
-      </FormControl>
-    </div>
-  );
-}
-
-export function EndTime() {
-  const [endTime, setEndTime] = React.useState('');
-  const handleChange = (event) => {
-    setEndTime(event.target.value);
-  };
-  return (
-    <div>
-      <FormControl style={{marginLeft:10}}>
-        <InputLabel id="endTime">เวลาสิ้นสุด</InputLabel>
-        <Select
-          labelId="selectEndTime"
-          id="selectEndTime"
-          value={endTime}
-          onChange={handleChange}
-          style={{width:120}}
-        >
-          <MenuItem value={1}>00:00</MenuItem>
-          <MenuItem value={2}>01:00</MenuItem>
-          <MenuItem value={3}>02:00</MenuItem>
-          <MenuItem value={4}>03:00</MenuItem>
-          <MenuItem value={5}>04:00</MenuItem>
-          <MenuItem value={6}>05:00</MenuItem>
-          <MenuItem value={7}>06:00</MenuItem>
-          <MenuItem value={8}>07:00</MenuItem>
-          <MenuItem value={9}>08:00</MenuItem>
-          <MenuItem value={10}>09:00</MenuItem>
-          <MenuItem value={11}>10:00</MenuItem>
-          <MenuItem value={12}>11:00</MenuItem>
-          <MenuItem value={13}>12:00</MenuItem>
-          <MenuItem value={14}>13:00</MenuItem>
-          <MenuItem value={15}>14:00</MenuItem>
-          <MenuItem value={16}>15:00</MenuItem>
-          <MenuItem value={17}>16:00</MenuItem>
-          <MenuItem value={18}>17:00</MenuItem>
-          <MenuItem value={19}>18:00</MenuItem>
-          <MenuItem value={20}>19:00</MenuItem>
-          <MenuItem value={21}>20:00</MenuItem>
-          <MenuItem value={22}>21:00</MenuItem>
-          <MenuItem value={23}>22:00</MenuItem>
-          <MenuItem value={24}>23:00</MenuItem>
-        </Select>
-      </FormControl>
-    </div>
-  );
-}
-*/
-
-
 
 //----------------- Table ----------------//
 const StyledTableCell = withStyles((theme) => ({
@@ -251,7 +156,7 @@ const StyledTableCell = withStyles((theme) => ({
     fontFamily: 'csPrajad',
     fontSize: 18,
     fontWeight: 'bold',
-    width:'30%'
+
   },
   body: {
     fontSize: 16,
@@ -267,9 +172,7 @@ const StyledTableRow = withStyles((theme) => ({
   },
 }))(TableRow);
 
-function createData(tripName, dateAndTime, updateData) {
-  return { tripName, dateAndTime, updateData };
-}
+
 
 const useStyles = makeStyles({
   table: {
@@ -283,12 +186,6 @@ const useStyles1 = makeStyles((theme) => ({
   },
 }));
 
-const rows = [
-  /////ex data
-  createData('ชลบุรี', '30/01/2021 10:52AM'),
-  createData('ทริป', '31/01/2021 18:21PM'),
-  createData('ทริป101', '04/02/2021 01:23AM'),
-];
 
 function TablePaginationActions(props) {
   const classes = useStyles1();
@@ -351,33 +248,53 @@ function CustomizedTables() {
   const classes = useStyles();
   const [page, setPage] = React.useState(0);
   const [rowsPerPage] = React.useState(5);
-  const emptyRows = rowsPerPage - Math.min(rowsPerPage, rows.length - page * rowsPerPage);
+  
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
   }
+  const [groups, setGroups] = React.useState([]);
+  const emptyRows = rowsPerPage - Math.min(rowsPerPage,groups.length - page * rowsPerPage);
 
+  const handleDelete = () => {
+    ////
+  }
+
+  useEffect(() => {
+    const fetchData = async () => {
+      await axios.get('http://104.248.7.194:8000/api/trip_title_api/')
+      .then((res) => {
+        setGroups(res.data)
+      })
+      .catch((err) => {
+        console.log(err)
+      }) 
+    }
+    fetchData()
+  }, [])
+  
+  console.log(groups)
   return (
     <TableContainer component={Paper}>
       <Table className={classes.table} aria-label="customized table">
         <TableHead>
           <TableRow>
             <StyledTableCell>ชื่อทริป</StyledTableCell>
-            <StyledTableCell align="center">วัน-เวลาที่สร้าง</StyledTableCell>
+            <StyledTableCell align="center">วันที่</StyledTableCell>
             <StyledTableCell align="center">แก้ไข/ลบ</StyledTableCell>
           </TableRow>
         </TableHead>
         <TableBody>
-          {(rowsPerPage > 0
-            ? rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-            : rows
-          ).map((row) => (
-            <StyledTableRow key={row.name}>
+        {(rowsPerPage > 0
+            ? groups.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+            : groups).map((row,index) => (
+            <StyledTableRow key={index}>
               <StyledTableCell component="th" scope="row">
-                {row.tripName}
+                {row.trip_name}
               </StyledTableCell>
-              <StyledTableCell align="center">{row.dateAndTime}</StyledTableCell>
+              <StyledTableCell align="center">{row.start_trip_date} ถึง {row.end_trip_date}</StyledTableCell>
               <StyledTableCell align="center">
-                <IconButton aria-label="edit" size="small"><EditRoundedIcon/></IconButton>   <IconButton aria-label="delete" size="small"><DeleteForeverRoundedIcon/></IconButton>
+                <IconButton aria-label="edit" size="small"><EditRoundedIcon/></IconButton>  
+                <IconButton aria-label="delete" size="small" ><DeleteForeverRoundedIcon/></IconButton>
               </StyledTableCell>
             </StyledTableRow>
           ))}
@@ -389,7 +306,7 @@ function CustomizedTables() {
         </TableBody>
         <TableFooter>
           <TablePagination
-                count={rows.length}
+                count={groups.length}
                 labelRowsPerPage=''
                 rowsPerPageOptions=''
                 rowsPerPage={rowsPerPage}
@@ -409,6 +326,8 @@ function CustomizedTables() {
 
 {/*     ////////       main     ///////    */ }
 export class MapContainer extends Component {
+
+  
   render() {
     return (
       <div className="Trip">
