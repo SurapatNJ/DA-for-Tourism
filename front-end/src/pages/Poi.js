@@ -1,4 +1,4 @@
-import React , {Component} from 'react';
+import React , {Component, useState} from 'react';
 import '../App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Container from 'react-bootstrap/Container';
@@ -22,11 +22,10 @@ import DateRangeIcon from '@material-ui/icons/DateRange';
 import AccessTimeIcon from '@material-ui/icons/AccessTime';
 import CommuteIcon from '@material-ui/icons/Commute';
 import TimelapseIcon from '@material-ui/icons/Timelapse';
-//import axios from "axios";
+import axios from "axios";
 
 //Google Map
 import { Map, GoogleApiWrapper,Rectangle,HeatMap,Marker} from 'google-maps-react';
-
 
 
 const mapStyles = {
@@ -35,9 +34,7 @@ const mapStyles = {
   margin:'5%'
 };
 
-
-
-export function CityName() {
+export function CityName({addCity}) {
   const defaultProps = {
     options: cityOptions,
     getOptionLabel: (option) => option.cname_th +" ("+ option.cname_en +")",
@@ -50,15 +47,24 @@ export function CityName() {
         autoComplete
         includeInputInList
         renderInput={(params) => <TextField {...params} label="ชื่อจังหวัด"/>}
+        onInputChange={(event, value) => {
+          addCity(value)
+          console.log("value:",value)
+      }}
       />
     </div>
   );
 }
 
-export function PlaceName() {
+export function PlaceName({addPlace}) {
   const defaultProps = {
     options: placeOptions,
     getOptionLabel: (option) => option.pname,
+    renderOption: (option) => (
+      <React.Fragment>
+        {option.pname}
+      </React.Fragment>
+    ),
   }
   return (
     <div style={{ width: '100%',marginTop:-18}}>
@@ -67,13 +73,25 @@ export function PlaceName() {
         id="placeName"
         autoComplete
         includeInputInList
-        renderInput={(params) => <TextField  {...params} label="ชื่อสถานที่ท่องเที่ยว"/>}
+        InputLabelProps={{
+          shrink: true,
+        }}
+        renderInput={(params) => <TextField  
+          {...params} label="ชื่อสถานที่ท่องเที่ยว"
+          inputProps={{
+            ...params.inputProps,
+            autoComplete: 'new-password',
+          }}/>}
+        onChange={(event, value) => {
+          console.log("value:",value)
+          addPlace(value.pname,value.lat,value.lon)
+      }}
       />
     </div>
   );
 }
 
-export function DateStart() {
+export function DateStart({addDatestart}) {
   return (
     <form noValidate>
     <TextField
@@ -85,11 +103,15 @@ export function DateStart() {
       InputLabelProps={{
         shrink: true,
       }}
+      onChange={(event, value) => {
+        addDatestart(event.target.value)
+        console.log("value:",event.target.value)
+    }}
     />
   </form>
   );
 }
-export function DateEnd() {
+export function DateEnd({addDateend}) {
   return (
     <form noValidate>
       <TextField
@@ -101,13 +123,14 @@ export function DateEnd() {
         InputLabelProps={{
           shrink: true,
         }}
+        onChange={(event, value) => {
+          addDateend(event.target.value)
+          console.log("value:",event.target.value)
+      }}
       />
     </form>
   );
 }
-
-
-
 
 export function PoiRec() {
   /*const defaultProps = {
@@ -122,7 +145,6 @@ export function PoiRec() {
 
 }
 
-
 const useStyles = makeStyles((theme) => ({
   paper: {
     display: 'flex',
@@ -134,12 +156,53 @@ const useStyles = makeStyles((theme) => ({
     marginTop: theme.spacing(3),
     marginBottom: theme.spacing(5),
   },
-
 }));
 
+function submitForm(data) {
+  console.log(data)
+  axios.post("http://104.248.7.194:8000/api/tourist_place/",{
+    lat_en: (data.lat+0.5).toString(),
+    lng_en: (data.lon+0.5).toString(),
+    lat_ws: (data.lat-0.5).toString(),
+    lng_ws: (data.lon-0.5).toString(),
+    date_start:data.datestart,
+    date_end:data.dateend
+  },{
+    headers: {
+      'Content-Type': 'application/json'
+  }})
+  .then(function (response) {
+    console.log(response);
+  })
+  .catch(function (error) {
+    console.log(error);
+  });
+}
 
 export function PoiForm() {
+  const [submitvalues,setSubmitvalues] = useState({
+    city:'',
+    lat:0.0,
+    lon:0.0,
+    place:'',
+    datestart:Date,
+    dateend:Date
+  })
   const classes = useStyles();
+
+  function addCity(p){
+    setSubmitvalues({...submitvalues, city: p})  
+  }
+  function addPlace(p,la,lo){
+    setSubmitvalues({...submitvalues, place: p,lat: la, lon: lo})  
+  }
+  function addDatestart(p){
+    setSubmitvalues({...submitvalues, datestart: p})  
+  }
+  function addDateend(p){
+    setSubmitvalues({...submitvalues, dateend: p})  
+  }
+
   return(
     <Container fluid noGutters={true}>
     <Paper elevation={5} style={{width:'90%',height:'auto',margin:'5%'}}>
@@ -151,19 +214,26 @@ export function PoiForm() {
             <Typography style={{fontFamily:'csPrajad' ,fontSize:18}}>จังหวัด :</Typography>
           </Grid>
           <Grid item xs={9}>
-              <CityName/>
+              <CityName
+              addCity = {addCity}/>
           </Grid>
           <Grid item xs={3}>
             <Typography style={{fontFamily:'csPrajad' ,fontSize:17}}>สถานที่ท่องเที่ยว :</Typography>
           </Grid>
           <Grid item xs={9}>
-              <PlaceName/>
+              <PlaceName
+              addPlace = {addPlace}
+              />
           </Grid>
           <Grid item xs={6}>
-            <DateStart/>
+            <DateStart
+            addDatestart = {addDatestart}
+            />
           </Grid>
           <Grid item xs={6}>
-             <DateEnd/>
+             <DateEnd
+             addDateend = {addDateend}
+             />
           </Grid>
           <Grid item xs={12}>
               {/*Submit Button        */ }
@@ -172,6 +242,10 @@ export function PoiForm() {
                     size="large"
                     color="secondary"
                     style={{width:'20%',height:60,marginLeft:'80%',borderRadius:50}}
+                    onClick={() => {
+                      submitForm(submitvalues)
+                    }
+                    }
               >
                 Submit
               </Button>
@@ -228,12 +302,12 @@ export class MapContainer extends React.Component  {
                     initialCenter={
                       {
                         lat:  13.12,
-                        lng:  101.20
+                        lon:  101.20
                       }
                     }
                   >      
                   {placeOptions.map(placeOptions=>(
-                <Marker key={placeOptions.pname} position={{lat:placeOptions.lat,lng:placeOptions.lon}} />
+                <Marker key={placeOptions.pname} position={{lat:placeOptions.lat,lon:placeOptions.lon}} />
               ))}
               </Map>
               </InputGroup>
