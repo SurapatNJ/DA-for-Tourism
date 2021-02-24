@@ -77,7 +77,7 @@ class HeatmapViewSet(viewsets.ModelViewSet):
             return Response(results)
         else:
             #Error input
-            return Response("Error!!! en <= ws")
+            return Response("Error!!! en <= ws", status=status.HTTP_404_NOT_FOUND)
 
 # Grid for tourism place
 class GridViewSet(viewsets.ModelViewSet):
@@ -111,7 +111,7 @@ class GridViewSet(viewsets.ModelViewSet):
             return Response(results)
         else:
             #Error input
-            return Response("Error!!! en <= ws")
+            return Response("Error!!! en <= ws", status=status.HTTP_404_NOT_FOUND)
 
 # tourist place detail
 class tourist_placeViewSet(viewsets.ModelViewSet):
@@ -139,7 +139,7 @@ class tourist_placeViewSet(viewsets.ModelViewSet):
             poi_ = pop_tourism.sort_values('poi').poi.unique()
 
             #Set days in year
-            pop_tourism['days'] = pop_tourism.apply(lambda x: (dt.datetime(2020, int(x.date.split('/')[1]), int(x.date.split('/')[0]))-dt.datetime(2020,1,1)).days, axis=1)
+            pop_tourism['days'] = pop_tourism.apply(lambda x: (dt.datetime(2020, int(x.date.split('-')[1]), int(x.date.split('-')[0]))-dt.datetime(2020,1,1)).days, axis=1)
             day_s = (dt.datetime(2020, int(date_start[5:7]), int(date_start[8:10]))-dt.datetime(2020,1,1)).days
             day_e = (dt.datetime(2020, int(date_end[5:7]), int(date_end[8:10]))-dt.datetime(2020,1,1)).days
 
@@ -175,7 +175,7 @@ class tourist_placeViewSet(viewsets.ModelViewSet):
             return Response(all_date_pop_tour)
         else:
             #Error input
-            return Response("Error!!! en <= ws")
+            return Response("Error!!! en <= ws", status=status.HTTP_404_NOT_FOUND)
 
     
 # trip_title_api
@@ -216,7 +216,7 @@ class trip_title_apiViewSet(viewsets.ModelViewSet):
                     'start_trip_date':new_trip.start_trip_date, 'end_trip_date':new_trip.end_trip_date, 'hotel_id':new_trip.hotel_id, 'trip_data':new_trip.trip_data}
 
             return Response(resp)
-        return Response('Error')
+        return Response('Error', status=status.HTTP_404_NOT_FOUND)
 
 
         
@@ -498,16 +498,17 @@ class loginViewSet(viewsets.ModelViewSet):
             #check password
             if password == '':
                 resp = {'status':'Error' ,'text': "Please enter Password."} 
-                return Response(resp)
+                return Response(resp, status=status.HTTP_404_NOT_FOUND)
 
             if not check_password(password, _user.password):
                 resp = {'status':'Error' ,'text': "That is not the correct Password."}
+                return Response(resp, status=status.HTTP_404_NOT_FOUND)
             else:
                 resp = {'status':'Success' ,'user_id': _user.id, 'username': _user.username, 'email': _user.email} 
-            return Response(resp)
+                return Response(resp)
         else:
             resp = {'status':'Error' ,'text': "not found that user."}
-            return Response(resp)
+            return Response(resp, status=status.HTTP_404_NOT_FOUND)
 
 
 
