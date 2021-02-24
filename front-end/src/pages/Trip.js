@@ -29,6 +29,7 @@ import KeyboardArrowLeft from '@material-ui/icons/KeyboardArrowLeft';
 import KeyboardArrowRight from '@material-ui/icons/KeyboardArrowRight';
 import LastPageIcon from '@material-ui/icons/LastPage';
 
+
 //Google Map
 import { Map, GoogleApiWrapper,Rectangle,HeatMap,Marker} from 'google-maps-react';
 
