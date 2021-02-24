@@ -1,0 +1,136 @@
+info:
+  description: 'Tourism API'
+  title: ''
+  version: '0.01'
+openapi: 3.0.0
+paths:
+  /api/groups/:
+    get:
+      description: API endpoint that allows groups to be viewed or edited.
+      operationId: groups_list
+      tags:
+      - groups
+    post:
+      description: API endpoint that allows groups to be viewed or edited.
+      operationId: groups_create
+      tags:
+      - groups
+  /api/groups/{id}/:
+    delete:
+      description: API endpoint that allows groups to be viewed or edited.
+      operationId: groups_delete
+      parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          description: A unique integer value identifying this group.
+          title: ID
+          type: integer
+      tags:
+      - groups
+    get:
+      description: API endpoint that allows groups to be viewed or edited.
+      operationId: groups_read
+      parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          description: A unique integer value identifying this group.
+          title: ID
+          type: integer
+      tags:
+      - groups
+    patch:
+      description: API endpoint that allows groups to be viewed or edited.
+      operationId: groups_partial_update
+      parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          description: A unique integer value identifying this group.
+          title: ID
+          type: integer
+      tags:
+      - groups
+    put:
+      description: API endpoint that allows groups to be viewed or edited.
+      operationId: groups_update
+      parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          description: A unique integer value identifying this group.
+          title: ID
+          type: integer
+      tags:
+      - groups
+  /api/users/:
+    get:
+      description: API endpoint that allows users to be viewed or edited.
+      operationId: users_list
+      tags:
+      - users
+    post:
+      description: API endpoint that allows users to be viewed or edited.
+      operationId: users_create
+      tags:
+      - users
+  /api/users/{id}/:
+    delete:
+      description: API endpoint that allows users to be viewed or edited.
+      operationId: users_delete
+      parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          description: A unique integer value identifying this user.
+          title: ID
+          type: integer
+      tags:
+      - users
+    get:
+      description: API endpoint that allows users to be viewed or edited.
+      operationId: users_read
+      parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          description: A unique integer value identifying this user.
+          title: ID
+          type: integer
+      tags:
+      - users
+    patch:
+      description: API endpoint that allows users to be viewed or edited.
+      operationId: users_partial_update
+      parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          description: A unique integer value identifying this user.
+          title: ID
+          type: integer
+      tags:
+      - users
+    put:
+      description: API endpoint that allows users to be viewed or edited.
+      operationId: users_update
+      parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          description: A unique integer value identifying this user.
+          title: ID
+          type: integer
+      tags:
+      - users
+servers:
+- url: ''

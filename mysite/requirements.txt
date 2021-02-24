@@ -3,5 +3,8 @@ psycopg2-binary==2.8.4
 gunicorn==20.0.4
 Pillow==7.1.2
 djangorestframework
+djangorestframework_simplejwt
+django-admin-interface
 django-rest-swagger
 django-filter
+django-cors-headers
