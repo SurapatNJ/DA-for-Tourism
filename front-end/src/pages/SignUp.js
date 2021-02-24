@@ -18,17 +18,19 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import VpnKeyOutlinedIcon from '@material-ui/icons/VpnKeyOutlined';
 import Typography from '@material-ui/core/Typography';
-import { makeStyles } from '@material-ui/core/styles';
+import { withStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import GoogleLogin from 'react-google-login';
+import Alert from '@material-ui/lab/Alert';
 
 
+import axios from 'axios';
 
 const responseGoogle = (response) => {
   console.log(response);
 }
 
-const useStyles = makeStyles((theme) => ({
+const style = (theme) => ({
   paper: {
     display: 'flex',
     flexDirection: 'column',
@@ -58,15 +60,91 @@ const useStyles = makeStyles((theme) => ({
       marginBottom: theme.spacing(3),
     },
 
-  }));
+  });
   
 
 
-export default function LogIn() {
-    const classes = useStyles();
+export class SignUp extends React.Component {
+  
+  state = {
+    username:"",
+    email:"",
+    password:"",
+    confirm_password:""
+  }
 
-  return (
-    <div classname="login">
+
+  componentDidMount() { 
+    let data; 
+    axios 
+        .get("http://104.248.7.194:8000/api/signup/") 
+        .then((res) => { 
+            data = res.data; 
+            this.setState({ 
+                text: data, 
+            }); 
+            console.log(res.statusText);
+        }) 
+        .catch((err) => {}); 
+} 
+
+  handleUsername = (e) => { 
+      this.setState({ 
+        username : e.target.value, 
+      }); 
+  }; 
+
+  handleEmail = (e) => { 
+    this.setState({ 
+        email: e.target.value, 
+    }); 
+  }; 
+
+  handlePassword = (e) => { 
+    this.setState({ 
+        password: e.target.value, 
+    }); 
+  }; 
+
+  handleConfirmPassword = (e) => { 
+    this.setState({ 
+        confirm_password: e.target.value, 
+    }); 
+  }; 
+
+  handleSubmit = (e) => { 
+      e.preventDefault(); 
+      console.log("submitted");
+      console.log(this.state);
+      axios 
+          .post("http://104.248.7.194:8000/api/signup/", { 
+            username: this.state.username,
+            email: this.state.email, 
+            password: this.state.password ,
+            confirm_password: this.state.confirm_password
+          },{  
+            headers: {
+            'Content-Type': 'application/json'
+          }}) 
+          .then((res) => { 
+            this.setState({ 
+              username: "",
+              email:"",
+              password: "",
+              confirm_password:"" 
+          });
+          console.log(res);
+          console.log(res.data);
+          }) 
+          .catch((err) => {console.log(err)}); 
+  }; 
+
+  
+  render(){
+    const { classes } = this.props;
+  
+    return (
+    <div classname="signUp">
     <link
         rel="stylesheet"
         href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"
@@ -89,67 +167,83 @@ export default function LogIn() {
               </Typography>
               <Divider style={{width:'90%',marginTop:'3%'}}/>
               <form className={classes.form} noValidate>
-              <TextField
-                variant="outlined"
-                required
-                fullWidth
-                id="email"
-                label="Email Address"
-                name="email"
-                autoComplete="email"
-              />
-          <TextField
-            variant="outlined"
-            margin="normal"
-            required
-            fullWidth
-            id="username"
-            label="Username"
-            name="username"
-            autoComplete="username"
-            autoFocus
-          />
-          <TextField
-            variant="outlined"
-            margin="normal"
-            required
-            fullWidth
-            name="password"
-            label="Password"
-            type="password"
-            id="password"
-            autoComplete="current-password"
-          />
-          <TextField
-            variant="outlined"
-            margin="normal"
-            required
-            fullWidth
-            name="confirmpassword"
-            label="Confirm Password"
-            type="password"
-            id="confirmpassword"
-            autoComplete="current-password"
-          />
-          <Button
-            type="submit"
-            fullWidth
-            style={{marginTop:'2%'}}
-            variant="contained"
-            color="secondary"
-            className={classes.submit}
-          >
-            Sign Up
-          </Button>
-          <Grid container>
-            <Grid item xs>
-            </Grid>
-            <Grid item>
+              <Grid container>
+                <Grid item xs={12}>
+                <TextField
+                  variant="outlined"
+                  margin="normal"
+                  required
+                  fullWidth
+                  id="username"
+                  label="Username"
+                  name="username"
+                  autoComplete="username"
+                  autoFocus
+                  onChange={this.handleUsername}
+                />
+                </Grid>
+                <Grid item xs={12}>
+                <TextField
+                  variant="outlined"
+                  required
+                  margin="normal"
+                  fullWidth
+                  id="email"
+                  label="Email Address"
+                  name="email"
+                  autoComplete="email"
+                  autoFocus
+                  onChange={this.handleEmail}
+                />
+                </Grid>
+                <Grid item xs={12}>
+                <TextField
+                  variant="outlined"
+                  margin="normal"
+                  required
+                  fullWidth
+                  name="password"
+                  label="Password"
+                  type="password"
+                  id="password"
+                  autoFocus
+                  onChange={this.handlePassword}
+                />
+                </Grid>
+                <Grid item xs={12}>
+                <TextField
+                  variant="outlined"
+                  margin="normal"
+                  required
+                  fullWidth
+                  name="confirmpassword"
+                  label="Confirm Password"
+                  type="password"
+                  id="confirmpassword"
+                  autoFocus
+                  onChange={this.handleConfirmPassword}
+                />
+                </Grid>
+                <Grid item xs={12}>
+                <Button
+                  type="submit"
+                  fullWidth
+                  style={{marginTop:'2%'}}
+                  variant="contained"
+                  color="secondary"
+                  onClick={this.handleSubmit}
+                >
+                  Sign Up
+                </Button>
+                </Grid>
+              <Grid item xs={10}/>
+              <Grid item xs={2}>
               <Link href="/pages/Login" variant="body2">
                 {"Log in"}
               </Link>
-            </Grid>
-          </Grid>
+              </Grid>
+              </Grid>
+
           </form>
 
             </CardContent>
@@ -162,3 +256,7 @@ export default function LogIn() {
     
   );
 }
+}
+
+
+export default withStyles(style)(SignUp);
