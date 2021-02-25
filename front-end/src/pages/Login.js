@@ -21,6 +21,7 @@ import Typography from '@material-ui/core/Typography';
 import { withStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import GoogleLogin from 'react-google-login';
+import {Alert, AlertTitle} from '@material-ui/lab/';
 
 import axios from 'axios';
 
@@ -64,13 +65,19 @@ const style = (theme) => ({
 
 export class LogIn extends React.Component{
 
-    state = {
+  constructor(props) {
+    super(props);
+    this.state = {
       username:"",
       email:"",
-      password:""
-    }
-
-
+      password:"",
+      error_msg:"",
+      User_error:false,
+      Pass_error:false,
+      UsernameHelperText:"",
+      PasswordHelperText:""
+    };
+  }
     componentDidMount() { 
       let data; 
       axios 
@@ -88,41 +95,65 @@ export class LogIn extends React.Component{
 
     handleUsername = (e) => { 
         this.setState({ 
-            username : e.target.value, 
+          username : e.target.value,
         }); 
-    }; 
+  }; 
 
     handlePassword = (e) => { 
       this.setState({ 
           password: e.target.value, 
       }); 
   }; 
+  
 
-    handleSubmit = (e) => { 
-        e.preventDefault(); 
-        console.log("submitted");
-        console.log(this.state)
-        axios 
-        
-            .post("http://104.248.7.194:8000/api/login/", { 
-              username: this.state.username, 
-              email: this.state.email,
-              password: this.state.password 
-            },{  
-              headers: {
-              'Content-Type': 'application/json'
-            }}) 
-            .then((res) => { 
-              this.setState({ 
-                username: "",
-                email:"",
-                password: "", 
-            });
-            console.log(res);
-            console.log(res.data);
-            }) 
-            .catch((err) => {console.log(err)}); 
-    }; 
+  handleSubmit = (e) => { 
+    e.preventDefault(); 
+    console.log("submitted");
+    axios 
+        .post("http://104.248.7.194:8000/api/login/", { 
+          username: this.state.username,
+          email: this.state.email, 
+          password: this.state.password ,
+        },{  
+          headers: {
+          'Content-Type': 'application/json'
+        }}) 
+        .then((res) => { 
+          this.setState({ 
+            User_error: false,
+            UsernameHelperText:"" ,
+            Pass_error: false,
+            PasswordHelperText:"",
+            error_msg : "" 
+        }); 
+            window.alert("login success")
+
+        }) 
+        .catch((err) => {
+          if((this.state.username&&this.state.password)==""){
+            this.setState({ 
+              User_error: true,
+              UsernameHelperText:"Enter a Username" 
+          }); 
+          }
+          if(this.state.password==""){
+            this.setState({ 
+              Pass_error: true,
+              PasswordHelperText:"Enter a Password" 
+          }); 
+          }
+          else{
+            this.setState({ 
+              User_error: true,
+              Pass_error:true,
+              UsernameHelperText:"",
+              PasswordHelperText:"",
+              error_msg : "Your Username or Password is Invalid"
+          }); 
+          console.log(this.state.UsernameHelperText,this.state.PasswordHelperText)
+          }
+        }); 
+  };
   
   render(){
     const { classes } = this.props;
@@ -154,6 +185,13 @@ export class LogIn extends React.Component{
                   <form noValidate className={classes.form} >
                     <Grid container>
                       <Grid item xs={12}>
+                      {this.state.error_msg===""? null:
+                        <Alert severity="error">
+                            <AlertTitle>{this.state.error_msg}</AlertTitle>
+                          </Alert>
+                        }  
+                      </Grid>
+                      <Grid item xs={12}>
                       <TextField
                         variant="outlined"
                         margin="normal"
@@ -162,6 +200,8 @@ export class LogIn extends React.Component{
                         id="username"
                         label="Username"
                         name="username"
+                        error={this.state.User_error}
+                        helperText={this.state.UsernameHelperText}
                         autoComplete="username"
                         autoFocus
                         onChange={this.handleUsername}
@@ -177,6 +217,8 @@ export class LogIn extends React.Component{
                         label="Password"
                         type="password"
                         id="password"
+                        error={this.state.Pass_error}
+                        helperText={this.state.PasswordHelperText}
                         autoComplete="current-password"
                         onChange={this.handlePassword}
                       />
