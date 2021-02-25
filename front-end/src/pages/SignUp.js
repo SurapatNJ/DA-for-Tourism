@@ -21,9 +21,7 @@ import Typography from '@material-ui/core/Typography';
 import { withStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import GoogleLogin from 'react-google-login';
-import Alert from '@material-ui/lab/Alert';
-
-
+import {Alert, AlertTitle} from '@material-ui/lab/';
 import axios from 'axios';
 
 const responseGoogle = (response) => {
@@ -62,17 +60,17 @@ const style = (theme) => ({
 
   });
   
-
-
 export class SignUp extends React.Component {
-  
-  state = {
-    username:"",
-    email:"",
-    password:"",
-    confirm_password:""
+  constructor(props) {
+    super(props);
+    this.state = {
+      username:"",
+      email:"",
+      password:"",
+      confirm_password:"",
+      error_msg:""
+    };
   }
-
 
   componentDidMount() { 
     let data; 
@@ -114,8 +112,6 @@ export class SignUp extends React.Component {
 
   handleSubmit = (e) => { 
       e.preventDefault(); 
-      console.log("submitted");
-      console.log(this.state);
       axios 
           .post("http://104.248.7.194:8000/api/signup/", { 
             username: this.state.username,
@@ -127,22 +123,24 @@ export class SignUp extends React.Component {
             'Content-Type': 'application/json'
           }}) 
           .then((res) => { 
-            this.setState({ 
-              username: "",
-              email:"",
-              password: "",
-              confirm_password:"" 
-          });
-          console.log(res);
-          console.log(res.data);
+            console.log(res.data.text)
+
+            if(res.data.status=="Error"){
+              this.setState({error_msg: res.data.text})
+            }
+            else{
+              this.props.history.push("/pages/Login");
+            }
+            /*
+            if(res.data.status!="Error"){
+              this.props.history.push("/pages/Login");
+            }*/
           }) 
-          .catch((err) => {console.log(err)}); 
+          .catch((err) => {console.log(err)});
   }; 
 
-  
   render(){
     const { classes } = this.props;
-  
     return (
     <div classname="signUp">
     <link
@@ -151,7 +149,6 @@ export class SignUp extends React.Component {
         integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk"
         crossorigin="anonymous"
     />
-
 
     <section className="App-section">
     <Container fluid>
@@ -168,6 +165,13 @@ export class SignUp extends React.Component {
               <Divider style={{width:'90%',marginTop:'3%'}}/>
               <form className={classes.form} noValidate>
               <Grid container>
+                <Grid item xs={12}>
+                 {this.state.error_msg===""? null:
+                  <Alert severity="error">
+                      <AlertTitle>{this.state.error_msg}</AlertTitle>
+                    </Alert>
+                  }  
+                </Grid>
                 <Grid item xs={12}>
                 <TextField
                   variant="outlined"
