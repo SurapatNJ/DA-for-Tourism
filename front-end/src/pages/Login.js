@@ -13,6 +13,7 @@ import Paper from '@material-ui/core/Paper';
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 import CardActions from '@material-ui/core/CardActions';
+import CardMedia from '@material-ui/core/CardMedia';
 import Box from '@material-ui/core/Box';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
@@ -22,9 +23,10 @@ import { withStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import GoogleLogin from 'react-google-login';
 import {Alert, AlertTitle} from '@material-ui/lab/';
-
 import axios from 'axios';
-
+import { Redirect } from "react-router";
+import { App } from '../App';
+import { CallMade } from '@material-ui/icons';
 
 const responseGoogle = (response) => {
   console.log(response);
@@ -60,8 +62,13 @@ const style = (theme) => ({
       margin: theme.spacing(3),
     },
 
+    media: {
+      height: 0,
+      paddingTop: "56.25%" // 16:9
+    }
   });
     
+
 
 export class LogIn extends React.Component{
 
@@ -75,10 +82,13 @@ export class LogIn extends React.Component{
       User_error:false,
       Pass_error:false,
       UsernameHelperText:"",
-      PasswordHelperText:""
+      PasswordHelperText:"",
+      isLogin:false
     };
   }
-    componentDidMount() { 
+
+
+  componentDidMount() { 
       let data; 
       axios 
           .get("http://104.248.7.194:8000/api/login/") 
@@ -92,8 +102,7 @@ export class LogIn extends React.Component{
           .catch((err) => {}); 
   } 
 
-
-    handleUsername = (e) => { 
+  handleUsername = (e) => { 
         this.setState({ 
           username : e.target.value,
         }); 
@@ -119,17 +128,24 @@ export class LogIn extends React.Component{
           'Content-Type': 'application/json'
         }}) 
         .then((res) => { 
+          //// Log In Success
+          localStorage.setItem('user_id',res.data.user_id)
+          localStorage.setItem('username',res.data.username)
+          localStorage.setItem('email',res.data.email)
           this.setState({ 
             User_error: false,
             UsernameHelperText:"" ,
             Pass_error: false,
             PasswordHelperText:"",
-            error_msg : "" 
+            error_msg : "",
+            isLogin:true
         }); 
-            window.alert("login success")
-
+        if (this.state.isLogin==true){
+          this.props.handleSuccessfulAuth(res.data);
+        }
         }) 
         .catch((err) => {
+          /////Validation
           if((this.state.username&&this.state.password)==""){
             this.setState({ 
               User_error: true,
@@ -150,13 +166,13 @@ export class LogIn extends React.Component{
               PasswordHelperText:"",
               error_msg : "Your Username or Password is Invalid"
           }); 
-          console.log(this.state.UsernameHelperText,this.state.PasswordHelperText)
           }
         }); 
-  };
+    };
   
   render(){
     const { classes } = this.props;
+
       return (
         <div className="login">
         <link
@@ -165,9 +181,8 @@ export class LogIn extends React.Component{
             integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk"
             crossorigin="anonymous"
         />
-
-
         <section className="App-section">
+       
         <Container fluid>
             <Row>
               <Paper elevation={5} style={{width:'50%',height:'50%',margin:'8.5%',marginLeft:'25%'}} className={classes.paper}>
@@ -179,7 +194,7 @@ export class LogIn extends React.Component{
                   <Typography variant="h5" style={{fontFamily:'csPrajad',fontWeight:'bold'}}>
                     Log in
                   </Typography>
-
+  
                   <Divider style={{width:'90%',marginTop:'3%'}}/>
 
                   <form noValidate className={classes.form} >
