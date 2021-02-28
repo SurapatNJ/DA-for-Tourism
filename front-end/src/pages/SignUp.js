@@ -68,7 +68,9 @@ export class SignUp extends React.Component {
       email:"",
       password:"",
       confirm_password:"",
-      error_msg:""
+      error_msg:"",
+      error:false,
+      success:false
     };
   }
 
@@ -81,7 +83,8 @@ export class SignUp extends React.Component {
             this.setState({ 
                 text: data, 
             }); 
-            console.log(res.statusText);
+            console.log("sign up");
+            console.log(localStorage)
         }) 
         .catch((err) => {}); 
 } 
@@ -126,17 +129,17 @@ export class SignUp extends React.Component {
             console.log(res.data.text)
 
             if(res.data.status=="Error"){
-              this.setState({error_msg: res.data.text})
+              this.setState({error_msg: res.data.text , error:true})
             }
             else{
-              this.props.history.push("/pages/Login");
+              this.setState({success : true})
             }
             /*
             if(res.data.status!="Error"){
               this.props.history.push("/pages/Login");
             }*/
           }) 
-          .catch((err) => {console.log(err)});
+          .catch((err) => {});
   }; 
 
   render(){
@@ -171,6 +174,14 @@ export class SignUp extends React.Component {
                       <AlertTitle>{this.state.error_msg}</AlertTitle>
                     </Alert>
                   }  
+                   {this.state.success?   
+                   <Alert severity="success">
+                      <AlertTitle>Sign Up Success&nbsp;&nbsp;
+                        <Link href="/pages/Login" variant="body2">{"Log in"}</Link>
+                      </AlertTitle>
+                    </Alert>
+                    :null
+                  }  
                 </Grid>
                 <Grid item xs={12}>
                 <TextField
@@ -178,6 +189,7 @@ export class SignUp extends React.Component {
                   margin="normal"
                   required
                   fullWidth
+                  error={this.state.error}
                   id="username"
                   label="Username"
                   name="username"
@@ -192,6 +204,7 @@ export class SignUp extends React.Component {
                   required
                   margin="normal"
                   fullWidth
+                  error={this.state.error}
                   id="email"
                   label="Email Address"
                   name="email"
@@ -206,6 +219,7 @@ export class SignUp extends React.Component {
                   margin="normal"
                   required
                   fullWidth
+                  error={this.state.error}
                   name="password"
                   label="Password"
                   type="password"
@@ -220,6 +234,7 @@ export class SignUp extends React.Component {
                   margin="normal"
                   required
                   fullWidth
+                  error={this.state.error}
                   name="confirmpassword"
                   label="Confirm Password"
                   type="password"
