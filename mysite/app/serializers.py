@@ -26,13 +26,13 @@ class trip_title_apiSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = trip_title_api
-        fields = ['user_id', 'trip_name', 'city_code', 'start_trip_date', 'end_trip_date', 'hotel_id', 'trip_data']
+        fields = ['id','user_id', 'trip_name', 'city_code', 'start_trip_date', 'end_trip_date', 'hotel_id', 'rating_point', 'trip_data', 'last_updated', 'created']
 
 class trip_detail_analysisSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = trip_detail_analysis
-        fields = ['date_start', 'date_end', 'hotal_id', 'trip_data']
+        fields = ['trip_type', 'date_start', 'date_end', 'hotal_id', 'trip_data']
 
 class signup_Serializer(serializers.ModelSerializer):
 

@@ -199,6 +199,8 @@ class trip_title_apiViewSet(viewsets.ModelViewSet):
 
         trip_data = searchData['trip_data'] # trip details
 
+        rating_point = searchData['rating_point']
+
         #check user_id
         user = list(User.objects.filter(id = int(user_id)))
         if user != []:
@@ -210,10 +212,12 @@ class trip_title_apiViewSet(viewsets.ModelViewSet):
             new_trip.end_trip_date = end_trip_date
             new_trip.hotel_id = hotel_id
             new_trip.trip_data = trip_data
+            new_trip.rating_point = rating_point
             new_trip.save()
 
             resp = {'id':new_trip.id, 'user_id':new_trip.user_id, 'trip_name':new_trip.trip_name, 'city_code':new_trip.city_code,
-                    'start_trip_date':new_trip.start_trip_date, 'end_trip_date':new_trip.end_trip_date, 'hotel_id':new_trip.hotel_id, 'trip_data':new_trip.trip_data}
+                    'start_trip_date':new_trip.start_trip_date, 'end_trip_date':new_trip.end_trip_date, 'hotel_id':new_trip.hotel_id, 'trip_data':new_trip.trip_data,
+                    'rating_point':new_trip.rating_point}
 
             return Response(resp)
         return Response('Error', status=status.HTTP_404_NOT_FOUND)
@@ -231,6 +235,7 @@ class trip_detail_analysisViewSet(viewsets.ModelViewSet):
     def create(self, request):
         #Get input
         searchData = request.data
+        trip_type = searchData['trip_type']
         date_start = searchData['date_start'] # start datetime
         date_end = searchData['date_end'] # end datetime
         hotal_id = searchData['hotal_id'] # hotal for trip
@@ -239,9 +244,16 @@ class trip_detail_analysisViewSet(viewsets.ModelViewSet):
         #pop data in year
         _date_tourism = pd.read_csv(main_path + "/data_car_stop/all_date_tourism.csv", encoding='TIS620')
         hotal_list = pd.read_csv(main_path + "/data_car_stop/cbi_hotels_data.csv", encoding='utf8')
+        _trip_type_list = pd.read_csv(main_path + "/data_car_stop/poi_category.csv", encoding='TIS620')
 
         #get trip_data to json
         jTrip = json.loads(trip_data)
+
+        #get trip type
+        jTrip_type = []
+        if trip_type != "":
+            jTrip_type = list(json.loads(trip_type))
+        trip_type_list = _trip_type_list.loc[(_trip_type_list['pcat_1'].isin(jTrip_type)) | (_trip_type_list['pcat_2'].isin(jTrip_type)) | (_trip_type_list['pcat_3'].isin(jTrip_type))]
 
         #Set json to dataframe pandas
         _trip_all = pd.DataFrame(columns=('datetime_start', 'datetime_end', 'poi', 'lat', 'lon', 'locked'))
@@ -254,7 +266,7 @@ class trip_detail_analysisViewSet(viewsets.ModelViewSet):
         date_tourism = date_tourism[_date_tourism.lng >= float(hotal_data.Longtitude) - 0.1][_date_tourism.lng <= float(hotal_data.Longtitude) + 0.1]
 
         #Find time_period and place_list for random genetic
-        trip_all = pd.DataFrame(columns=('datetime_start', 'datetime_end', 'poi', 'lat', 'lon', 'locked','time_trip','time_period', 'place_list'))
+        trip_all = pd.DataFrame(columns=('datetime_start', 'datetime_end', 'poi', 'lat', 'lon', 'locked','time_trip','time_period', 'place_list', 'place_type'))
         for index, row in _trip_all.iterrows():
             del index
             time_start = dt.datetime.strptime(row.datetime_start, '%Y-%m-%d %H:%M:%S')
@@ -268,19 +280,26 @@ class trip_detail_analysisViewSet(viewsets.ModelViewSet):
             row['time_trip'] = round(dTime.seconds/60,2)
             if time_start >= dt.datetime(_y,_m,_d,0) - dTime/2 and time_end < dt.datetime(_y,_m,_d,6) + dTime/2:
                 row['time_period'] = 0
-                row['place_list'] = date_tourism[date_tourism.pp_last_night > 0]
+                place_list = date_tourism[date_tourism.pp_last_night > 0]
+                row['place_list'] = place_list
             elif time_start >= dt.datetime(_y,_m,_d,6) - dTime/2 and time_end < dt.datetime(_y,_m,_d,12) + dTime/2:
                 row['time_period'] = 1
-                row['place_list'] = date_tourism[date_tourism.pp_morning > 0]
+                place_list = date_tourism[date_tourism.pp_morning > 0]
+                row['place_list'] = place_list
             elif time_start >= dt.datetime(_y,_m,_d,12) - dTime/2 and time_end < dt.datetime(_y,_m,_d,16) + dTime/2:
                 row['time_period'] = 2
-                row['place_list'] = date_tourism[date_tourism.pp_afternoon > 0]
+                place_list = date_tourism[date_tourism.pp_afternoon > 0]
+                row['place_list'] = place_list
             elif time_start >= dt.datetime(_y,_m,_d,16) - dTime/2 and time_end < dt.datetime(_y,_m,_d,20) + dTime/2:
                 row['time_period'] = 3
-                row['place_list'] = date_tourism[date_tourism.pp_evening > 0]
+                place_list = date_tourism[date_tourism.pp_evening > 0]
+                row['place_list'] = place_list
             elif time_start >= dt.datetime(_y,_m,_d,20) - dTime/2 and time_end <= dt.datetime(_y,_m,_d,23,59) + dTime/2:
                 row['time_period'] = 4
-                row['place_list'] = date_tourism[date_tourism.pp_night > 0]
+                place_list = date_tourism[date_tourism.pp_night > 0]
+                row['place_list'] = place_list
+            
+            row['place_type'] = trip_type_list.loc[trip_type_list['poi'].isin(list(place_list.poi))]
             trip_all = trip_all.append(row, ignore_index=True)
         del _trip_all
         
@@ -291,13 +310,24 @@ class trip_detail_analysisViewSet(viewsets.ModelViewSet):
             for index, row in trip_all.iterrows():
                 del index
                 place_list = row.place_list
+                place_type = row.place_type
                 if row.locked:
                     _place = place_list[place_list.poi == row.poi]
+                    place_type = place_type.query("poi not in " + str(list(_place.poi)))
+                    place_list = place_list.query("poi not in " + str(list(_place.poi)))
                 else:
                     # random tourlist place in dataframe
                     _place = place_list.sample()
-                    while _place.poi.max() in list(trip_random.poi):
-                        _place = place_list.sample()
+                    if not place_type.empty:
+                        _place_type = place_type.sample()
+                        while _place_type.poi.max() in list(trip_random.poi):
+                            _place_type = place_type.sample()
+                        _place = place_list[place_list.poi == _place_type.poi.max()]
+                        place_type = place_type.query("poi not in " + str(list(_place.poi)))
+                    else:
+                        while _place.poi.max() in list(trip_random.poi):
+                            _place = place_list.sample()
+                    place_list = place_list.query("poi not in " + str(list(_place.poi)))
 
                 _trip = {'datetime_start':row.datetime_start, 'datetime_end':row.datetime_end, 
                 'poi':_place.poi.max(), 'lat':_place.lat.max(), 'lon':_place.lng.max(), 'locked': row.locked}
@@ -404,20 +434,26 @@ def crossover(datalist,trip_all):
     _trip2 = rand_trip_list2[rand_trip_list2.datetime_start == rand_period]
 
     new_trip1 = pd.DataFrame(columns=('datetime_start', 'datetime_end', 'poi', 'lat', 'lon', 'locked','time_trip', 'time_tour', 'pop_point'))
-    for index, row in rand_trip_list1.iterrows():
-        del index
-        if row.datetime_start == rand_period :
-            new_trip1 = new_trip1.append(_trip2, ignore_index=True)
-        else:
-            new_trip1 = new_trip1.append(row, ignore_index=True)
+    if _trip2.poi.max() in list(rand_trip_list1.poi):
+        new_trip1 = mutation([rand_trip_list1], trip_all)[0]
+    else:
+        for index, row in rand_trip_list1.iterrows():
+            del index
+            if row.datetime_start == rand_period :
+                new_trip1 = new_trip1.append(_trip2, ignore_index=True)
+            else:
+                new_trip1 = new_trip1.append(row, ignore_index=True)
 
     new_trip2 = pd.DataFrame(columns=('datetime_start', 'datetime_end', 'poi', 'lat', 'lon', 'locked','time_trip', 'time_tour', 'pop_point'))
-    for index, row in rand_trip_list2.iterrows():
-        del index
-        if row.datetime_start == rand_period :
-            new_trip2 = new_trip2.append(_trip1, ignore_index=True)
-        else:
-            new_trip2 = new_trip2.append(row, ignore_index=True)
+    if _trip1.poi.max() in list(rand_trip_list2.poi):
+        new_trip2 = mutation([rand_trip_list2], trip_all)[0]
+    else:
+        for index, row in rand_trip_list2.iterrows():
+            del index
+            if row.datetime_start == rand_period :
+                new_trip2 = new_trip2.append(_trip1, ignore_index=True)
+            else:
+                new_trip2 = new_trip2.append(row, ignore_index=True)
 
     new_datalist = datalist
     new_datalist.append(new_trip1)

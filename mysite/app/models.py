@@ -39,10 +39,12 @@ class trip_title_api(models.Model):
     end_trip_date = models.DateField(default=dt.datetime(2019,1,2))
     hotel_id = models.CharField(max_length=100, null=True, blank=True)
     trip_data = models.TextField(max_length=1000, null=True, blank=True)
+    rating_point = models.IntegerField(default=0)
     last_updated = models.DateTimeField(auto_now=True, editable=False)
     created = models.DateTimeField(auto_now_add=True, editable=False)
 
 class trip_detail_analysis(models.Model):
+    trip_type = models.CharField(max_length=100, null=True, blank=True)
     date_start = models.DateField(default=dt.datetime(2019,1,1))
     date_end = models.DateField(default=dt.datetime(2019,1,2))
     hotal_id = models.CharField(max_length=100, null=True, blank=True)
