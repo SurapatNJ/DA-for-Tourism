@@ -2,7 +2,9 @@
 import React from "react";
 import './App.css';
 import { Tabs, Tab, AppBar, Toolbar,Typography ,IconButton,Button,Icon} from "@material-ui/core";
-import { Route, BrowserRouter, Switch, Link } from "react-router-dom";
+import { Route, BrowserRouter, Switch, Link ,withRouter,useHistory} from "react-router-dom";
+
+import PropTypes from "prop-types";
 import { Redirect } from "react-router";
 import Poi from "./pages/Poi";
 import Trip from "./pages/Trip";
@@ -11,24 +13,27 @@ import Planner from "./pages/Planner";
 import Login from "./pages/Login";
 import SignUp from "./pages/SignUp";
 import { withStyles  } from '@material-ui/core/styles';
-import "bootstrap/dist/css/bootstrap.min.css";
+//import "bootstrap/dist/css/bootstrap.min.css";
 import logo from './location.svg';
 import { render } from "@testing-library/react";
 import { Component } from "react";
 import InputGroup from 'react-bootstrap/InputGroup';
 import axios from 'axios';
 
+
 const style = (theme) => ({
   root: {
     flexGrow: 1,
   },
   menuButton: {
-    marginRight: theme.spacing(2),
+    marginRight: theme.spacing(3),
     color:"#FFFFFF",
     "&:hover": {
       backgroundColor: "transparent",
       color:"#3C6E71",
-      textDecoration: "underline transparent"
+      textDecoration: "underline transparent",
+      border:"none",
+      outline:"none"
     }
   },
   title: {
@@ -37,6 +42,8 @@ const style = (theme) => ({
       display: 'block',
     },
     marginLeft: theme.spacing(1),
+    fontFamily:'csPrajad',
+    color:'#FFFFFF'
   },
   toolbar:{
     backgroundColor: '#353535',
@@ -57,13 +64,13 @@ const style = (theme) => ({
   },
   button:{
     marginRight: theme.spacing(2),
-
+    marginLeft: theme.spacing(3),
   }
 });
 
 
 
-export class App extends React.Component {
+export class App extends Component {
 
   constructor(props) {
     super(props);
@@ -73,55 +80,65 @@ export class App extends React.Component {
       userdata : ""
     };
     this.handleSuccessfulAuth = this.handleSuccessfulAuth.bind(this);
+    localStorage.clear();
 
   }
 
   handleSuccessfulAuth(data) {
-
     this.setState({
       auth: true,
+      userdata : data
     })
-    window.alert(data)
+    this.props.history.push("/pages/Trip")
+  };
+
+
+  AppClick= (event) =>
+  {
+    this.props.history.push("/pages/Poi")
+  }
+
+
+  LogInClick= (event) =>
+  {
+    this.props.history.push("/pages/Login")
   }
 
 
 
-  LogInClick= (event) => {
-    window.location.href = "/pages/Login";
-  };
- 
   LogOutClick = (event) => {
     this.setState({
       auth: false
     })
     localStorage.clear();
-    window.location.href = "/pages/Login";
+    this.props.history.push("/pages/Login")
   };
 
+
   render(){
-    const { classes } = this.props;
+    const { classes} = this.props;
     return (
-      <div className="App">
-        <BrowserRouter>
+
+         <div className="App">
           <Route
             path="/"
             
             render={(history) => (
               <AppBar position="fixed">
                 <Toolbar className={classes.toolbar}>
-                  <Icon edge="start" className={classes.menuButton} color="inherit" >
+        
+                  <IconButton edge="start" className={classes.menuButton}  color="inherit" disabled >
                       <img
                           alt=""
                           src={logo}
                           width="40"
                           height="40"
-                          className="d-inline-block align-top"
                       />{' '}
-                 
-                  </Icon>
                   <Typography variant="h6" className={classes.title}>
                     Tourism Data
                   </Typography>
+                  </IconButton>
+               
                   <Tabs
                     value={
                       history.location.pathname
@@ -154,7 +171,7 @@ export class App extends React.Component {
                     )}
                   {this.state.auth && (
                       <div>
-                      {localStorage.getItem('username')}&nbsp;&nbsp;
+                      {this.state.userdata.username}&nbsp;&nbsp;
                       <Button color="inherit" className={classes.button}  onClick={this.LogOutClick}>Log out</Button>
                       </div>
                     )}
@@ -168,16 +185,21 @@ export class App extends React.Component {
             <Route path="/pages/Poi" component={Poi} exact/>
             <Route path="/pages/Trip" component={Trip} exact/>
             <Route path="/pages/Planner" component={Planner} exact/>
-            <Route path="/pages/Login" component={(Login)} exact/>
+            <Route path="/pages/Login" component={()=><Login handleSuccessfulAuth = {this.handleSuccessfulAuth} />} exact/>
             <Route path="/pages/SignUp" component={SignUp} exact/>
           </Switch>
-        </BrowserRouter>
+                 
+        </div>
+ 
 
-        
-      </div>
+ 
     );
 }
 }
 
 
-export default withStyles(style)(App);
+//export default withStyles(style)(App);
+
+//export default withRouter(App);
+//export default withRouter((withStyles(style)(App)));
+export default withRouter(withStyles(style)(App));
