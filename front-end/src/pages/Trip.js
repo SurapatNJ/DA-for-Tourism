@@ -279,7 +279,7 @@ function CustomizedTables() {
         <TableHead>
           <TableRow>
             <StyledTableCell>ชื่อทริป</StyledTableCell>
-            <StyledTableCell align="center">วันที่</StyledTableCell>
+            <StyledTableCell align="center">วัน/เวลาที่สร้าง</StyledTableCell>
             <StyledTableCell align="center">แก้ไข/ลบ</StyledTableCell>
           </TableRow>
         </TableHead>
@@ -291,7 +291,7 @@ function CustomizedTables() {
               <StyledTableCell component="th" scope="row">
                 {row.trip_name}
               </StyledTableCell>
-              <StyledTableCell align="center">{row.start_trip_date} ถึง {row.end_trip_date}</StyledTableCell>
+              <StyledTableCell align="center">{row.created.replace('T'," ").split("",19)}</StyledTableCell>
               <StyledTableCell align="center">
                 <IconButton aria-label="edit" size="small"><EditRoundedIcon/></IconButton>  
                 <IconButton aria-label="delete" size="small" ><DeleteForeverRoundedIcon/></IconButton>
@@ -351,12 +351,12 @@ export class MapContainer extends Component {
             <Card style={{backgroundColor:'#3C6E71',width:'90%',height:'auto'}}>
               <CardContent style={{color:'white'}}>
               <Row>
-                <Avatar alt="User" src="/" style={{maxWidth:'100%' , marginLeft:10}}/>
+                <Avatar alt={localStorage.getItem('username')} src="/" style={{maxWidth:'100%' , marginLeft:10,backgroundColor:'#284B63'}}/>
                 <Typography style={{fontFamily:"csPrajad" ,padding:5,fontSize:24,fontWeight:'bold'}}>Profile</Typography>
               </Row>
               <Divider style={{margin:10}}/>
-              <Typography style={{fontFamily:"csPrajad" ,fontSize: 18, marginTop:5}}>ชื่อในระบบ :</Typography>
-              <Typography style={{fontFamily:"csPrajad" ,fontSize: 18, marginTop:5}}> E-mail :</Typography>
+              <Typography style={{fontFamily:"csPrajad" ,fontSize: 18, marginTop:5}}>ชื่อในระบบ : {localStorage.getItem('username')}</Typography>
+              <Typography style={{fontFamily:"csPrajad" ,fontSize: 18, marginTop:5}}> E-mail : {localStorage.getItem('email')}</Typography>
               </CardContent>
             </Card>
             </Box>
