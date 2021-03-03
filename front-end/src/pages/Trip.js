@@ -351,7 +351,7 @@ export class MapContainer extends Component {
             <Card style={{backgroundColor:'#3C6E71',width:'90%',height:'auto'}}>
               <CardContent style={{color:'white'}}>
               <Row>
-                <Avatar alt="User" src="/" style={{maxWidth:'100%' , marginLeft:10}}/>
+                <Avatar alt={localStorage.getItem('username')} src="/" style={{maxWidth:'100%' , marginLeft:10,backgroundColor:'#284B63'}}/>
                 <Typography style={{fontFamily:"csPrajad" ,padding:5,fontSize:24,fontWeight:'bold'}}>Profile</Typography>
               </Row>
               <Divider style={{margin:10}}/>
