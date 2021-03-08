@@ -327,7 +327,18 @@ function CustomizedTables() {
 {/*     ////////       main     ///////    */ }
 export class MapContainer extends Component {
 
-  
+  componentDidMount() { 
+    let data; 
+    axios 
+        .get("http://104.248.7.194:8000/api/login/") 
+        .then((res) => { 
+            if(localStorage.getItem('username')==null){
+              this.props.history.push('/pages/Login')
+            }
+        }) 
+        .catch((err) => {}); 
+} 
+
   render() {
     return (
       <div className="Trip">

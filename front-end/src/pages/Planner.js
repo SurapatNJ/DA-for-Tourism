@@ -39,6 +39,7 @@ import ThumbDownOutlinedIcon from '@material-ui/icons/ThumbDownOutlined';
 import AssistantOutlinedIcon from '@material-ui/icons/AssistantOutlined';
 import AddBoxIcon from '@material-ui/icons/AddBox';
 import IndeterminateCheckBoxIcon from '@material-ui/icons/IndeterminateCheckBox';
+import axios from 'axios';
 
 //Google Map
 import { Map, GoogleApiWrapper,Rectangle,HeatMap,Marker} from 'google-maps-react';
@@ -616,6 +617,19 @@ export function PlannerForm() {
 
 {/*     ////////       main     ///////    */ }
 export class MapContainer extends Component {
+
+  componentDidMount() { 
+    let data; 
+    axios 
+        .get("http://104.248.7.194:8000/api/login/") 
+        .then((res) => { 
+            if(localStorage.getItem('username')==null){
+              this.props.history.push('/pages/Login')
+            }
+        }) 
+        .catch((err) => {}); 
+} 
+
   render() {
     return (
       <div className="Trip">
