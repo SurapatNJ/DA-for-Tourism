@@ -1,7 +1,7 @@
 
 import React from "react";
 import './App.css';
-import { Tabs, Tab, AppBar, Toolbar,Typography ,IconButton,Button,Icon} from "@material-ui/core";
+import { Tabs, Tab, AppBar, Toolbar,Typography ,IconButton,Button,Icon,Tooltip} from "@material-ui/core";
 import { Route, BrowserRouter, Switch, Link ,withRouter,useHistory} from "react-router-dom";
 
 import PropTypes from "prop-types";
@@ -26,8 +26,7 @@ const style = (theme) => ({
     flexGrow: 1,
   },
   menuButton: {
-    marginRight: theme.spacing(3),
-    color:"#FFFFFF",
+    marginRight: theme.spacing(2),
     "&:hover": {
       backgroundColor: "transparent",
       color:"#3C6E71",
@@ -65,6 +64,15 @@ const style = (theme) => ({
   button:{
     marginRight: theme.spacing(2),
     marginLeft: theme.spacing(3),
+  },
+  popover: {
+    pointerEvents: 'none',
+  },
+  paper: {
+    padding: theme.spacing(1),
+  },
+  quote:{
+    marginLeft: theme.spacing(-1.5),
   }
 });
 
@@ -77,19 +85,41 @@ export class App extends Component {
     this.state = {
       routes : ["/","/pages/Poi", "/pages/Trip","/pages/Planner","/pages/Login","/pages/SignUp"],
       auth : false,
-      userdata : ""
+      userdata : "",
     };
     this.handleSuccessfulAuth = this.handleSuccessfulAuth.bind(this);
-    localStorage.clear();
 
   }
+
+  
+  componentDidMount() { 
+    let data; 
+    axios 
+        .get("http://104.248.7.194:8000/api/login/") 
+        .then((res) => { 
+            if(localStorage.getItem('username')!=null){
+              const items = { ...localStorage };
+              this.setState({
+                auth: true,
+                userdata : items
+              })
+              console.log(localStorage)
+            }
+            else{
+              this.setState({
+                auth: false,
+              })
+            }
+        }) 
+        .catch((err) => {}); 
+} 
 
   handleSuccessfulAuth(data) {
     this.setState({
       auth: true,
       userdata : data
     })
-    this.props.history.push("/pages/Trip")
+    this.props.history.push("/pages/Poi")
   };
 
 
@@ -114,6 +144,7 @@ export class App extends Component {
     this.props.history.push("/pages/Login")
   };
 
+  
 
   render(){
     const { classes} = this.props;
@@ -140,13 +171,14 @@ export class App extends Component {
                   </IconButton>
                
                   <Tabs
+                  
                     value={
                       history.location.pathname
                         ? history.location.pathname
                         : false
                     }
                     className={classes.tabs}
-                    
+  
                   >
                     <Tab
                       value={this.state.routes[1]}
@@ -155,6 +187,7 @@ export class App extends Component {
                       to={this.state.routes[1]}
                       className={classes.tab}
                     />
+                   
                     <Tab
                       value={this.state.routes[2]}
                       label="Trip Planner"
@@ -163,7 +196,18 @@ export class App extends Component {
                       to={this.state.routes[2]}
                       className={classes.tab}
                     />
+                    {!this.state.auth && (
+                      <div className={classes.quote}>
+                        <IconButton edge="start" className={classes.menuButton}  color="inherit" disabled >
+                          <Typography style={{fontSize:14 ,color:'#3C6E71'}} >
+                            ( You must Login before planning your trip )
+                          </Typography>
+                        </IconButton>
+                      </div>
+                    )}
                   </Tabs>
+
+
                   {!this.state.auth && (
                       <div>
                       <Button color="inherit" className={classes.button} onClick={this.LogInClick} >Log in &nbsp;&nbsp;&nbsp;</Button>
