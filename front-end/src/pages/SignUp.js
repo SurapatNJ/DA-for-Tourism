@@ -74,17 +74,15 @@ export class SignUp extends React.Component {
     };
   }
 
+ 
   componentDidMount() { 
-    let data; 
+
     axios 
-        .get("http://104.248.7.194:8000/api/signup/") 
+        .get("http://104.248.7.194:8000/api/login/") 
         .then((res) => { 
-            data = res.data; 
-            this.setState({ 
-                text: data, 
-            }); 
-            console.log("sign up");
-            console.log(localStorage)
+            if(localStorage.getItem('username')!=null){
+              this.props.history.push('/pages/Poi')
+            }
         }) 
         .catch((err) => {}); 
 } 
