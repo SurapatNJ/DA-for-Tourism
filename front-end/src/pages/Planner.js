@@ -617,7 +617,6 @@ export function PlannerForm() {
 
 {/*     ////////       main     ///////    */ }
 export class MapContainer extends Component {
-
   componentDidMount() { 
     let data; 
     axios 

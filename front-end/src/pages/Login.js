@@ -89,18 +89,16 @@ export class LogIn extends React.Component{
 
 
   componentDidMount() { 
-      let data; 
-      axios 
-          .get("http://104.248.7.194:8000/api/login/") 
-          .then((res) => { 
-              data = res.data; 
-              this.setState({ 
-                  text: data, 
-              }); 
-              console.log(res.statusText);
-          }) 
-          .catch((err) => {}); 
-  } 
+ 
+    axios 
+        .get("http://104.248.7.194:8000/api/login/") 
+        .then((res) => { 
+            if(localStorage.getItem('username')!=null){
+              this.props.history.push('/pages/Poi')
+            }
+        }) 
+        .catch((err) => {}); 
+} 
 
   handleUsername = (e) => { 
         this.setState({ 
