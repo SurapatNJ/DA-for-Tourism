@@ -119,7 +119,7 @@ export class App extends Component {
       auth: true,
       userdata : data
     })
-    this.props.history.push("/pages/Poi")
+    this.props.history.push("/pages/Trip")
   };
 
 
