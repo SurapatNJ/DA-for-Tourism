@@ -89,12 +89,13 @@ export class LogIn extends React.Component{
 
 
   componentDidMount() { 
- 
+
     axios 
         .get("http://104.248.7.194:8000/api/login/") 
         .then((res) => { 
             if(localStorage.getItem('username')!=null){
-              this.props.history.push('/pages/Poi')
+              window.location.href = '/pages/Poi';
+              //this.props.history.push('/pages/Trip')
             }
         }) 
         .catch((err) => {}); 
@@ -140,6 +141,7 @@ export class LogIn extends React.Component{
         }); 
         if (this.state.isLogin==true){
           this.props.handleSuccessfulAuth(res.data);
+          this.props.history.push('/pages/Poi')
         }
         }) 
         .catch((err) => {
