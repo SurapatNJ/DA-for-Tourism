@@ -95,7 +95,7 @@ export class LogIn extends React.Component{
         .then((res) => { 
             if(localStorage.getItem('username')!=null){
               window.location.href = '/pages/Poi';
-              //this.props.history.push('/pages/Trip')
+              //this.props.history.push('/pages/Poi')
             }
         }) 
         .catch((err) => {}); 
@@ -141,7 +141,6 @@ export class LogIn extends React.Component{
         }); 
         if (this.state.isLogin==true){
           this.props.handleSuccessfulAuth(res.data);
-          this.props.history.push('/pages/Poi')
         }
         }) 
         .catch((err) => {
