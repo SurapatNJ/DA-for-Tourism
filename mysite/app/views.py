@@ -8,9 +8,9 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from django_filters.rest_framework import DjangoFilterBackend, FilterSet, RangeFilter
 from .models import Heatmap, gridMap, tourist_place_detail, trip_title_api, trip_detail_analysis
-from .models import signup_model, login_model
+from .models import signup_model, login_model, rating_analysis
 from .serializers import HeatmapSerializer, GridSerializer, tourist_placeSerializer, trip_title_apiSerializer, trip_detail_analysisSerializer
-from .serializers import signup_Serializer, login_Serializer
+from .serializers import signup_Serializer, login_Serializer, rating_analysisSerializer
 #anaconda lib 
 import numpy as np
 import pandas as pd
@@ -184,46 +184,15 @@ class trip_title_apiViewSet(viewsets.ModelViewSet):
     queryset = trip_title_api.objects.all()
     serializer_class = trip_title_apiSerializer
     filter_backends = [DjangoFilterBackend]
-    filterset_fields = ['user_id']    
+    filterset_fields = ['user_id']
 
-    #Post tourist_place data
-    def create(self, request):
-        #Get input
-        searchData = request.data
-        user_id = searchData['user_id']
-        trip_name = searchData['trip_name']
-        city_code = searchData['city_code']
-        start_trip_date = searchData['start_trip_date'] # start date
-        end_trip_date = searchData['end_trip_date'] # end date
-        hotel_id = searchData['hotel_id'] # hotal for trip
-
-        trip_data = searchData['trip_data'] # trip details
-
-        rating_point = searchData['rating_point']
-
-        #check user_id
-        user = list(User.objects.filter(id = int(user_id)))
-        if user != []:
-            new_trip = trip_title_api()
-            new_trip.user_id = user_id
-            new_trip.trip_name = trip_name
-            new_trip.city_code = city_code
-            new_trip.start_trip_date = start_trip_date
-            new_trip.end_trip_date = end_trip_date
-            new_trip.hotel_id = hotel_id
-            new_trip.trip_data = trip_data
-            new_trip.rating_point = rating_point
-            new_trip.save()
-
-            resp = {'id':new_trip.id, 'user_id':new_trip.user_id, 'trip_name':new_trip.trip_name, 'city_code':new_trip.city_code,
-                    'start_trip_date':new_trip.start_trip_date, 'end_trip_date':new_trip.end_trip_date, 'hotel_id':new_trip.hotel_id, 'trip_data':new_trip.trip_data,
-                    'rating_point':new_trip.rating_point}
-
-            return Response(resp)
-        return Response('Error', status=status.HTTP_404_NOT_FOUND)
-
-
-        
+# trip_title_api
+class rating_analysisViewSet(viewsets.ModelViewSet):
+    #Set model 
+    queryset = rating_analysis.objects.all()
+    serializer_class = rating_analysisSerializer
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = ['rating_point']  
 
 # trip_detail_analysis
 class trip_detail_analysisViewSet(viewsets.ModelViewSet):
