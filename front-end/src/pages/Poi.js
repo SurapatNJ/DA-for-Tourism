@@ -1,4 +1,5 @@
-import React , {Component, useState} from 'react';
+import React , {Component, useState, setState} from 'react';
+import { render } from 'react-dom';
 import '../App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Container from 'react-bootstrap/Container';
@@ -22,18 +23,30 @@ import DateRangeIcon from '@material-ui/icons/DateRange';
 import AccessTimeIcon from '@material-ui/icons/AccessTime';
 import CommuteIcon from '@material-ui/icons/Commute';
 import TimelapseIcon from '@material-ui/icons/Timelapse';
+import { Map, HeatMap, GoogleApiWrapper,InfoWindow ,Rectangle,Marker} from "google-maps-react";
 import axios from "axios";
-
-//Google Map
-import { Map, GoogleApiWrapper,Rectangle,HeatMap,Marker} from 'google-maps-react';
-
 
 const mapStyles = {
   width: '80%',
   height: '50%',
   margin:'5%'
 };
-
+const gradient = [
+  "rgba(0, 255, 255, 0)",
+  "rgba(0, 255, 255, 1)",
+  "rgba(0, 191, 255, 1)",
+  "rgba(0, 127, 255, 1)",
+  "rgba(0, 63, 255, 1)",
+  "rgba(0, 0, 255, 1)",
+  "rgba(0, 0, 223, 1)",
+  "rgba(0, 0, 191, 1)",
+  "rgba(0, 0, 159, 1)",
+  "rgba(0, 0, 127, 1)",
+  "rgba(63, 0, 91, 1)",
+  "rgba(127, 0, 63, 1)",
+  "rgba(191, 0, 31, 1)",
+  "rgba(255, 0, 0, 1)"
+];
 export function CityName({addCity}) {
   const defaultProps = {
     options: cityOptions,
@@ -55,7 +68,6 @@ export function CityName({addCity}) {
     </div>
   );
 }
-
 export function PlaceName({addPlace}) {
   const defaultProps = {
     options: placeOptions,
@@ -90,7 +102,12 @@ export function PlaceName({addPlace}) {
     </div>
   );
 }
-
+function convert(date){
+  var datearray = date.split("-");
+  var newdate = datearray[0] + '-' + datearray[1] + '-' + datearray[2];
+  return newdate;
+  
+}
 export function DateStart({addDatestart}) {
   return (
     <form noValidate>
@@ -104,8 +121,8 @@ export function DateStart({addDatestart}) {
         shrink: true,
       }}
       onChange={(event, value) => {
-        addDatestart(event.target.value)
-        console.log("value:",event.target.value)
+        addDatestart(convert(event.target.value))
+        console.log("value:",convert(event.target.value))
     }}
     />
   </form>
@@ -124,14 +141,13 @@ export function DateEnd({addDateend}) {
           shrink: true,
         }}
         onChange={(event, value) => {
-          addDateend(event.target.value)
-          console.log("value:",event.target.value)
+          addDateend(convert(event.target.value))
+          console.log("value:",convert(event.target.value))
       }}
       />
     </form>
   );
 }
-
 export function PoiRec() {
   /*const defaultProps = {
     options: poiOptions,
@@ -158,28 +174,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-function submitForm(data) {
-  console.log(data)
-  axios.post("http://104.248.7.194:8000/api/tourist_place/",{
-    lat_en: (data.lat+0.5).toString(),
-    lng_en: (data.lon+0.5).toString(),
-    lat_ws: (data.lat-0.5).toString(),
-    lng_ws: (data.lon-0.5).toString(),
-    date_start:data.datestart,
-    date_end:data.dateend
-  },{
-    headers: {
-      'Content-Type': 'application/json'
-  }})
-  .then(function (response) {
-    console.log(response);
-  })
-  .catch(function (error) {
-    console.log(error);
-  });
-}
-
-export function PoiForm() {
+export function PoiForm({setStatistics,setPlaces,setHeatmaps}) {
   const [submitvalues,setSubmitvalues] = useState({
     city:'',
     lat:0.0,
@@ -188,6 +183,57 @@ export function PoiForm() {
     datestart:Date,
     dateend:Date
   })
+  function callHeatmap(data) {
+    // this.map = map;
+    // console.log(this.map.getBounds());
+    //setTimeout(() =>{console.log(this.map.getBounds());},10)
+    // this.bounds = this.map.getBounds();
+    // console.log(this.bounds,this.bounds.getNorthEast().lat(),this.bounds.getNorthEast().lng(),this.bounds.getSouthWest().lat(),this.bounds.getSouthWest().lng())
+    console.log('HeatmapInput:',data)
+    axios
+      .post("http://104.248.7.194:8000/api/heatMap/",{
+        lat_en: (data.lat+0.02).toString(),
+        lng_en: (data.lon+0.02).toString(),
+        lat_ws: (data.lat-0.02).toString(),
+        lng_ws: (data.lon-0.02).toString(),
+        date_start:data.datestart,
+        date_end:data.dateend
+    },{
+        headers: {
+          'Content-Type': 'application/json'
+    }})
+      .then(function (response) {
+      console.log('HeatmapResponse:',response.data);
+      setHeatmaps(response.data)
+    })
+      .catch(function (error) {
+      console.log('HeatmapError:',error);
+    });
+}
+  function submitForm(data) {
+    console.log('submitform: ',data)
+    setPlaces(data)
+    callHeatmap(data)
+    axios.post("http://104.248.7.194:8000/api/tourist_place/",{
+      lat_en: (data.lat+0.02).toString(),
+      lng_en: (data.lon+0.02).toString(),
+      lat_ws: (data.lat-0.02).toString(),
+      lng_ws: (data.lon-0.02).toString(),
+      date_start:data.datestart,
+      date_end:data.dateend
+    },{
+      headers: {
+        'Content-Type': 'application/json'
+    }})
+    .then(function (response) {
+      console.log('FormResponse: ',response.data)
+      setStatistics(response.data)
+    })
+    .catch(function (error) {
+      console.log('FormError: ',error);
+    });
+  }
+
   const classes = useStyles();
 
   function addCity(p){
@@ -202,7 +248,7 @@ export function PoiForm() {
   function addDateend(p){
     setSubmitvalues({...submitvalues, dateend: p})  
   }
-
+  
   return(
     <Container fluid noGutters={true}>
     <Paper elevation={5} style={{width:'90%',height:'auto',margin:'5%'}}>
@@ -243,13 +289,11 @@ export function PoiForm() {
                     color="secondary"
                     style={{width:'20%',height:60,marginLeft:'80%',borderRadius:50}}
                     onClick={() => {
-                      submitForm(submitvalues)
-                    }
-                    }
+                      submitForm(submitvalues) 
+                    }}
               >
                 Submit
               </Button>
-
           </Grid>
         </Grid>
       </form>
@@ -260,19 +304,77 @@ export function PoiForm() {
   );
 }
 
-
-
 {/*     ////////       main     ///////    */ }
 
-export class MapContainer extends React.Component  {
+export class MapContainer extends React.Component{
+  constructor(props){
+    super(props);
+    this.state = {
+         statistics:[{
+          lat: 0,
+          lng: 0,
+          pname_en: "",
+          pname_th: "",
+          poi: "",
+          pop_dayofweek: 0,
+          pop_month: 0,
+          pp_afternoon: 0,
+          pp_all: 0,
+          pp_all_in_year: 0,
+          pp_evening: 0,
+          pp_last_night: 0,
+          pp_morning: 0,
+          pp_night: 0,
+          travel_time: 0
+        }],
+        places:[{
+          pid: 0,
+          pname: "",
+          lat: 0,
+          lon: 0
+        }],
+        heatmaps:[{
+          lat: 0,
+          lng: 0
+        }]
+    }
+  }
+
+  setStatistic(p){
+    this.setState({statistics:p})
+  }
+  setPlace(p){
+    this.setState({places:p})
+  }
+  setHeatmap(p){
+    this.setState({heatmaps:p})
+  }
+  state = {
+    isHeatVisible : true
+  };
+  toggleHeatmap = () => {
+    this.setState({isHeatVisible: !this.state.isHeatVisible});
+  }
+
   render(){
+    let heat = <HeatMap
+            //gradient={gradient}
+            positions={this.state.heatmaps}
+            opacity={1}
+            radius={10}
+            maxIntensity = {5}
+          />
+    // this.handleMapMount = this.handleMapMount.bind(this);
+    this.setStatistic = this.setStatistic.bind(this);
+    this.setPlace = this.setPlace.bind(this);
+    this.setHeatmap = this.setHeatmap.bind(this);
     return(
       <div className="Poi">
       <link
         rel="stylesheet"
         href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"
         integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk"
-        crossorigin="anonymous"
+        crossOrigin="anonymous"
       />
 
       <header className="App-header">
@@ -281,35 +383,47 @@ export class MapContainer extends React.Component  {
       <section className="App-section">
 
       <Container fluid noGutters={true}>
-        <PoiForm/>
-        
-        
+        <PoiForm 
+        setStatistics={this.setStatistic}
+        setPlaces={this.setPlace}
+        setHeatmaps={this.setHeatmap}
+        >
+        </PoiForm>
         <Paper elevation={5} style={{width:'90%',height:'auto',margin:'5%'}}>
           <Row noGutters>
             <Col xs={6}>
               <InputGroup style={{width:'100%',height:'90%'}}>
-              <Map
-                    style={{borderRadius:'1%'}}
-                    google={this.props.google}
-                    zoom={9}
-                    disableDefaultUI ={true}
-                    scrollwheel={false}
-                    disableDoubleClickZoom = {true}
-                    draggable={false}
-                    zoomControl={false}
-                    onReady={this.handleMapReady}
-                    onBounds_changed={this.handleMapMount}
-                    initialCenter={
-                      {
-                        lat:  13.12,
-                        lon:  101.20
-                      }
-                    }
-                  >      
-                  {placeOptions.map(placeOptions=>(
-                <Marker key={placeOptions.pname} position={{lat:placeOptions.lat,lon:placeOptions.lon}} />
-              ))}
-              </Map>
+                <Map
+                  style={{borderRadius:'1%'}}
+                  google={this.props.google}
+                  className={"map"}
+                  zoom={14}
+                  // disableDefaultUI ={true}
+                  scrollwheel={false}
+                  disableDoubleClickZoom = {true}
+                  draggable={false}
+                  zoomControl={false}
+                  initialCenter={{ lat:13.301 , lng: 100.901 }}
+                  center={{ lat:this.state.places.lat, lng: this.state.places.lon}}
+                  onReady={this.handleMapReady}
+                  // onBounds_changed={this.callHeatmap(this.state.places)}
+                  //onCenter_changed={this.callHeatmap(this.state.places)}
+                >      
+                  <Marker
+                    onMouseover={this.onMouseoverMarker}
+                    // onClick={this.onMarkerClick}
+                    name = {'Current location'}
+                    position={{ lat:this.state.places.lat, lng: this.state.places.lon}}
+                  />
+                  <InfoWindow onClose={this.onInfoWindowClose}
+                    marker={this.state.activeMarker}
+                    visible={this.state.showingInfoWindow}>
+                      <div>
+                        <h1>{this.state.places.pname}</h1>
+                      </div>
+                  </InfoWindow>
+                  {this.state.isHeatVisible ? heat: null}
+                </Map>
               </InputGroup>
               <InputGroup style={{height:'10%'}}>
               <Button
@@ -320,6 +434,7 @@ export class MapContainer extends React.Component  {
                             onClick={this.toggleHeatmap}
                           >
                               Open Heat Map
+                            
               </Button>
               </InputGroup>
             </Col>
@@ -330,21 +445,21 @@ export class MapContainer extends React.Component  {
                     สถิติของสถานที่ท่องเที่ยว
                   </Typography>
                   <Typography color="textSecondary" style={{fontFamily:"csPrajad",fontSize:18}}>
-                    Tourism Statistics
+                    Tourism Statistics 
                   </Typography>
                   <br />
                   <Divider/>
                   <Typography style={{fontFamily:"csPrajad",fontSize:16}}>
                     <br />
                     <AccountBalanceIcon />
-                    ชื่อสถานที่ : 
+                    ชื่อสถานที่ :   {`${this.state.places.place}`}
                   </Typography>
                   <br />
                   <Divider/>
                   <Typography style={{fontFamily:"csPrajad",fontSize:16}}>
                     <br />
                     <RoomIcon/>
-                    ละติจูด-ลองจิจูด : 
+                    ละติจูด-ลองจิจูด :  {`${this.state.places.lat}-${this.state.places.lon}`}
                   </Typography>
                   <br />
                   <Divider/>
@@ -358,31 +473,31 @@ export class MapContainer extends React.Component  {
                      <ListItem>
                         <Typography style={{fontFamily:"csPrajad",fontSize:16}}>
                         <CommuteIcon />
-                        Popularity : 
+                        จำนวนรถนักท่องเที่ยว(คัน) : {`${this.state.statistics[0].pp_all}`}
                       </Typography>
                     </ListItem>
                     <ListItem>
                         <Typography style={{fontFamily:"csPrajad",fontSize:16}}>
                         <TodayIcon />
-                        Day-of-Week : 
+                        วันที่นิยม : {`${this.state.statistics[0].pop_dayofweek}`}
                       </Typography>
                     </ListItem>
                     <ListItem>
                         <Typography style={{fontFamily:"csPrajad",fontSize:16}}>
                         <DateRangeIcon />
-                        Favourite Month :
+                        เดือนที่นิยม : {`${this.state.statistics[0].pop_month}`}
                       </Typography>
                     </ListItem>
                     <ListItem>
                         <Typography style={{fontFamily:"csPrajad",fontSize:16}}>
                         <TimelapseIcon />
-                        Time Ranges :
+                        เวลาเฉลี่ยในการท่องเที่ยว : {`${this.state.statistics[0].travel_time}`}
                       </Typography>
                     </ListItem>
                     <ListItem>
                         <Typography style={{fontFamily:"csPrajad",fontSize:16}}>
                         <AccessTimeIcon />
-                        Times of the Day :
+                        ช่วงเวลาที่นิยม : {`${this.state.statistics[0]}`}
                       </Typography>
                     </ListItem>
                   </List>
@@ -396,14 +511,11 @@ export class MapContainer extends React.Component  {
         </Paper>
         </Container>
 
-
-  
       </section>
     </div>
     );
   }
 }
-
 
 export default GoogleApiWrapper({
   apiKey: 'AIzaSyDf8sqiZUNBWHSQkw3Tqpt5R6LIb4kLdbc',
