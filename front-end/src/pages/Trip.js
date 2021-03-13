@@ -33,6 +33,7 @@ import axios from 'axios';
 
 //Google Map
 import { Map, GoogleApiWrapper,Rectangle,HeatMap,Marker} from 'google-maps-react';
+import { ControlPointDuplicateOutlined } from '@material-ui/icons';
 
 
 
@@ -255,8 +256,12 @@ function CustomizedTables() {
   const [groups, setGroups] = React.useState([]);
   const emptyRows = rowsPerPage - Math.min(rowsPerPage,groups.length - page * rowsPerPage);
 
-  const handleDelete = () => {
-    ////
+  const handleDelete = (id,i) => {
+    setGroups(groups.filter((row, j) => j !== i))
+    axios.delete("http://104.248.7.194:8000/api/trip_title_api/" + id).catch((err)=> {
+      console.log('deleted')
+    });
+
   }
 
   useEffect(() => {
@@ -272,7 +277,6 @@ function CustomizedTables() {
     fetchData()
   }, [])
   
-  console.log(groups)
   return (
     <TableContainer component={Paper}>
       <Table className={classes.table} aria-label="customized table">
@@ -294,7 +298,7 @@ function CustomizedTables() {
               <StyledTableCell align="center">{row.created.replace('T'," ").split("",19)}</StyledTableCell>
               <StyledTableCell align="center">
                 <IconButton aria-label="edit" size="small"><EditRoundedIcon/></IconButton>  
-                <IconButton aria-label="delete" size="small" ><DeleteForeverRoundedIcon/></IconButton>
+                <IconButton aria-label="delete" size="small" onClick={() => handleDelete(groups[index].id,index)}><DeleteForeverRoundedIcon/></IconButton>
               </StyledTableCell>
             </StyledTableRow>
           ))}
