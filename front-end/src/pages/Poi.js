@@ -536,7 +536,7 @@ export class MapContainer extends React.Component{
                   <Typography style={{fontFamily:"csPrajad",fontSize:16}}>
                     <br />
                     <RoomIcon/>
-                    ละติจูด-ลองจิจูด :  {`${this.state.selectedPlace.lat}-${this.state.selectedPlace.lng}`}
+                    ละติจูด-ลองจิจูด :  {`${this.state.selectedPlace.lat} - ${this.state.selectedPlace.lng}`}
                   </Typography>
                   <br />
                   <Divider/>
