@@ -96,7 +96,12 @@ export function PlaceName({addPlace}) {
           }}/>}
         onChange={(event, value) => {
           console.log("value:",value)
+          if (value){
           addPlace(value.pname,value.lat,value.lon)
+          }
+          else {
+            addPlace("",0,0)
+          }
       }}
       />
     </div>
@@ -550,7 +555,7 @@ export class MapContainer extends React.Component{
                      <ListItem>
                         <Typography style={{fontFamily:"csPrajad",fontSize:16}}>
                         <CommuteIcon />
-                        จำนวนรถนักท่องเที่ยว : {`${this.state.selectedPlace.pp_all} คัน`}
+                        จำนวนรถนักท่องเที่ยวโดยเฉลี่ย : {`${this.state.selectedPlace.pp_all} คัน`}
                       </Typography>
                     </ListItem>
                     <ListItem>
