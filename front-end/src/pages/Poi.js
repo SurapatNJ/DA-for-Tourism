@@ -184,11 +184,6 @@ export function PoiForm({setStatistics,setPlaces,setHeatmaps}) {
     dateend:Date
   })
   function callHeatmap(data) {
-    // this.map = map;
-    // console.log(this.map.getBounds());
-    //setTimeout(() =>{console.log(this.map.getBounds());},10)
-    // this.bounds = this.map.getBounds();
-    // console.log(this.bounds,this.bounds.getNorthEast().lat(),this.bounds.getNorthEast().lng(),this.bounds.getSouthWest().lat(),this.bounds.getSouthWest().lng())
     console.log('HeatmapInput:',data)
     axios
       .post("http://104.248.7.194:8000/api/heatMap/",{
@@ -227,7 +222,7 @@ export function PoiForm({setStatistics,setPlaces,setHeatmaps}) {
     }})
     .then(function (response) {
       console.log('FormResponse: ',response.data)
-      setStatistics(response.data)
+      setStatistics(response.data,data.place)
     })
     .catch(function (error) {
       console.log('FormError: ',error);
@@ -266,6 +261,7 @@ export function PoiForm({setStatistics,setPlaces,setHeatmaps}) {
           <Grid item xs={3}>
             <Typography style={{fontFamily:'csPrajad' ,fontSize:17}}>สถานที่ท่องเที่ยว :</Typography>
           </Grid>
+
           <Grid item xs={9}>
               <PlaceName
               addPlace = {addPlace}
@@ -300,7 +296,6 @@ export function PoiForm({setStatistics,setPlaces,setHeatmaps}) {
     </div>
     </Paper>
   </Container>
-
   );
 }
 
@@ -336,12 +331,65 @@ export class MapContainer extends React.Component{
         heatmaps:[{
           lat: 0,
           lng: 0
-        }]
+        }],
+        selectedPlace:{
+          lat: 0,
+          lng: 0,
+          pname_en: "",
+          pname_th: "",
+          poi: "",
+          pop_dayofweek: 0,
+          pop_month: 0,
+          pp_all: 0,
+          pp_all_in_year: 0,
+          travel_time: 0,
+          pp_afternoon: 0,
+          pp_evening: 0,
+          pp_last_night: 0,
+          pp_morning: 0,
+          pp_night: 0,
+        },
+        dict:{
+          day:{
+            0:"วันอาทิตย์",
+            1:"วันจันทร์",
+            2:"วันอังคาร",
+            3:"วันพุธ",
+            4:"วันพฤหัส",
+            5:"วันศุกร์",
+            6:"วันเสาร์"
+          },
+          month:{
+            0:"",
+            1:"มกราคม",
+            2:"กุมภาพันธ์",
+            3:"มีนาคม",
+            4:"เมษายน",
+            5:"พฤษภาคม",
+            6:"มิถุนายน",
+            7:"กรกฎาคม",
+            8:"สิงหาคม",
+            9:"กันยายน",
+            10:"ตุลาคม",
+            11:"พฤศจิกายน",
+            12:"ธันวาคม",
+          },
+          timeperiod:{
+            pp_last_night:" 0:00 - 5:59,",
+            pp_morning:" 6:00 - 11:59,",
+            pp_afternoon:" 12:00 - 15:59,",
+            pp_evening:" 16:00 - 19:59,",
+            pp_night:" 20:00 - 23:59,"
+          }
+        },
     }
   }
 
-  setStatistic(p){
+  setStatistic(p,name){
+    const psname = p.find(e => e.pname_th === name)
+    console.log("psname: ",psname)
     this.setState({statistics:p})
+    this.setState({selectedPlace:psname})
   }
   setPlace(p){
     this.setState({places:p})
@@ -350,13 +398,36 @@ export class MapContainer extends React.Component{
     this.setState({heatmaps:p})
   }
   state = {
-    isHeatVisible : true
+    isHeatVisible : false
   };
   toggleHeatmap = () => {
     this.setState({isHeatVisible: !this.state.isHeatVisible});
   }
+  onMarkerClick = (props, marker, e) => {
+    console.log("props: ",props)
+    const popular = this.state.statistics.find(e => e.pname_th === props.name)
+    console.log("popular: ",popular)
+    this.setState({
+      selectedPlace: popular,
+      activeMarker: marker,
+      showingInfoWindow: true
+    });
+  }
+  renderChildren() {
+      const {children} = this.props;
 
+      if (!children) return;
+
+      return React.Children.map(children, c => {
+        return React.cloneElement(c, {
+          map: this.map,
+          google: this.props.google,
+          mapCenter: this.state.currentLocation
+        });
+      })
+    }
   render(){
+    const dict = this.state.dict;
     let heat = <HeatMap
             //gradient={gradient}
             positions={this.state.heatmaps}
@@ -368,7 +439,9 @@ export class MapContainer extends React.Component{
     this.setStatistic = this.setStatistic.bind(this);
     this.setPlace = this.setPlace.bind(this);
     this.setHeatmap = this.setHeatmap.bind(this);
+    this.onMarkerClick = this.onMarkerClick.bind(this);
     return(
+      
       <div className="Poi">
       <link
         rel="stylesheet"
@@ -406,35 +479,38 @@ export class MapContainer extends React.Component{
                   initialCenter={{ lat:13.301 , lng: 100.901 }}
                   center={{ lat:this.state.places.lat, lng: this.state.places.lon}}
                   onReady={this.handleMapReady}
-                  // onBounds_changed={this.callHeatmap(this.state.places)}
+                  //onBounds_changed={this.callHeatmap(this.state.places)}
                   //onCenter_changed={this.callHeatmap(this.state.places)}
-                >      
-                  <Marker
-                    onMouseover={this.onMouseoverMarker}
-                    // onClick={this.onMarkerClick}
-                    name = {'Current location'}
-                    position={{ lat:this.state.places.lat, lng: this.state.places.lon}}
-                  />
+                >
+                  {this.state.statistics.map((s,i) => {
+                    return(
+                      // <div>
+                      <Marker
+                      onClick={this.onMarkerClick}
+                      name = {s.pname_th}
+                      position={{ lat:s.lat, lng: s.lng}}
+                      />
+                    )
+                  })}
                   <InfoWindow onClose={this.onInfoWindowClose}
-                    marker={this.state.activeMarker}
-                    visible={this.state.showingInfoWindow}>
-                      <div>
-                        <h1>{this.state.places.pname}</h1>
-                      </div>
-                  </InfoWindow>
+                      marker={this.state.activeMarker}
+                      visible={this.state.showingInfoWindow}>
+                        <div>
+                          <p>{this.state.selectedPlace.pname_th}</p>
+                        </div>
+                  </InfoWindow>        
+                  {this.renderChildren()}
                   {this.state.isHeatVisible ? heat: null}
                 </Map>
               </InputGroup>
               <InputGroup style={{height:'10%'}}>
               <Button
-                            variant="contained"
-                            size="large"
-                            color="secondary"
-                            style={{width:'100%'}}
-                            onClick={this.toggleHeatmap}
-                          >
-                              Open Heat Map
-                            
+                variant="contained"
+                size="large"
+                color="secondary"
+                style={{width:'100%'}}
+                onClick={this.toggleHeatmap}
+              >Open Heat Map      
               </Button>
               </InputGroup>
             </Col>
@@ -452,14 +528,14 @@ export class MapContainer extends React.Component{
                   <Typography style={{fontFamily:"csPrajad",fontSize:16}}>
                     <br />
                     <AccountBalanceIcon />
-                    ชื่อสถานที่ :   {`${this.state.places.place}`}
+                    ชื่อสถานที่ :   {`${this.state.selectedPlace.pname_th}`}
                   </Typography>
                   <br />
                   <Divider/>
                   <Typography style={{fontFamily:"csPrajad",fontSize:16}}>
                     <br />
                     <RoomIcon/>
-                    ละติจูด-ลองจิจูด :  {`${this.state.places.lat}-${this.state.places.lon}`}
+                    ละติจูด-ลองจิจูด :  {`${this.state.selectedPlace.lat}-${this.state.selectedPlace.lng}`}
                   </Typography>
                   <br />
                   <Divider/>
@@ -473,31 +549,59 @@ export class MapContainer extends React.Component{
                      <ListItem>
                         <Typography style={{fontFamily:"csPrajad",fontSize:16}}>
                         <CommuteIcon />
-                        จำนวนรถนักท่องเที่ยว(คัน) : {`${this.state.statistics[0].pp_all}`}
+                        จำนวนรถนักท่องเที่ยว : {`${this.state.selectedPlace.pp_all} คัน`}
                       </Typography>
                     </ListItem>
                     <ListItem>
                         <Typography style={{fontFamily:"csPrajad",fontSize:16}}>
                         <TodayIcon />
-                        วันที่นิยม : {`${this.state.statistics[0].pop_dayofweek}`}
+                        วันที่นิยม : {`${Object.values(this.state.dict.day)[this.state.selectedPlace.pop_dayofweek]}`}
                       </Typography>
                     </ListItem>
                     <ListItem>
                         <Typography style={{fontFamily:"csPrajad",fontSize:16}}>
                         <DateRangeIcon />
-                        เดือนที่นิยม : {`${this.state.statistics[0].pop_month}`}
+                        เดือนที่นิยม : {`${Object.values(this.state.dict.month)[this.state.selectedPlace.pop_month]}`}
                       </Typography>
                     </ListItem>
                     <ListItem>
                         <Typography style={{fontFamily:"csPrajad",fontSize:16}}>
                         <TimelapseIcon />
-                        เวลาเฉลี่ยในการท่องเที่ยว : {`${this.state.statistics[0].travel_time}`}
+                        เวลาเฉลี่ยในการท่องเที่ยว : {`${this.state.selectedPlace.travel_time} นาที`}
                       </Typography>
                     </ListItem>
                     <ListItem>
                         <Typography style={{fontFamily:"csPrajad",fontSize:16}}>
                         <AccessTimeIcon />
-                        ช่วงเวลาที่นิยม : {`${this.state.statistics[0]}`}
+                        ช่วงเวลาที่นิยม : 
+                        { 
+                          // (Object.values(this.state.selectedPlace)).map((item,index) => {
+                          // if (item === Math.max( 
+                          //       this.state.selectedPlace.pp_last_night,
+                          //       this.state.selectedPlace.pp_morning,
+                          //       this.state.selectedPlace.pp_afternoon,
+                          //       this.state.selectedPlace.pp_evening,
+                          //       this.state.selectedPlace.pp_night)
+                          //       // && item != 0
+                          //     )
+                          // {return index}
+                          // }).map((item) => {
+                          //   return Object.keys(this.state.selectedPlace)[item]
+                          // }).map((item) => {
+                          //   return this.state.dict.timeperiod[item]
+                          // })          
+                          Object.keys(this.state.selectedPlace).map((item,index) => {
+                            if (this.state.selectedPlace[item] === Math.max( 
+                                this.state.selectedPlace.pp_last_night,
+                                this.state.selectedPlace.pp_morning,
+                                this.state.selectedPlace.pp_afternoon,
+                                this.state.selectedPlace.pp_evening,
+                                this.state.selectedPlace.pp_night)
+                                && this.state.selectedPlace[item] != 0
+                              )
+                              {return this.state.dict.timeperiod[item]}
+                            })
+                      }
                       </Typography>
                     </ListItem>
                   </List>
