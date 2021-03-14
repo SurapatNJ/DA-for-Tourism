@@ -225,6 +225,7 @@ export function PoiForm({setStatistics,setPlaces,setHeatmaps}) {
       setStatistics(response.data,data.place)
     })
     .catch(function (error) {
+      alert("กรุณากรอบข้อมูลให้ครบถ้วน")
       console.log('FormError: ',error);
     });
   }
