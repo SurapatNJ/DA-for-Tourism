@@ -574,22 +574,7 @@ export class MapContainer extends React.Component{
                         <Typography style={{fontFamily:"csPrajad",fontSize:16}}>
                         <AccessTimeIcon />
                         ช่วงเวลาที่นิยม : 
-                        { 
-                          // (Object.values(this.state.selectedPlace)).map((item,index) => {
-                          // if (item === Math.max( 
-                          //       this.state.selectedPlace.pp_last_night,
-                          //       this.state.selectedPlace.pp_morning,
-                          //       this.state.selectedPlace.pp_afternoon,
-                          //       this.state.selectedPlace.pp_evening,
-                          //       this.state.selectedPlace.pp_night)
-                          //       // && item != 0
-                          //     )
-                          // {return index}
-                          // }).map((item) => {
-                          //   return Object.keys(this.state.selectedPlace)[item]
-                          // }).map((item) => {
-                          //   return this.state.dict.timeperiod[item]
-                          // })          
+                        {      
                           Object.keys(this.state.selectedPlace).map((item,index) => {
                             if (this.state.selectedPlace[item] === Math.max( 
                                 this.state.selectedPlace.pp_last_night,
@@ -609,12 +594,10 @@ export class MapContainer extends React.Component{
                   <br />
                 </CardContent>
               </Card>
-
             </Col>
           </Row>
         </Paper>
         </Container>
-
       </section>
     </div>
     );
