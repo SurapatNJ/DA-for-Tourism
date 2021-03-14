@@ -1219,17 +1219,6 @@ export default [
     "pcat_1": "นันทนาการ",
     "pcat_2": "",
     "pcat_3": ""
-  },
-  {
-    "id": 111,
-    "poi": "",
-    "pname_en": "",
-    "pname": "",
-    "lat": 0,
-    "lon": 0,
-    "pcat_1": "",
-    "pcat_2": "",
-    "pcat_3": ""
   }
   ];
   
