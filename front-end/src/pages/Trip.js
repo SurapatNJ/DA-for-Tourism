@@ -33,7 +33,7 @@ import axios from 'axios';
 
 //Google Map
 import { Map, GoogleApiWrapper,Rectangle,HeatMap,Marker} from 'google-maps-react';
-import { ControlPointDuplicateOutlined } from '@material-ui/icons';
+import { ControlPointDuplicateOutlined, HeadsetMicRounded } from '@material-ui/icons';
 
 
 
@@ -248,25 +248,38 @@ TablePaginationActions.propTypes = {
 function CustomizedTables() {
   const classes = useStyles();
   const [page, setPage] = React.useState(0);
+  const [myPage, setmyPage] = React.useState(0);
   const [rowsPerPage] = React.useState(5);
-  const [myTrip, setMyTrip] = React.useState(true);
+
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
   }
   const [groups, setGroups] = React.useState([]);
+  const [myGroups, setmyGroups] = React.useState([]);
   const emptyRows = rowsPerPage - Math.min(rowsPerPage,groups.length - page * rowsPerPage);
+  const [myTrip, setMyTrip] = React.useState(true);
   
-  const handleDelete = (id,i) => {
 
-    setGroups(groups.filter((row, j) => j !== i))
-    axios.delete("http://104.248.7.194:8000/api/trip_title_api/" + id).catch((err)=> {
-    });
+  const getIndex= (value, arr, prop)=>{
+    for(var i = 0; i < arr.length; i++) {
+        if(arr[i][prop] === value) {
+            return i;
+        }
+    }
+    return -1; //to handle the case where the value doesn't exist
+  }
+
+  const handleDelete = (myid,i) => {
+    var k = getIndex(myid,groups,'id')
+    setmyGroups(myGroups.filter((row, j) => j !== i))
+    setGroups(groups.filter((row, j) => j !== k))
+    /*axios.delete("http://104.248.7.194:8000/api/trip_title_api/" + id).catch((err)=> {
+    });*/
 
   }
   
   const handleMyTrip = () => {
     setMyTrip(true);
-    console.log(groups)
   }
 
   const handleRecTrip = () => {
@@ -278,11 +291,13 @@ function CustomizedTables() {
       await axios.get('http://104.248.7.194:8000/api/trip_title_api/')
       .then((res) => {
         setGroups(res.data)
+        setmyGroups(res.data.filter(item=>item.user_id==localStorage.getItem('user_id')))
       })
       .catch((err) => {
         console.log(err)
       }) 
     }
+
     fetchData()
   }, [])
   
@@ -313,8 +328,8 @@ function CustomizedTables() {
         {myTrip==true? 
          <TableBody>
          {(rowsPerPage > 0
-             ? groups.filter(item=>item.user_id==localStorage.getItem('user_id')).slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-             : groups.filter(item=>item.user_id==localStorage.getItem('user_id'))).map((row,index) => (        
+             ? myGroups.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+             : myGroups).map((row,index) => (        
              <StyledTableRow key={index}>
                <StyledTableCell component="th" scope="row">
                  {row.trip_name}
@@ -322,7 +337,7 @@ function CustomizedTables() {
                <StyledTableCell align="center">{row.created.replace('T'," ").split("",19)}</StyledTableCell>
                <StyledTableCell align="center">
                  <IconButton aria-label="edit" size="small"><EditRoundedIcon/></IconButton>  
-                 <IconButton aria-label="delete" size="small" onClick={() => handleDelete(groups[index].id,index)}><DeleteForeverRoundedIcon/></IconButton>
+                 <IconButton aria-label="delete" size="small" onClick={() => handleDelete(myGroups[index].id,index)}><DeleteForeverRoundedIcon/></IconButton>
                </StyledTableCell>
              </StyledTableRow>
            ))}
@@ -358,13 +373,13 @@ function CustomizedTables() {
         <TableFooter>
         {myTrip==true? 
           <TablePagination
-                count={groups.filter(item=>item.user_id==localStorage.getItem('user_id')).length}
-                labelRowsPerPage=''
-                rowsPerPageOptions=''
-                rowsPerPage={rowsPerPage}
-                page={page}
-                onChangePage={handleChangePage}
-                ActionsComponent={TablePaginationActions}
+            count={myGroups.length}
+            labelRowsPerPage=''
+            rowsPerPageOptions=''
+            rowsPerPage={rowsPerPage}
+            page={page}
+            onChangePage={handleChangePage}
+            ActionsComponent={TablePaginationActions}
               />
               :
               <TablePagination
