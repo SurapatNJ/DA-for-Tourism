@@ -272,8 +272,8 @@ function CustomizedTables() {
     var k = getIndex(myid,groups,'id')
     setmyGroups(myGroups.filter((row, j) => j !== i))
     setGroups(groups.filter((row, j) => j !== k))
-    /*axios.delete("http://104.248.7.194:8000/api/trip_title_api/" + id).catch((err)=> {
-    });*/
+    axios.delete("http://104.248.7.194:8000/api/trip_title_api/" + id).catch((err)=> {
+    });
 
   }
   
