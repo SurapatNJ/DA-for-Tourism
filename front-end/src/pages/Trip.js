@@ -257,10 +257,10 @@ function CustomizedTables() {
   const emptyRows = rowsPerPage - Math.min(rowsPerPage,groups.length - page * rowsPerPage);
   
   const handleDelete = (id,i) => {
-    window.alert('dd')
-    /*setGroups(groups.filter((row, j) => j !== i))
+
+    setGroups(groups.filter((row, j) => j !== i))
     axios.delete("http://104.248.7.194:8000/api/trip_title_api/" + id).catch((err)=> {
-    });*/
+    });
 
   }
   
