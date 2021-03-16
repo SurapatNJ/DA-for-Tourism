@@ -28,11 +28,12 @@ import FirstPageIcon from '@material-ui/icons/FirstPage';
 import KeyboardArrowLeft from '@material-ui/icons/KeyboardArrowLeft';
 import KeyboardArrowRight from '@material-ui/icons/KeyboardArrowRight';
 import LastPageIcon from '@material-ui/icons/LastPage';
-
+import SearchIcon from '@material-ui/icons/Search';
 import axios from 'axios';
 
 //Google Map
 import { Map, GoogleApiWrapper,Rectangle,HeatMap,Marker} from 'google-maps-react';
+import { ControlPointDuplicateOutlined } from '@material-ui/icons';
 
 
 
@@ -248,15 +249,28 @@ function CustomizedTables() {
   const classes = useStyles();
   const [page, setPage] = React.useState(0);
   const [rowsPerPage] = React.useState(5);
-  
+  const [myTrip, setMyTrip] = React.useState(true);
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
   }
   const [groups, setGroups] = React.useState([]);
   const emptyRows = rowsPerPage - Math.min(rowsPerPage,groups.length - page * rowsPerPage);
+  
+  const handleDelete = (id,i) => {
+    window.alert('dd')
+    /*setGroups(groups.filter((row, j) => j !== i))
+    axios.delete("http://104.248.7.194:8000/api/trip_title_api/" + id).catch((err)=> {
+    });*/
 
-  const handleDelete = () => {
-    ////
+  }
+  
+  const handleMyTrip = () => {
+    setMyTrip(true);
+    console.log(groups)
+  }
+
+  const handleRecTrip = () => {
+    setMyTrip(false);
   }
 
   useEffect(() => {
@@ -272,9 +286,21 @@ function CustomizedTables() {
     fetchData()
   }, [])
   
-  console.log(groups)
   return (
+    
     <TableContainer component={Paper}>
+       <Button
+                  variant="contained"
+                  color="secondary"
+                  style={{width:'50%',height:50}}
+                  onClick={handleMyTrip}
+              >My Trip</Button>
+         <Button
+                  variant="contained"
+                  color="primary"
+                  style={{width:'50%',height:50}}
+                  onClick={handleRecTrip}
+              >Recommended Trip</Button>
       <Table className={classes.table} aria-label="customized table">
         <TableHead>
           <TableRow>
@@ -283,18 +309,41 @@ function CustomizedTables() {
             <StyledTableCell align="center">แก้ไข/ลบ</StyledTableCell>
           </TableRow>
         </TableHead>
+       
+        {myTrip==true? 
+         <TableBody>
+         {(rowsPerPage > 0
+             ? groups.filter(item=>item.user_id==localStorage.getItem('user_id')).slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+             : groups.filter(item=>item.user_id==localStorage.getItem('user_id'))).map((row,index) => (        
+             <StyledTableRow key={index}>
+               <StyledTableCell component="th" scope="row">
+                 {row.trip_name}
+               </StyledTableCell>
+               <StyledTableCell align="center">{row.created.replace('T'," ").split("",19)}</StyledTableCell>
+               <StyledTableCell align="center">
+                 <IconButton aria-label="edit" size="small"><EditRoundedIcon/></IconButton>  
+                 <IconButton aria-label="delete" size="small" onClick={() => handleDelete(groups[index].id,index)}><DeleteForeverRoundedIcon/></IconButton>
+               </StyledTableCell>
+             </StyledTableRow>
+           ))}
+           {emptyRows > 0 && (
+             <TableRow style={{ height: 63 * emptyRows }}>
+               <TableCell colSpan={6} />
+             </TableRow>
+           )}
+         </TableBody>
+        :
         <TableBody>
         {(rowsPerPage > 0
             ? groups.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-            : groups).map((row,index) => (
+            : groups).map((row,index) => (        
             <StyledTableRow key={index}>
               <StyledTableCell component="th" scope="row">
                 {row.trip_name}
               </StyledTableCell>
               <StyledTableCell align="center">{row.created.replace('T'," ").split("",19)}</StyledTableCell>
               <StyledTableCell align="center">
-                <IconButton aria-label="edit" size="small"><EditRoundedIcon/></IconButton>  
-                <IconButton aria-label="delete" size="small" ><DeleteForeverRoundedIcon/></IconButton>
+                <IconButton size="small"><SearchIcon/></IconButton>  
               </StyledTableCell>
             </StyledTableRow>
           ))}
@@ -304,9 +353,12 @@ function CustomizedTables() {
             </TableRow>
           )}
         </TableBody>
+        }
+       
         <TableFooter>
+        {myTrip==true? 
           <TablePagination
-                count={groups.length}
+                count={groups.filter(item=>item.user_id==localStorage.getItem('user_id')).length}
                 labelRowsPerPage=''
                 rowsPerPageOptions=''
                 rowsPerPage={rowsPerPage}
@@ -314,9 +366,21 @@ function CustomizedTables() {
                 onChangePage={handleChangePage}
                 ActionsComponent={TablePaginationActions}
               />
+              :
+              <TablePagination
+              count={groups.length}
+              labelRowsPerPage=''
+              rowsPerPageOptions=''
+              rowsPerPage={rowsPerPage}
+              page={page}
+              onChangePage={handleChangePage}
+              ActionsComponent={TablePaginationActions}
+            />
+            }
         </TableFooter>
       </Table>
     </TableContainer>
+    
   );
 }
 
@@ -376,6 +440,7 @@ export class MapContainer extends Component {
                   variant="contained"
                   color="secondary"
                   style={{width:'75%',height:50}}
+              
               >My Trip</Button>
             </Box>
             <Box ml={'14%'} py={2}>
