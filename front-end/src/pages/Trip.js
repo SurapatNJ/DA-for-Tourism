@@ -248,7 +248,6 @@ TablePaginationActions.propTypes = {
 function CustomizedTables() {
   const classes = useStyles();
   const [page, setPage] = React.useState(0);
-  const [myPage, setmyPage] = React.useState(0);
   const [rowsPerPage] = React.useState(5);
 
   const handleChangePage = (event, newPage) => {
@@ -266,20 +265,21 @@ function CustomizedTables() {
             return i;
         }
     }
-    return -1;
+    return -1; //to handle the case where the value doesn't exist
   }
 
   const handleDelete = (myid,i) => {
     var k = getIndex(myid,groups,'id')
     setmyGroups(myGroups.filter((row, j) => j !== i))
     setGroups(groups.filter((row, j) => j !== k))
-    axios.delete("http://104.248.7.194:8000/api/trip_title_api/" + id).catch((err)=> {
-    });
+    /*axios.delete("http://104.248.7.194:8000/api/trip_title_api/" + id).catch((err)=> {
+    });*/
 
   }
   
   const handleMyTrip = () => {
     setMyTrip(true);
+    setPage(0);
   }
 
   const handleRecTrip = () => {
