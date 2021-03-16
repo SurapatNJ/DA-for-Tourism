@@ -10,6 +10,7 @@ import Poi from "./pages/Poi";
 import Trip from "./pages/Trip";
 import Home from './pages/Home';
 import Planner from "./pages/Planner";
+import EditPlanner from "./pages/EditPlanner";
 import Login from "./pages/Login";
 import SignUp from "./pages/SignUp";
 import { withStyles  } from '@material-ui/core/styles';
@@ -223,6 +224,7 @@ export class App extends Component {
             <Route path="/pages/Planner" component={Planner} exact/>
             <Route path="/pages/Login" component={()=><Login handleSuccessfulAuth = {this.handleSuccessfulAuth} />} exact/>
             <Route path="/pages/SignUp" component={SignUp} exact/>
+            <Route path="/pages/EditPlanner/:id" component={EditPlanner} exact/>
           </Switch>
                  
         </div>

@@ -35,9 +35,6 @@ import axios from 'axios';
 import { Map, GoogleApiWrapper,Rectangle,HeatMap,Marker} from 'google-maps-react';
 import { ControlPointDuplicateOutlined, HeadsetMicRounded } from '@material-ui/icons';
 
-
-
-
 //------------------ Input -----------------------//
 export function CityName() {
   const defaultProps = {
@@ -274,7 +271,6 @@ function CustomizedTables() {
     setGroups(groups.filter((row, j) => j !== k))
     axios.delete("http://104.248.7.194:8000/api/trip_title_api/" + myid).catch((err)=> {
     });
-
   }
   
   const handleMyTrip = () => {
@@ -329,14 +325,17 @@ function CustomizedTables() {
          <TableBody>
          {(rowsPerPage > 0
              ? myGroups.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-             : myGroups).map((row,index) => (        
+             : myGroups).map((row,index) => ( 
              <StyledTableRow key={index}>
                <StyledTableCell component="th" scope="row">
                  {row.trip_name}
                </StyledTableCell>
                <StyledTableCell align="center">{row.created.replace('T'," ").split("",19)}</StyledTableCell>
                <StyledTableCell align="center">
-                 <IconButton aria-label="edit" size="small"><EditRoundedIcon/></IconButton>  
+                 <IconButton aria-label="edit" size="small" 
+                  component={Link}
+                  to={"/pages/EditPlanner/"+row.id}
+                 ><EditRoundedIcon/></IconButton>  
                  <IconButton aria-label="delete" size="small" onClick={() => handleDelete(myGroups[index].id,index)}><DeleteForeverRoundedIcon/></IconButton>
                </StyledTableCell>
              </StyledTableRow>

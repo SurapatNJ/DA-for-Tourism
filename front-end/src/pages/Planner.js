@@ -132,8 +132,13 @@ export function HotelName({setHotelname}) {
         includeInputInList
         renderInput={(params) => <TextField {...params} label="ชื่อโรงแรม/ที่พัก"  required id="standard-required"/>}
         onChange={(event, value) => {
-          console.log("value:",value.Id,parseFloat(value.lat),value.lng)
-          setHotelname(value.Id,parseFloat(value.lat),value.lng)
+          console.log("value:",value)
+          if (value){
+            setHotelname(value.Id,parseFloat(value.lat),value.lng)
+          }
+          else {
+            setHotelname(0,0,0)
+          }
         }}
       />
     </div>
