@@ -1,4 +1,4 @@
-import React , {Component, Fragment, useRef } from 'react';
+import React , {Component, Fragment, useRef, useState } from 'react';
 import '../App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Container from 'react-bootstrap/Container';
@@ -12,8 +12,7 @@ import { Link } from 'react-router-dom';
 import InputGroup from 'react-bootstrap/InputGroup';
 import { Scrollbars } from 'react-custom-scrollbars';
 import {Typography,Button,Paper,Grid,Tab,Tabs,Box,TextField,InputLabel,MenuItem,FormControl,Select,Fab,IconButton,Card,CardContent,Divider,Avatar,List,ListItem,ListItemIcon,Table,TableBody,TableCell,TableContainer,TableHead,TableRow,TableFooter,TablePagination,Collapse,Portal,Checkbox,FormControlLabel,Radio,RadioGroup,FormGroup} from "@material-ui/core";
-import { green } from '@material-ui/core/colors';
-
+import { green } from '@material-ui/core/colors'; 
 import MuiAccordion from '@material-ui/core/Accordion';
 import MuiAccordionSummary from '@material-ui/core/AccordionSummary';
 import MuiAccordionDetails from '@material-ui/core/AccordionDetails';
@@ -48,7 +47,12 @@ import { ThumbDownAltRounded, ThumbsUpDownOutlined } from '@material-ui/icons';
 
 
 //------------------ Input -----------------------//
-export function CityName() {
+
+export function TripName(val) {
+  return (console.log(val))
+}
+
+export function CityName({setCitycode}) {
   const defaultProps = {
     options: cityOptions,
     getOptionLabel: (option) => option.cname_th +" ("+ option.cname_en +")",
@@ -61,6 +65,10 @@ export function CityName() {
         autoComplete
         includeInputInList
         renderInput={(params) => <TextField {...params} label="ชื่อจังหวัด"   required id="standard-required" style={{marginTop:-18}}/>}
+        onChange={(event, value) => {       
+          setCitycode(value.city_code)
+          console.log("value:",value)
+        }}
       />
     </div>
   );
@@ -79,6 +87,9 @@ export function PlaceName() {
         autoComplete
         includeInputInList
         renderInput={(params) => <TextField  {...params} label="ชื่อสถานที่ท่องเที่ยว" />}
+        onChange={(event, value) => {
+          console.log("value:",value)
+        }}
       />
     </div>
   );
@@ -98,13 +109,16 @@ export function ModeName() {
         autoComplete
         includeInputInList
         renderInput={(params) => <TextField {...params} label="โหมดสถานที่"  required id="standard-required"  style={{marginLeft:10,marginTop:5}}/>}
+        onChange={(event, value) => {
+          console.log("value:",value)
+        }}
       />
     </div>
   );
 }
 
 
-export function HotelName() {
+export function HotelName({setHotelname}) {
   const defaultProps = {
     options: hotelOptions,
     getOptionLabel: (option) => option.Hotel_name,
@@ -117,12 +131,16 @@ export function HotelName() {
         autoComplete
         includeInputInList
         renderInput={(params) => <TextField {...params} label="ชื่อโรงแรม/ที่พัก"  required id="standard-required"/>}
+        onChange={(event, value) => {
+          console.log("value:",value.Id,parseFloat(value.lat),value.lng)
+          setHotelname(value.Id,parseFloat(value.lat),value.lng)
+        }}
       />
     </div>
   );
 }
 
-export function DateStart() {
+export function DateStart({addDatestart}) {
   return (
     <form noValidate>
       <TextField
@@ -134,12 +152,16 @@ export function DateStart() {
         InputLabelProps={{
           shrink: true,
         }}
+        onChange={(event, value) => {
+          addDatestart(event.target.value)
+          console.log("value:",event.target.value)
+        }}
       />
     </form>
   );
 }
 
-export function DateEnd() {
+export function DateEnd({addDateend}) {
   return (
     <form noValidate>
       <TextField
@@ -151,11 +173,14 @@ export function DateEnd() {
         InputLabelProps={{
           shrink: true,
         }}
+        onChange={(event, value) => {
+          addDateend(event.target.value)
+          console.log("value:",event.target.value)
+        }}
       />
     </form>
   );
 }
-
 
 const p_cat = [
   { pcat: 'ธรรมชาติ'},
@@ -249,7 +274,6 @@ const useStyles1 = makeStyles((theme) => ({
     margin: theme.spacing(1, 3),
   },
 }));
-
 
 //--------------- Accordion ------------------/
 
@@ -470,7 +494,6 @@ export function CreateAccordion(){
   );
 }
 
-
 export function RatingClick() {
   const [show, setShow] = React.useState(false);
   const container = React.useRef(null);
@@ -508,7 +531,6 @@ export function RatingClick() {
 
   );
 }
-
 
 export function RatingAllClick() {
   const [show, setShow] = React.useState(false);
@@ -548,7 +570,6 @@ export function RatingAllClick() {
   );
 }
 
-
 const plannerUseStyles = makeStyles((theme) => ({
   paper: {
     display: 'flex',
@@ -568,8 +589,58 @@ const plannerUseStyles = makeStyles((theme) => ({
 
 }));
 
-export function PlannerForm() {
+export function PlannerForm({setPlaces}) {
+  const [submitvalues,setSubmitvalues] = useState({
+    user_id: localStorage.getItem('user_id'),
+    trip_name: '',
+    city_code: '',
+    start_trip_date: '',
+    end_trip_date: '',
+    hotel_id: '',
+    rating_point: 0,
+    trip_data: '',
+    lat:0,
+    lng:0,
+  })
   const classes = plannerUseStyles();
+  function setTripname(p){
+    setSubmitvalues({...submitvalues, trip_name: p})  
+  }
+  function setCitycode(p){
+    setSubmitvalues({...submitvalues, city_code: p})  
+  }
+  function setHotelname(p,lat,lng){
+    setSubmitvalues({...submitvalues, hotel_id: p, lat:lat, lng:lng}) 
+  }
+  function addDatestart(p){
+    setSubmitvalues({...submitvalues, start_trip_date: p})  
+  }
+  function addDateend(p){
+    setSubmitvalues({...submitvalues, end_trip_date: p})  
+  }
+  function submitForm(data) {
+    setPlaces(data.lat,data.lng)
+    console.log('submitform: ',data)  
+    axios.post("http://104.248.7.194:8000/api/trip_title_api/",{
+      user_id: data.user_id,
+      trip_name: data.trip_name,
+      city_code: data.city_code,
+      start_trip_date: data.start_trip_date,
+      end_trip_date: data.end_trip_date,
+      hotel_id: data.hotel_id,
+      rating_point: data.rating_point,
+      trip_data: data.trip_data,
+    },{
+      headers: {
+        'Content-Type': 'application/json'
+    }})
+      .then(function (response) {
+      console.log('TripResponse:',response.data);
+    })
+      .catch(function (error) {
+      console.log('TripError:',error);
+    });
+  }
   return(
     <Container fluid noGutters={true}>
     <div className={classes.paper}>
@@ -579,33 +650,55 @@ export function PlannerForm() {
             <Typography style={{fontFamily:"csPrajad" ,fontSize:16}}>ชื่อทริป :</Typography>
           </Grid>
           <Grid item xs={9}>
-            <TextField required id="standard-required" label="ชื่อทริป" style={{width:'100%',marginTop:-18}}/>
+            <TextField required id="standard-required" label="ชื่อทริป" style={{width:'100%',marginTop:-18}}
+            onChange={e => {
+              setTripname(e.target.value)
+            }} 
+            />
           </Grid>
           <Grid item xs={3}>
             <Typography style={{fontFamily:"csPrajad" ,fontSize:16}}>ชื่อจังหวัด :</Typography>
           </Grid>
           <Grid item xs={9}>
-            <CityName/>
+            <CityName 
+            setCitycode={setCitycode}
+            />
           </Grid>
           <Grid item xs={3}>
             <Typography style={{fontFamily:"csPrajad" ,fontSize:16}}>วันที่ไป :</Typography>
           </Grid>
           <Grid item xs={9}>
-            <DateStart/>
+            <DateStart
+            addDatestart = {addDatestart}
+            />
           </Grid>
           <Grid item xs={3}>
             <Typography style={{fontFamily:"csPrajad" ,fontSize:16}}>วันที่กลับ :</Typography>
           </Grid>
           <Grid item xs={9}>
-            <DateEnd/>
+            <DateEnd
+             addDateend = {addDateend}
+             />
           </Grid>
           <Grid item xs={3}>
             <Typography style={{fontFamily:"csPrajad" ,fontSize:16}}>ที่พัก :</Typography>
           </Grid>
           <Grid item xs={9}>
-            <HotelName/>
+            <HotelName
+            setHotelname={setHotelname}
+            />
           </Grid>
         </Grid>
+        <InputGroup style={{width:'80%'}}>
+              <Button
+                    variant="contained"
+                    color="primary"
+                    style={{width:'30%',height:'8%',margin:'5%',marginLeft:'45%',marginTop:'7%'}}
+                    onClick={() => {
+                      submitForm(submitvalues) 
+                    }}
+                >ยืนยัน</Button>
+            </InputGroup>
       </form>
     </div>
   </Container>
@@ -613,11 +706,23 @@ export function PlannerForm() {
   );
 }
 
-
-
 {/*     ////////       main     ///////    */ }
 export class MapContainer extends Component {
-  componentDidMount() { 
+  constructor(props){
+    super(props);
+    this.state = {
+      places:{
+        lat: 0,
+        lng: 0,
+      }
+    }
+  }
+  setPlace(p,q){
+    console.log("PQ:",p,q)
+    this.setState({places:{lat:p ,lng:q+0.0022141 }})
+    console.log("places:",this.state.places)
+  }
+  componentDidMount(){ 
     let data; 
     axios 
         .get("http://104.248.7.194:8000/api/login/") 
@@ -630,6 +735,7 @@ export class MapContainer extends Component {
 } 
 
   render() {
+    this.setPlace = this.setPlace.bind(this);
     return (
       <div className="Trip">
       <link
@@ -638,28 +744,30 @@ export class MapContainer extends Component {
         integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk"
         crossorigin="anonymous"
       />
-   
       <header className="App-header">
       </header>
 
       <section className="App-section">
-      <Container fluid >
-             
-      <Row>
+      <Container fluid >            
+      <Row 
+      >
           <Paper elevation={5} style={{width:'30%',minHeight:637,height:'90%',marginTop:'5%',marginBottom:'5%',marginLeft:'3%'}}>
             <Card style={{backgroundColor:'#284B63',width:'auto'}}>
               <CardContent style={{color:'white'}}>
                 <Typography style={{margin:10, fontFamily:"csPrajad" ,fontSize:20,fontWeight:'bold'}}>ข้อมูลทริป และเลือกที่พัก</Typography>
               </CardContent>
             </Card>
-            <PlannerForm/>
+            <PlannerForm 
+              setPlaces={this.setPlace}
+            >
+            </PlannerForm>
             <InputGroup style={{width:'100%',height:180}}>
               {/*    Hotel Map    */}
                 <Map
                 google={this.props.google}
                 zoom={17}
                 style={{width:'95%',height:'100%',margin:'2.5%'}}
-                disableDefaultUI ={true}
+                //disableDefaultUI ={true}
                 scrollwheel={false}
                 disableDoubleClickZoom = {true}
                 draggable={false}
@@ -672,18 +780,14 @@ export class MapContainer extends Component {
                     lng:  100.901878
                   }
                 }
+                center={{ lat:this.state.places.lat, lng: this.state.places.lng}}
               >
-            {hotelOptions.map(hotelOptions=>(
-              <Marker key={hotelOptions.Hotel_name[1]} position={{lat:hotelOptions.lat,lng:hotelOptions.lng}} />
-            ))}
+              <Marker
+                // onClick={this.onMarkerClick}
+                //name = {s.pname_th}
+                position={{ lat:this.state.places.lat, lng: this.state.places.lng}}
+              />
               </Map>     
-            </InputGroup>
-            <InputGroup style={{width:'80%'}}>
-              <Button
-                    variant="contained"
-                    color="primary"
-                    style={{width:'30%',height:'8%',margin:'5%',marginLeft:'45%',marginTop:'7%'}}
-                >ยืนยัน</Button>
             </InputGroup>
           </Paper>
 
