@@ -119,7 +119,7 @@ export class App extends Component {
       auth: true,
       userdata : data
     })
-    this.props.history.push("/pages/Trip")
+    this.props.history.push("/pages/Poi")
   };
 
 
@@ -196,15 +196,7 @@ export class App extends Component {
                       to={this.state.routes[2]}
                       className={classes.tab}
                     />
-                    {!this.state.auth && (
-                      <div className={classes.quote}>
-                        <IconButton edge="start" className={classes.menuButton}  color="inherit" disabled >
-                          <Typography style={{fontSize:14 ,color:'#3C6E71'}} >
-                            ( You must Login before planning your trip )
-                          </Typography>
-                        </IconButton>
-                      </div>
-                    )}
+
                   </Tabs>
 
 
