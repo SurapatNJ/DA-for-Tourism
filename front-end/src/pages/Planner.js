@@ -606,7 +606,7 @@ export function CreateAccordion(){
       
     </div>
   );
-
+}
 export function RatingClick() {
   const [show, setShow] = React.useState(false);
   const container = React.useRef(null);
