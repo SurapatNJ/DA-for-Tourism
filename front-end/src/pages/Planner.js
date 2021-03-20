@@ -153,7 +153,7 @@ export function DateStart({addDatestart}) {
         label="วันที่เริ่มต้น"
         type="date"
         required id="standard-required" 
-        style={{width:'55%',marginTop:-18}}
+        style={{width:'100%',marginTop:-18}}
         InputLabelProps={{
           shrink: true,
         }}
@@ -174,7 +174,7 @@ export function DateEnd({addDateend}) {
         label="วันที่สิ้นสุด"
         type="date"
         required id="standard-required" 
-        style={{width:'55%',marginTop:-18}}
+        style={{width:'100%',marginTop:-18}}
         InputLabelProps={{
           shrink: true,
         }}
@@ -237,7 +237,7 @@ export function SetTime() {
           id="selectStartTime"
           value={startTime}
           onChange={handleChange}
-          style={{width:'120'}}
+
         >
           <MenuItem value={1}>00:00</MenuItem>
           <MenuItem value={2}>01:00</MenuItem>
@@ -337,10 +337,29 @@ export function CreateAccordion(){
     );
   }
 
+  const start = "2020-11-29"
+  const end = "2020-12-02"
+
+  var daysOfYear = [];
+  for (var d = new Date(start); d <= new Date(end); d.setDate(d.getDate() + 1)) {
+    var format = ("0"+new Date(d).getDate()).slice(-2) +"/"+ ("0"+(new Date(d).getMonth()+1)).slice(-2) +"/"+ new Date(d).getFullYear()
+    daysOfYear.push(format);
+  }
+  const diffDate = (new Date(end) - new Date(start))/ (1000 * 60 * 60 * 24)
+
+  const accordion_data = [];
+  for(var i=0;i<diffDate+1;i++){
+    accordion_data.push(
+      {id: i,
+      heading: daysOfYear[i],
+      date: daysOfYear[i].replaceAll("/","-")}
+    )
+  }
+
   return (
     <div>
       <Paper elevation={0}>
-      <Scrollbars style={{height:550}}>
+      
       <div ClassName={classes2.paper}>
         <form className={classes2.form} noValidate>
           <Grid container spacing={2}>
@@ -356,7 +375,80 @@ export function CreateAccordion(){
           </Grid>
         </form>
         </div>
-
+        <Scrollbars style={{height:415}}>
+        {accordion_data.map(accordion => {
+        const { id, heading,date} = accordion; //date = var for add Trip_data
+        return (
+          <Accordion
+          expanded={expanded === id}
+          key={id}
+          onChange={handleChange(id)}
+        >
+          <AccordionSummary
+              expandIcon={<ExpandMoreIcon />}
+              aria-controls="panel1bh-content"
+              id="panel1bh-header"
+              style={{backgroundColor:'#3C6E71',color:'white'}}
+            >
+              <Typography style={{fontFamily:'csPrajad'}}>วันที่ {heading}</Typography>
+          </AccordionSummary>
+          <AccordionDetails>
+            <Paper elevation={0} style={{width:'100%'}}>
+                <div ClassName={classes2.paper}>
+                <form className={classes2.form2} noValidate>
+                  <Grid container style={{marginTop:-20}} >
+                    <Grid item xs={12}>
+                        <RatingClick/>
+                    </Grid>
+                      <Divider style={{marginTop:5}}/>
+                  
+                    <List style={{width:'100%',marginLeft:'-1%'}}>
+                      <ListItem>
+                        <Grid item xs={4}>
+                        <InputGroup><SetTime/><Typography style={{marginTop:2,fontSize:20,marginLeft:5,marginRight:5}}>-</Typography><SetTime/></InputGroup>
+                        </Grid>
+                        <Grid item xs={7} >   
+                            <PlaceName/>
+                        </Grid>
+                        <Grid item xs={1}/>
+                      </ListItem>
+            
+                      <ListItem>
+                        <Grid item xs={4}>
+                        <InputGroup><SetTime/><Typography style={{marginTop:2,fontSize:20,marginLeft:5,marginRight:5}}>-</Typography><SetTime/></InputGroup>
+                        </Grid>
+                        <Grid item xs={7}>   
+                            <PlaceName/>
+                        </Grid>
+                        <Grid item xs={1}/>
+                      </ListItem>
+                      <ListItem>
+                        <Grid item xs={4}>
+                        <InputGroup><SetTime/><Typography style={{marginTop:2,fontSize:20,marginLeft:5,marginRight:5}}>-</Typography><SetTime/></InputGroup>
+                        </Grid>
+                        <Grid item xs={7}>   
+                            <PlaceName/>
+                        </Grid>
+                        <Grid item xs={1}>
+                          <ListItemIcon>
+                            <IconButton size="small"><AddBoxIcon style={{ color: green[500]}} onClick={handleToggle}/></IconButton>
+                            <IconButton size="small"><IndeterminateCheckBoxIcon color="action"/></IconButton>
+                          </ListItemIcon>
+                        </Grid>
+                      </ListItem>
+                    </List>
+                      <Divider style={{marginTop:15}}/>
+                    </Grid>
+                  </form>
+                  </div>
+                  </Paper>
+              </AccordionDetails>
+          </Accordion>
+        );
+      })}
+ 
+            
+          {/*
       <Accordion square expanded={expanded === 'panel1'} onChange={handleChange('panel1')} > 
         <AccordionSummary
           expandIcon={<ExpandMoreIcon />}
@@ -370,35 +462,37 @@ export function CreateAccordion(){
         <Paper elevation={0} style={{width:'100%'}}>
             <div ClassName={classes2.paper}>
             <form className={classes2.form2} noValidate>
-              <Grid container spacing={2} style={{marginTop:-20}}>
+              <Grid container style={{marginTop:-20}} >
                 <Grid item xs={12}>
                      <RatingClick/>
                 </Grid>
                   <Divider style={{marginTop:5}}/>
-                <List style={{width:'100%'}}>
+               
+                <List style={{width:'100%',marginLeft:'-1%'}}>
                   <ListItem>
-                    <Grid item xs={5}>
+                    <Grid item xs={4}>
                     <InputGroup><SetTime/><Typography style={{marginTop:2,fontSize:20,marginLeft:5,marginRight:5}}>-</Typography><SetTime/></InputGroup>
                     </Grid>
-                    <Grid item xs={6}>   
+                    <Grid item xs={7} >   
+                        <PlaceName/>
+                    </Grid>
+                    <Grid item xs={1}/>
+                  </ListItem>
+         
+                  <ListItem>
+                    <Grid item xs={4}>
+                    <InputGroup><SetTime/><Typography style={{marginTop:2,fontSize:20,marginLeft:5,marginRight:5}}>-</Typography><SetTime/></InputGroup>
+                    </Grid>
+                    <Grid item xs={7}>   
                         <PlaceName/>
                     </Grid>
                     <Grid item xs={1}/>
                   </ListItem>
                   <ListItem>
-                    <Grid item xs={5}>
+                    <Grid item xs={4}>
                     <InputGroup><SetTime/><Typography style={{marginTop:2,fontSize:20,marginLeft:5,marginRight:5}}>-</Typography><SetTime/></InputGroup>
                     </Grid>
-                    <Grid item xs={6}>   
-                        <PlaceName/>
-                    </Grid>
-                    <Grid item xs={1}/>
-                  </ListItem>
-                  <ListItem>
-                    <Grid item xs={5}>
-                    <InputGroup><SetTime/><Typography style={{marginTop:2,fontSize:20,marginLeft:5,marginRight:5}}>-</Typography><SetTime/></InputGroup>
-                    </Grid>
-                    <Grid item xs={6}>   
+                    <Grid item xs={7}>   
                         <PlaceName/>
                     </Grid>
                     <Grid item xs={1}>
@@ -436,30 +530,30 @@ export function CreateAccordion(){
                      <RatingClick/>
                 </Grid>
                   <Divider style={{marginTop:5}}/>
-                <List style={{width:'100%'}}>
+                <List style={{width:'100%',marginLeft:'-1%'}}>
                   <ListItem>
-                    <Grid item xs={5}>
+                    <Grid item xs={4}>
                     <InputGroup><SetTime/><Typography style={{marginTop:2,fontSize:20,marginLeft:5,marginRight:5}}>-</Typography><SetTime/></InputGroup>
                     </Grid>
-                    <Grid item xs={6}>   
+                    <Grid item xs={7}>   
                         <PlaceName/>
                     </Grid>
                     <Grid item xs={1}/>
                   </ListItem>
                   <ListItem>
-                    <Grid item xs={5}>
+                    <Grid item xs={4}>
                     <InputGroup><SetTime/><Typography style={{marginTop:2,fontSize:20,marginLeft:5,marginRight:5}}>-</Typography><SetTime/></InputGroup>
                     </Grid>
-                    <Grid item xs={6}>   
+                    <Grid item xs={7}>   
                         <PlaceName/>
                     </Grid>
                     <Grid item xs={1}/>
                   </ListItem>
                   <ListItem>
-                    <Grid item xs={5}>
+                    <Grid item xs={4}>
                     <InputGroup><SetTime/><Typography style={{marginTop:2,fontSize:20,marginLeft:5,marginRight:5}}>-</Typography><SetTime/></InputGroup>
                     </Grid>
-                    <Grid item xs={6}>   
+                    <Grid item xs={7}>   
                         <PlaceName/>
                     </Grid>
                     <Grid item xs={1}>
@@ -477,7 +571,7 @@ export function CreateAccordion(){
               </Paper>
         </AccordionDetails>
       </Accordion>
-
+*/}
         <Divider/>
         <div className={classes2.paper}>
         <form className={classes2.form} noValidate>
@@ -494,7 +588,9 @@ export function CreateAccordion(){
         </form>
         </div>
         </Scrollbars>
+
       </Paper>
+      
     </div>
   );
 }
@@ -582,7 +678,7 @@ const plannerUseStyles = makeStyles((theme) => ({
     alignItems: 'center',
   },
   form: {
-    width: '90%', // Fix IE 11 issue.
+    width: '80%', // Fix IE 11 issue.
     marginTop: theme.spacing(3),
     marginBottom: theme.spacing(2),
   },
@@ -721,6 +817,7 @@ export class MapContainer extends Component {
         lng: 0,
       }
     }
+
   }
   setPlace(p,q){
     console.log("PQ:",p,q)
@@ -738,7 +835,6 @@ export class MapContainer extends Component {
         }) 
         .catch((err) => {}); 
 } 
-
   render() {
     this.setPlace = this.setPlace.bind(this);
     return (
@@ -753,13 +849,20 @@ export class MapContainer extends Component {
       </header>
 
       <section className="App-section">
-      <Container fluid >            
-      <Row 
-      >
-          <Paper elevation={5} style={{width:'30%',minHeight:637,height:'90%',marginTop:'5%',marginBottom:'5%',marginLeft:'3%'}}>
+      <Container fluid noGutters={true}>
+      <Row>
+      <Paper elevation={5} style={{width:'40%',height:'auto',marginTop:'5%',marginLeft:'7.5%'}}>
             <Card style={{backgroundColor:'#284B63',width:'auto'}}>
               <CardContent style={{color:'white'}}>
+                <Grid
+                  container
+                  spacing={0}
+                  direction="column"
+                  alignItems="center"
+                  justify="center"
+                >
                 <Typography style={{margin:10, fontFamily:"csPrajad" ,fontSize:20,fontWeight:'bold'}}>ข้อมูลทริป และเลือกที่พัก</Typography>
+              </Grid>
               </CardContent>
             </Card>
             <PlannerForm 
@@ -771,7 +874,7 @@ export class MapContainer extends Component {
                 <Map
                 google={this.props.google}
                 zoom={17}
-                style={{width:'95%',height:'100%',margin:'2.5%'}}
+                style={{width:'100%',height:'100%'}}
                 //disableDefaultUI ={true}
                 scrollwheel={false}
                 disableDoubleClickZoom = {true}
@@ -794,22 +897,42 @@ export class MapContainer extends Component {
               />
               </Map>     
             </InputGroup>
-          </Paper>
+      </Paper>
 
-          <Paper elevation={5} style={{width:'30%',minHeight:637,height:'90%',marginTop:'5%',marginBottom:'5%',marginLeft:'2%'}}>
+      <Paper elevation={5} style={{width:'40%',height:'auto',marginTop:'5%',marginLeft:'5%'}}>   
+        <Card style={{backgroundColor:'#284B63',width:'auto'}}>
+                <CardContent style={{color:'white'}}>
+                <Grid
+                  container
+                  spacing={0}
+                  direction="column"
+                  alignItems="center"
+                  justify="center"
+                >
+                <Typography style={{margin:10, fontFamily:"csPrajad" ,fontSize:20,fontWeight:'bold'}}>จัดการทริป</Typography>
+                </Grid>
+                </CardContent>
+              </Card>
+              {/*test Accordion--------*/}
+              <CreateAccordion/>
+      </Paper>
+      </Row>   
+
+
+      <Paper elevation={5} style={{width:'90%',height:'auto',margin:'5%'}}>
+        <Row noGutters>
+            <Col xs={12}>
             <Card style={{backgroundColor:'#284B63',width:'auto'}}>
               <CardContent style={{color:'white'}}>
-              <Typography style={{margin:10, fontFamily:"csPrajad" ,fontSize:20,fontWeight:'bold'}}>จัดการทริป</Typography>
-              </CardContent>
-            </Card>
-            {/*test Accordion--------*/}
-            <CreateAccordion/>
-          </Paper> 
-
-          <Paper elevation={5} style={{width:'30%',minHeight:637,height:'90%',marginTop:'5%',marginBottom:'5%',marginLeft:'2%'}}>
-            <Card style={{backgroundColor:'#284B63',width:'auto'}}>
-              <CardContent style={{color:'white'}}>
+              <Grid
+                  container
+                  spacing={0}
+                  direction="column"
+                  alignItems="center"
+                  justify="center"
+                >
               <Typography style={{margin:10, fontFamily:"csPrajad" ,fontSize:20,fontWeight:'bold'}}>แผนที่ทริป</Typography>
+              </Grid>
               </CardContent>
             </Card>
             <InputGroup style={{width:'100%',minHeight:547}}>
@@ -833,8 +956,10 @@ export class MapContainer extends Component {
                 }
               />     
             </InputGroup>
-          </Paper>  
-        </Row>  
+            </Col>
+        </Row>
+      </Paper>
+
       </Container>
       </section>
     </div>
