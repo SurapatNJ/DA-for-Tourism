@@ -364,6 +364,7 @@ export function CreateAccordion(){
       date: daysOfYear[i].replaceAll("/","-")}
     )
     
+      } 
   function addCattype(p){
     setSubmitvalues({...submitvalues, trip_type: p})  
   }
