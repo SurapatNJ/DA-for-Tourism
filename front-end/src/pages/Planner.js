@@ -205,7 +205,7 @@ const p_cat = [
   { pcat: 'ฟาร์ม'},
 ];
 
-export function Place_cat() {
+export function Place_cat({addCattype}) {
   const defaultProps = {
     options: p_cat,
     getOptionLabel: (option) => option.pcat,
@@ -219,15 +219,21 @@ export function Place_cat() {
         autoComplete
         includeInputInList
         renderInput={(params) => <TextField {...params} label="ประเภทของสถานที่ท่องเที่ยว"  required id="standard-required"  style={{marginLeft:10,marginBottom:10,marginTop:-5}}/>}
-      />
+        onChange={(event, value) => {
+          console.log("value:",value)
+          addCattype(value)
+      }}
+     />
     </div>
   );
 }
 
 export function SetTime() {
   const [startTime, setStartTime] = React.useState(1);
+
   const handleChange = (event) => {
     setStartTime(event.target.value);
+    console.log("value:",event.target.value)
   };
   return (
     <div>
@@ -324,6 +330,9 @@ const AccordionDetails = withStyles((theme) => ({
 }))(MuiAccordionDetails);
 
 export function CreateAccordion(){
+  const [submitvalues,setSubmitvalues] = useState({
+    trip_type:[]
+  })
   const classes = useStyles1();
   const classes2 = plannerUseStyles();
   const [expanded, setExpanded] = React.useState(false);
@@ -354,6 +363,9 @@ export function CreateAccordion(){
       heading: daysOfYear[i],
       date: daysOfYear[i].replaceAll("/","-")}
     )
+    
+  function addCattype(p){
+    setSubmitvalues({...submitvalues, trip_type: p})  
   }
 
   return (
@@ -370,7 +382,8 @@ export function CreateAccordion(){
               </InputGroup>
             </Grid>
            <Grid item xs={12}>
-            <Place_cat/>
+            <Place_cat
+            addCattype = {addCattype}/>
            </Grid>
           </Grid>
         </form>
