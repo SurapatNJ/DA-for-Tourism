@@ -1,4 +1,4 @@
-import React , {Component, Fragment, useRef, useState } from 'react';
+import React , {Component, Fragment, useEffect, useRef, useState } from 'react';
 import '../App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Container from 'react-bootstrap/Container';
@@ -229,7 +229,7 @@ export function Place_cat({addCattype}) {
 }
 
 export function SetTime() {
-  const [startTime, setStartTime] = React.useState(1);
+  const [startTime, setStartTime] = React.useState("");
 
   const handleChange = (event) => {
     setStartTime(event.target.value);
@@ -241,34 +241,32 @@ export function SetTime() {
         <Select
           labelId="selectStartTime"
           id="selectStartTime"
-          value={startTime}
           onChange={handleChange}
-
         >
-          <MenuItem value={1}>00:00</MenuItem>
-          <MenuItem value={2}>01:00</MenuItem>
-          <MenuItem value={3}>02:00</MenuItem>
-          <MenuItem value={4}>03:00</MenuItem>
-          <MenuItem value={5}>04:00</MenuItem>
-          <MenuItem value={6}>05:00</MenuItem>
-          <MenuItem value={7}>06:00</MenuItem>
-          <MenuItem value={8}>07:00</MenuItem>
-          <MenuItem value={9}>08:00</MenuItem>
-          <MenuItem value={10}>09:00</MenuItem>
-          <MenuItem value={11}>10:00</MenuItem>
-          <MenuItem value={12}>11:00</MenuItem>
-          <MenuItem value={13}>12:00</MenuItem>
-          <MenuItem value={14}>13:00</MenuItem>
-          <MenuItem value={15}>14:00</MenuItem>
-          <MenuItem value={16}>15:00</MenuItem>
-          <MenuItem value={17}>16:00</MenuItem>
-          <MenuItem value={18}>17:00</MenuItem>
-          <MenuItem value={19}>18:00</MenuItem>
-          <MenuItem value={20}>19:00</MenuItem>
-          <MenuItem value={21}>20:00</MenuItem>
-          <MenuItem value={22}>21:00</MenuItem>
-          <MenuItem value={23}>22:00</MenuItem>
-          <MenuItem value={24}>23:00</MenuItem>
+          <MenuItem value={"00:00"}>00:00</MenuItem>
+          <MenuItem value={"01:00"}>01:00</MenuItem>
+          <MenuItem value={"02:00"}>02:00</MenuItem>
+          <MenuItem value={"03:00"}>03:00</MenuItem>
+          <MenuItem value={"04:00"}>04:00</MenuItem>
+          <MenuItem value={"05:00"}>05:00</MenuItem>
+          <MenuItem value={"06:00"}>06:00</MenuItem>
+          <MenuItem value={"07:00"}>07:00</MenuItem>
+          <MenuItem value={"08:00"}>08:00</MenuItem>
+          <MenuItem value={"09:00"}>09:00</MenuItem>
+          <MenuItem value={"10:00"}>10:00</MenuItem>
+          <MenuItem value={"11:00"}>11:00</MenuItem>
+          <MenuItem value={"12:00"}>12:00</MenuItem>
+          <MenuItem value={"13:00"}>13:00</MenuItem>
+          <MenuItem value={"14:00"}>14:00</MenuItem>
+          <MenuItem value={"15:00"}>15:00</MenuItem>
+          <MenuItem value={"16:00"}>16:00</MenuItem>
+          <MenuItem value={"17:00"}>17:00</MenuItem>
+          <MenuItem value={"18:00"}>18:00</MenuItem>
+          <MenuItem value={"19:00"}>19:00</MenuItem>
+          <MenuItem value={"20:00"}>20:00</MenuItem>
+          <MenuItem value={"21:00"}>21:00</MenuItem>
+          <MenuItem value={"22:00"}>22:00</MenuItem>
+          <MenuItem value={"23:00"}>23:00</MenuItem>
         </Select>
       </FormControl>
     </div>
@@ -329,25 +327,53 @@ const AccordionDetails = withStyles((theme) => ({
   },
 }))(MuiAccordionDetails);
 
-export function CreateAccordion(){
+export function CreateAccordion({datainterval}){
   const [submitvalues,setSubmitvalues] = useState({
-    trip_type:[]
+    trip_type:[],
+    start:"2020-11-29",
+    end:"2020-12-03",
+    
   })
-  const classes = useStyles1();
+  const [rowdatas,setRowdatas] = useState({
+    date:[{
+      id : "",
+      trips: [{
+        id: 0,
+        start: "",
+        end: "",
+        place: ""
+      }],
+      count: 0
+    }]
+  })
+  console.log("DI_CA:",datainterval)
   const classes2 = plannerUseStyles();
   const [expanded, setExpanded] = React.useState(false);
   const handleChange = (panel) => (event, newExpanded) => {
     setExpanded(newExpanded ? panel : false);
   };
-  const [added, setAdded] = React.useState([]);
   const handleToggle= () => {
-    return (
-      <Typography>ddd</Typography>
-    );
+    // rowdatas.date[index].trips.push({
+    //   id: 0,
+    //   start: "",
+    //   end: "",
+    //   place: ""
+    // })
   }
-
-  const start = "2020-11-29"
-  const end = "2020-12-02"
+  useEffect(() => {
+    const fetch = () => {
+      if (datainterval.start === ""){
+        console.log("DI_CA2:",datainterval)
+      }
+      else{
+        setSubmitvalues({...submitvalues, start: datainterval.start, end:datainterval.end}) 
+        console.log("submit:",submitvalues)
+      }
+    }
+    fetch()
+  },[datainterval])
+  const start = submitvalues.start
+  const end = submitvalues.end
 
   var daysOfYear = [];
   for (var d = new Date(start); d <= new Date(end); d.setDate(d.getDate() + 1)) {
@@ -363,7 +389,19 @@ export function CreateAccordion(){
       heading: daysOfYear[i],
       date: daysOfYear[i].replaceAll("/","-")}
     )
-  } 
+    rowdatas.date.push(
+      {
+        id: i,
+        trips: [{
+          id: 0,
+          start: "",
+          end: "",
+          place: ""
+        }]
+      }
+    )
+  }
+
   function addCattype(p){
     setSubmitvalues({...submitvalues, trip_type: p})  
   }
@@ -371,7 +409,6 @@ export function CreateAccordion(){
   return (
     <div>
       <Paper elevation={0}>
-      
       <div ClassName={classes2.paper}>
         <form className={classes2.form} noValidate>
           <Grid container spacing={2}>
@@ -389,7 +426,8 @@ export function CreateAccordion(){
         </form>
         </div>
         <Scrollbars style={{height:415}}>
-        {accordion_data.map(accordion => {
+        {accordion_data.map((accordion,index) => {
+        console.log("index:",index)
         const { id, heading,date} = accordion; //date = var for add Trip_data
         return (
           <Accordion
@@ -414,28 +452,10 @@ export function CreateAccordion(){
                         <RatingClick/>
                     </Grid>
                       <Divider style={{marginTop:5}}/>
-                  
                     <List style={{width:'100%',marginLeft:'-1%'}}>
-                      <ListItem>
-                        <Grid item xs={4}>
-                        <InputGroup><SetTime/><Typography style={{marginTop:2,fontSize:20,marginLeft:5,marginRight:5}}>-</Typography><SetTime/></InputGroup>
-                        </Grid>
-                        <Grid item xs={7} >   
-                            <PlaceName/>
-                        </Grid>
-                        <Grid item xs={1}/>
-                      </ListItem>
-            
-                      <ListItem>
-                        <Grid item xs={4}>
-                        <InputGroup><SetTime/><Typography style={{marginTop:2,fontSize:20,marginLeft:5,marginRight:5}}>-</Typography><SetTime/></InputGroup>
-                        </Grid>
-                        <Grid item xs={7}>   
-                            <PlaceName/>
-                        </Grid>
-                        <Grid item xs={1}/>
-                      </ListItem>
-                      <ListItem>
+                      {rowdatas.date[index].trips.map((d,i) => {
+                        return(
+                        <ListItem>
                         <Grid item xs={4}>
                         <InputGroup><SetTime/><Typography style={{marginTop:2,fontSize:20,marginLeft:5,marginRight:5}}>-</Typography><SetTime/></InputGroup>
                         </Grid>
@@ -449,6 +469,8 @@ export function CreateAccordion(){
                           </ListItemIcon>
                         </Grid>
                       </ListItem>
+                      )
+                      })}
                     </List>
                       <Divider style={{marginTop:15}}/>
                     </Grid>
@@ -459,132 +481,6 @@ export function CreateAccordion(){
           </Accordion>
         );
       })}
- 
-            
-          {/*
-      <Accordion square expanded={expanded === 'panel1'} onChange={handleChange('panel1')} > 
-        <AccordionSummary
-          expandIcon={<ExpandMoreIcon />}
-          aria-controls="panel1bh-content"
-          id="panel1bh-header"
-          style={{backgroundColor:'#3C6E71',color:'white'}}
-        >
-          <Typography style={{fontFamily:'csPrajad',fontSize:'18',fontWeight:'bold'}}>วันที่ 1</Typography>
-        </AccordionSummary>
-        <AccordionDetails>
-        <Paper elevation={0} style={{width:'100%'}}>
-            <div ClassName={classes2.paper}>
-            <form className={classes2.form2} noValidate>
-              <Grid container style={{marginTop:-20}} >
-                <Grid item xs={12}>
-                     <RatingClick/>
-                </Grid>
-                  <Divider style={{marginTop:5}}/>
-               
-                <List style={{width:'100%',marginLeft:'-1%'}}>
-                  <ListItem>
-                    <Grid item xs={4}>
-                    <InputGroup><SetTime/><Typography style={{marginTop:2,fontSize:20,marginLeft:5,marginRight:5}}>-</Typography><SetTime/></InputGroup>
-                    </Grid>
-                    <Grid item xs={7} >   
-                        <PlaceName/>
-                    </Grid>
-                    <Grid item xs={1}/>
-                  </ListItem>
-         
-                  <ListItem>
-                    <Grid item xs={4}>
-                    <InputGroup><SetTime/><Typography style={{marginTop:2,fontSize:20,marginLeft:5,marginRight:5}}>-</Typography><SetTime/></InputGroup>
-                    </Grid>
-                    <Grid item xs={7}>   
-                        <PlaceName/>
-                    </Grid>
-                    <Grid item xs={1}/>
-                  </ListItem>
-                  <ListItem>
-                    <Grid item xs={4}>
-                    <InputGroup><SetTime/><Typography style={{marginTop:2,fontSize:20,marginLeft:5,marginRight:5}}>-</Typography><SetTime/></InputGroup>
-                    </Grid>
-                    <Grid item xs={7}>   
-                        <PlaceName/>
-                    </Grid>
-                    <Grid item xs={1}>
-                      <ListItemIcon>
-                        <IconButton size="small"><AddBoxIcon style={{ color: green[500]}} onClick={handleToggle}/></IconButton>
-                        <IconButton size="small"><IndeterminateCheckBoxIcon color="action"/></IconButton>
-                      </ListItemIcon>
-                    </Grid>
-                  </ListItem>
-                </List>
-                  <Divider style={{marginTop:15}}/>
-                </Grid>
-              </form>
-              </div>
-              </Paper>
-        </AccordionDetails>
-      </Accordion>
-
-      
-      <Accordion square expanded={expanded === 'panel2'} onChange={handleChange('panel2')} > 
-        <AccordionSummary
-          expandIcon={<ExpandMoreIcon />}
-          aria-controls="panel1bh-content"
-          id="panel1bh-header"
-          style={{backgroundColor:'#3C6E71',color:'white'}}
-        >
-          <Typography style={{fontFamily:'csPrajad',fontSize:'18',fontWeight:'bold'}}>วันที่ 2</Typography>
-        </AccordionSummary>
-        <AccordionDetails>
-        <Paper elevation={0} style={{width:'100%'}}>
-            <div ClassName={classes2.paper}>
-            <form className={classes2.form2} noValidate>
-              <Grid container spacing={2} style={{marginTop:-20}}>
-                <Grid item xs={12}>
-                     <RatingClick/>
-                </Grid>
-                  <Divider style={{marginTop:5}}/>
-                <List style={{width:'100%',marginLeft:'-1%'}}>
-                  <ListItem>
-                    <Grid item xs={4}>
-                    <InputGroup><SetTime/><Typography style={{marginTop:2,fontSize:20,marginLeft:5,marginRight:5}}>-</Typography><SetTime/></InputGroup>
-                    </Grid>
-                    <Grid item xs={7}>   
-                        <PlaceName/>
-                    </Grid>
-                    <Grid item xs={1}/>
-                  </ListItem>
-                  <ListItem>
-                    <Grid item xs={4}>
-                    <InputGroup><SetTime/><Typography style={{marginTop:2,fontSize:20,marginLeft:5,marginRight:5}}>-</Typography><SetTime/></InputGroup>
-                    </Grid>
-                    <Grid item xs={7}>   
-                        <PlaceName/>
-                    </Grid>
-                    <Grid item xs={1}/>
-                  </ListItem>
-                  <ListItem>
-                    <Grid item xs={4}>
-                    <InputGroup><SetTime/><Typography style={{marginTop:2,fontSize:20,marginLeft:5,marginRight:5}}>-</Typography><SetTime/></InputGroup>
-                    </Grid>
-                    <Grid item xs={7}>   
-                        <PlaceName/>
-                    </Grid>
-                    <Grid item xs={1}>
-                      <ListItemIcon>
-                        <IconButton size="small"><AddBoxIcon style={{ color: green[500]}} onClick={handleToggle}/></IconButton>
-                        <IconButton size="small"><IndeterminateCheckBoxIcon color="action"/></IconButton>
-                      </ListItemIcon>
-                    </Grid>
-                  </ListItem>
-                </List>
-                  <Divider style={{marginTop:15}}/>
-                </Grid>
-              </form>
-              </div>
-              </Paper>
-        </AccordionDetails>
-      </Accordion>
-*/}
         <Divider/>
         <div className={classes2.paper}>
         <form className={classes2.form} noValidate>
@@ -702,7 +598,7 @@ const plannerUseStyles = makeStyles((theme) => ({
 
 }));
 
-export function PlannerForm({setPlaces}) {
+export function PlannerForm({setPlaces,setDateIntervals}) {
   const [submitvalues,setSubmitvalues] = useState({
     user_id: localStorage.getItem('user_id'),
     trip_name: '',
@@ -729,10 +625,11 @@ export function PlannerForm({setPlaces}) {
     setSubmitvalues({...submitvalues, start_trip_date: p})  
   }
   function addDateend(p){
-    setSubmitvalues({...submitvalues, end_trip_date: p})  
+    setSubmitvalues({...submitvalues, end_trip_date: p})
   }
   function submitForm(data) {
     setPlaces(data.lat,data.lng)
+    setDateIntervals(data)
     console.log('submitform: ',data)  
     axios.post("http://104.248.7.194:8000/api/trip_title_api/",{
       user_id: data.user_id,
@@ -827,6 +724,10 @@ export class MapContainer extends Component {
       places:{
         lat: 0,
         lng: 0,
+      },
+      dateinterval:{
+        start:'',
+        end:''
       }
     }
 
@@ -834,7 +735,12 @@ export class MapContainer extends Component {
   setPlace(p,q){
     console.log("PQ:",p,q)
     this.setState({places:{lat:p ,lng:q+0.0022141 }})
-    console.log("places:",this.state.places)
+    // console.log("places:",this.state.places)
+  }
+  setDateInterval(p){
+    console.log("DI:",p)
+    this.setState({dateinterval:{start:p.start_trip_date,end:p.end_trip_date}})
+    // console.log("date:",this.state.dateinterval)
   }
   componentDidMount(){ 
     let data; 
@@ -849,6 +755,7 @@ export class MapContainer extends Component {
 } 
   render() {
     this.setPlace = this.setPlace.bind(this);
+    this.setDateInterval = this.setDateInterval.bind(this);
     return (
       <div className="Trip">
       <link
@@ -879,6 +786,7 @@ export class MapContainer extends Component {
             </Card>
             <PlannerForm 
               setPlaces={this.setPlace}
+              setDateIntervals={this.setDateInterval}
             >
             </PlannerForm>
             <InputGroup style={{width:'100%',height:180}}>
@@ -926,7 +834,7 @@ export class MapContainer extends Component {
                 </CardContent>
               </Card>
               {/*test Accordion--------*/}
-              <CreateAccordion/>
+              <CreateAccordion datainterval={this.state.dateinterval}/>
       </Paper>
       </Row>   
 
