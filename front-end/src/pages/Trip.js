@@ -11,6 +11,7 @@ import Autocomplete from '@material-ui/lab/Autocomplete';
 import { Link } from 'react-router-dom';
 import InputGroup from 'react-bootstrap/InputGroup';
 import { Scrollbars } from 'react-custom-scrollbars';
+import {Typography,Button,Paper,Tab,Tabs,Box,TextField,Select,InputLabel,MenuItem,FormControl,Fab,TableSortLabel,IconButton,Card,CardContent,Divider,Avatar,Table,TableBody,TableCell,TableContainer,TableHead,TableRow,TableFooter,TablePagination,Collapse} from "@material-ui/core";
 import MuiAccordion from '@material-ui/core/Accordion';
 import MuiAccordionSummary from '@material-ui/core/AccordionSummary';
 import MuiAccordionDetails from '@material-ui/core/AccordionDetails';
@@ -268,8 +269,9 @@ function CustomizedTables() {
     var k = getIndex(myid,groups,'id')
     setmyGroups(myGroups.filter((row, j) => j !== i))
     setGroups(groups.filter((row, j) => j !== k))
-    axios.delete("http://104.248.7.194:8000/api/trip_title_api/" + myid).catch((err)=> {
-    });
+    /*axios.delete("http://104.248.7.194:8000/api/trip_title_api/" + myid).catch((err)=> {
+    });*/
+
   }
   
   const handleMyTrip = () => {
@@ -285,6 +287,8 @@ function CustomizedTables() {
     const fetchData = async () => {
       await axios.get('http://104.248.7.194:8000/api/trip_title_api/')
       .then((res) => {
+        setGroups(res.data.sort((a, b) => (a.created < b.created) ? 1 : -1))
+        setmyGroups(res.data.filter(item=>item.user_id==localStorage.getItem('user_id')).sort((a, b) => (a.created < b.created) ? 1 : -1))
       })
       .catch((err) => {
         console.log(err)
@@ -330,7 +334,7 @@ function CustomizedTables() {
                <StyledTableCell align="center">{row.created.replace('T'," ").split("",19)}</StyledTableCell>
                <StyledTableCell align="center">
                  <IconButton aria-label="edit" size="small" 
-                  component={Link}
+                  componen t={Link}
                   to={"/pages/EditPlanner/"+row.id}
                  ><EditRoundedIcon/></IconButton>  
                  <IconButton aria-label="delete" size="small" onClick={() => handleDelete(myGroups[index].id,index)}><DeleteForeverRoundedIcon/></IconButton>

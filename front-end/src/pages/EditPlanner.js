@@ -1,4 +1,4 @@
-import React , {Component, Fragment, useRef, useState } from 'react';
+import React , {Component, Fragment, useRef, useState, useEffect} from 'react';
 import '../App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Container from 'react-bootstrap/Container';
@@ -52,32 +52,43 @@ export function TripName(val) {
 }
 
 export function CityName({setCitycode,defaultCity}) {
-    console.log("defaultCity:",defaultCity)
-  const [df,setDf] = useState({city:""})
+  const [city,setCity] = useState(  {
+    "city_code": "",
+    "cname_th": "",
+    "cname_en": ""
+  })
+  console.log("defaultCity:",defaultCity)
   const defaultProps = {
     options: cityOptions,
     getOptionLabel: (option) => option.cname_th +" ("+ option.cname_en +")",
   }
-  setDf({city:defaultCity})
-  console.log(df)
-  const valueProps = defaultProps.options.find(o => o.city_code === "CBI")
-  console.log("valueProps:",valueProps)
-  const cityProps = defaultProps.options.find(o => o.city_code === defaultCity)
-  console.log("cityProps:",cityProps)
+  useEffect(() => {
+    const defaultTest = () =>{
+      const cityProps = defaultProps.options.find(o => o.city_code === defaultCity)
+      setCity({cityProps})
+      console.log("city1",city)
+    }
+    defaultTest()
+  }, [defaultCity])
   return (
     <div style={{ width: '100%'}}>
+      
+      {console.log("city2",city)}
       <Autocomplete
         {...defaultProps}
         id="cityName"
         autoComplete
         includeInputInList
-        renderInput={(params) => <TextField {...params} label="ชื่อจังหวัด"   required id="standard-required" style={{marginTop:-18}}/>}
+        renderInput={(params) => <TextField 
+          {...params} 
+          label="ชื่อจังหวัด"   
+          required id="standard-required" 
+          style={{marginTop:-18}}/>}
         onChange={(event, value) => {       
           setCitycode(value.city_code)
         }}
-    value={cityProps}
+        defaultValue={city}
       />
-      {console.log(valueProps)}
     </div>
   );
 }
@@ -151,7 +162,8 @@ export function HotelName({setHotelname}) {
   );
 }
 
-export function DateStart({addDatestart}) {
+export function DateStart({addDatestart,defaultDatestart}) {
+  console.log("defaultDatestart:",defaultDatestart)
   return (
     <form noValidate>
       <TextField
@@ -163,6 +175,7 @@ export function DateStart({addDatestart}) {
         InputLabelProps={{
           shrink: true,
         }}
+        value={defaultDatestart}
         onChange={(event, value) => {
           addDatestart(event.target.value)
           console.log("value:",event.target.value)
@@ -683,6 +696,7 @@ export function PlannerForm({setPlaces,setData}) {
           <Grid item xs={9}>
             <DateStart
             addDatestart = {addDatestart}
+            defaultDatestart={setData.start_trip_date}
             />
           </Grid>
           <Grid item xs={3}>
@@ -771,6 +785,9 @@ export class MapContainer extends Component {
 
   render() {
     this.setPlace = this.setPlace.bind(this);
+    if (!this.state.editdata) {
+      return "loading data";
+    }
     return (
       <div className="Trip">
       <link
