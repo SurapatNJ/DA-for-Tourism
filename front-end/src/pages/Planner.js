@@ -1,4 +1,4 @@
-import React , {Component, Fragment, useRef } from 'react';
+import React , {Component, Fragment, useRef, useState } from 'react';
 import '../App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Container from 'react-bootstrap/Container';
@@ -12,8 +12,7 @@ import { Link } from 'react-router-dom';
 import InputGroup from 'react-bootstrap/InputGroup';
 import { Scrollbars } from 'react-custom-scrollbars';
 import {Typography,Button,Paper,Grid,Tab,Tabs,Box,TextField,InputLabel,MenuItem,FormControl,Select,Fab,IconButton,Card,CardContent,Divider,Avatar,List,ListItem,ListItemIcon,Table,TableBody,TableCell,TableContainer,TableHead,TableRow,TableFooter,TablePagination,Collapse,Portal,Checkbox,FormControlLabel,Radio,RadioGroup,FormGroup} from "@material-ui/core";
-import { green } from '@material-ui/core/colors';
-
+import { green } from '@material-ui/core/colors'; 
 import MuiAccordion from '@material-ui/core/Accordion';
 import MuiAccordionSummary from '@material-ui/core/AccordionSummary';
 import MuiAccordionDetails from '@material-ui/core/AccordionDetails';
@@ -48,7 +47,12 @@ import { ThumbDownAltRounded, ThumbsUpDownOutlined } from '@material-ui/icons';
 
 
 //------------------ Input -----------------------//
-export function CityName() {
+
+export function TripName(val) {
+  return (console.log(val))
+}
+
+export function CityName({setCitycode}) {
   const defaultProps = {
     options: cityOptions,
     getOptionLabel: (option) => option.cname_th +" ("+ option.cname_en +")",
@@ -61,6 +65,10 @@ export function CityName() {
         autoComplete
         includeInputInList
         renderInput={(params) => <TextField {...params} label="ชื่อจังหวัด"   required id="standard-required" style={{marginTop:-18}}/>}
+        onChange={(event, value) => {       
+          setCitycode(value.city_code)
+          console.log("value:",value)
+        }}
       />
     </div>
   );
@@ -79,6 +87,9 @@ export function PlaceName() {
         autoComplete
         includeInputInList
         renderInput={(params) => <TextField  {...params} label="ชื่อสถานที่ท่องเที่ยว" />}
+        onChange={(event, value) => {
+          console.log("value:",value)
+        }}
       />
     </div>
   );
@@ -98,13 +109,16 @@ export function ModeName() {
         autoComplete
         includeInputInList
         renderInput={(params) => <TextField {...params} label="โหมดสถานที่"  required id="standard-required"  style={{marginLeft:10,marginTop:5}}/>}
+        onChange={(event, value) => {
+          console.log("value:",value)
+        }}
       />
     </div>
   );
 }
 
 
-export function HotelName() {
+export function HotelName({setHotelname}) {
   const defaultProps = {
     options: hotelOptions,
     getOptionLabel: (option) => option.Hotel_name,
@@ -117,12 +131,21 @@ export function HotelName() {
         autoComplete
         includeInputInList
         renderInput={(params) => <TextField {...params} label="ชื่อโรงแรม/ที่พัก"  required id="standard-required"/>}
+        onChange={(event, value) => {
+          console.log("value:",value)
+          if (value){
+            setHotelname(value.Id,parseFloat(value.lat),value.lng)
+          }
+          else {
+            setHotelname(0,0,0)
+          }
+        }}
       />
     </div>
   );
 }
 
-export function DateStart() {
+export function DateStart({addDatestart}) {
   return (
     <form noValidate>
       <TextField
@@ -130,16 +153,20 @@ export function DateStart() {
         label="วันที่เริ่มต้น"
         type="date"
         required id="standard-required" 
-        style={{width:'55%',marginTop:-18}}
+        style={{width:'100%',marginTop:-18}}
         InputLabelProps={{
           shrink: true,
+        }}
+        onChange={(event, value) => {
+          addDatestart(event.target.value)
+          console.log("value:",event.target.value)
         }}
       />
     </form>
   );
 }
 
-export function DateEnd() {
+export function DateEnd({addDateend}) {
   return (
     <form noValidate>
       <TextField
@@ -147,15 +174,18 @@ export function DateEnd() {
         label="วันที่สิ้นสุด"
         type="date"
         required id="standard-required" 
-        style={{width:'55%',marginTop:-18}}
+        style={{width:'100%',marginTop:-18}}
         InputLabelProps={{
           shrink: true,
+        }}
+        onChange={(event, value) => {
+          addDateend(event.target.value)
+          console.log("value:",event.target.value)
         }}
       />
     </form>
   );
 }
-
 
 const p_cat = [
   { pcat: 'ธรรมชาติ'},
@@ -207,7 +237,7 @@ export function SetTime() {
           id="selectStartTime"
           value={startTime}
           onChange={handleChange}
-          style={{width:'120'}}
+
         >
           <MenuItem value={1}>00:00</MenuItem>
           <MenuItem value={2}>01:00</MenuItem>
@@ -249,7 +279,6 @@ const useStyles1 = makeStyles((theme) => ({
     margin: theme.spacing(1, 3),
   },
 }));
-
 
 //--------------- Accordion ------------------/
 
@@ -308,10 +337,29 @@ export function CreateAccordion(){
     );
   }
 
+  const start = "2020-11-29"
+  const end = "2020-12-02"
+
+  var daysOfYear = [];
+  for (var d = new Date(start); d <= new Date(end); d.setDate(d.getDate() + 1)) {
+    var format = ("0"+new Date(d).getDate()).slice(-2) +"/"+ ("0"+(new Date(d).getMonth()+1)).slice(-2) +"/"+ new Date(d).getFullYear()
+    daysOfYear.push(format);
+  }
+  const diffDate = (new Date(end) - new Date(start))/ (1000 * 60 * 60 * 24)
+
+  const accordion_data = [];
+  for(var i=0;i<diffDate+1;i++){
+    accordion_data.push(
+      {id: i,
+      heading: daysOfYear[i],
+      date: daysOfYear[i].replaceAll("/","-")}
+    )
+  }
+
   return (
     <div>
       <Paper elevation={0}>
-      <Scrollbars style={{height:550}}>
+      
       <div ClassName={classes2.paper}>
         <form className={classes2.form} noValidate>
           <Grid container spacing={2}>
@@ -327,7 +375,80 @@ export function CreateAccordion(){
           </Grid>
         </form>
         </div>
-
+        <Scrollbars style={{height:415}}>
+        {accordion_data.map(accordion => {
+        const { id, heading,date} = accordion; //date = var for add Trip_data
+        return (
+          <Accordion
+          expanded={expanded === id}
+          key={id}
+          onChange={handleChange(id)}
+        >
+          <AccordionSummary
+              expandIcon={<ExpandMoreIcon />}
+              aria-controls="panel1bh-content"
+              id="panel1bh-header"
+              style={{backgroundColor:'#3C6E71',color:'white'}}
+            >
+              <Typography style={{fontFamily:'csPrajad'}}>วันที่ {heading}</Typography>
+          </AccordionSummary>
+          <AccordionDetails>
+            <Paper elevation={0} style={{width:'100%'}}>
+                <div ClassName={classes2.paper}>
+                <form className={classes2.form2} noValidate>
+                  <Grid container style={{marginTop:-20}} >
+                    <Grid item xs={12}>
+                        <RatingClick/>
+                    </Grid>
+                      <Divider style={{marginTop:5}}/>
+                  
+                    <List style={{width:'100%',marginLeft:'-1%'}}>
+                      <ListItem>
+                        <Grid item xs={4}>
+                        <InputGroup><SetTime/><Typography style={{marginTop:2,fontSize:20,marginLeft:5,marginRight:5}}>-</Typography><SetTime/></InputGroup>
+                        </Grid>
+                        <Grid item xs={7} >   
+                            <PlaceName/>
+                        </Grid>
+                        <Grid item xs={1}/>
+                      </ListItem>
+            
+                      <ListItem>
+                        <Grid item xs={4}>
+                        <InputGroup><SetTime/><Typography style={{marginTop:2,fontSize:20,marginLeft:5,marginRight:5}}>-</Typography><SetTime/></InputGroup>
+                        </Grid>
+                        <Grid item xs={7}>   
+                            <PlaceName/>
+                        </Grid>
+                        <Grid item xs={1}/>
+                      </ListItem>
+                      <ListItem>
+                        <Grid item xs={4}>
+                        <InputGroup><SetTime/><Typography style={{marginTop:2,fontSize:20,marginLeft:5,marginRight:5}}>-</Typography><SetTime/></InputGroup>
+                        </Grid>
+                        <Grid item xs={7}>   
+                            <PlaceName/>
+                        </Grid>
+                        <Grid item xs={1}>
+                          <ListItemIcon>
+                            <IconButton size="small"><AddBoxIcon style={{ color: green[500]}} onClick={handleToggle}/></IconButton>
+                            <IconButton size="small"><IndeterminateCheckBoxIcon color="action"/></IconButton>
+                          </ListItemIcon>
+                        </Grid>
+                      </ListItem>
+                    </List>
+                      <Divider style={{marginTop:15}}/>
+                    </Grid>
+                  </form>
+                  </div>
+                  </Paper>
+              </AccordionDetails>
+          </Accordion>
+        );
+      })}
+ 
+            
+          {/*
       <Accordion square expanded={expanded === 'panel1'} onChange={handleChange('panel1')} > 
         <AccordionSummary
           expandIcon={<ExpandMoreIcon />}
@@ -341,35 +462,37 @@ export function CreateAccordion(){
         <Paper elevation={0} style={{width:'100%'}}>
             <div ClassName={classes2.paper}>
             <form className={classes2.form2} noValidate>
-              <Grid container spacing={2} style={{marginTop:-20}}>
+              <Grid container style={{marginTop:-20}} >
                 <Grid item xs={12}>
                      <RatingClick/>
                 </Grid>
                   <Divider style={{marginTop:5}}/>
-                <List style={{width:'100%'}}>
+               
+                <List style={{width:'100%',marginLeft:'-1%'}}>
                   <ListItem>
-                    <Grid item xs={5}>
+                    <Grid item xs={4}>
                     <InputGroup><SetTime/><Typography style={{marginTop:2,fontSize:20,marginLeft:5,marginRight:5}}>-</Typography><SetTime/></InputGroup>
                     </Grid>
-                    <Grid item xs={6}>   
+                    <Grid item xs={7} >   
+                        <PlaceName/>
+                    </Grid>
+                    <Grid item xs={1}/>
+                  </ListItem>
+         
+                  <ListItem>
+                    <Grid item xs={4}>
+                    <InputGroup><SetTime/><Typography style={{marginTop:2,fontSize:20,marginLeft:5,marginRight:5}}>-</Typography><SetTime/></InputGroup>
+                    </Grid>
+                    <Grid item xs={7}>   
                         <PlaceName/>
                     </Grid>
                     <Grid item xs={1}/>
                   </ListItem>
                   <ListItem>
-                    <Grid item xs={5}>
+                    <Grid item xs={4}>
                     <InputGroup><SetTime/><Typography style={{marginTop:2,fontSize:20,marginLeft:5,marginRight:5}}>-</Typography><SetTime/></InputGroup>
                     </Grid>
-                    <Grid item xs={6}>   
-                        <PlaceName/>
-                    </Grid>
-                    <Grid item xs={1}/>
-                  </ListItem>
-                  <ListItem>
-                    <Grid item xs={5}>
-                    <InputGroup><SetTime/><Typography style={{marginTop:2,fontSize:20,marginLeft:5,marginRight:5}}>-</Typography><SetTime/></InputGroup>
-                    </Grid>
-                    <Grid item xs={6}>   
+                    <Grid item xs={7}>   
                         <PlaceName/>
                     </Grid>
                     <Grid item xs={1}>
@@ -407,30 +530,30 @@ export function CreateAccordion(){
                      <RatingClick/>
                 </Grid>
                   <Divider style={{marginTop:5}}/>
-                <List style={{width:'100%'}}>
+                <List style={{width:'100%',marginLeft:'-1%'}}>
                   <ListItem>
-                    <Grid item xs={5}>
+                    <Grid item xs={4}>
                     <InputGroup><SetTime/><Typography style={{marginTop:2,fontSize:20,marginLeft:5,marginRight:5}}>-</Typography><SetTime/></InputGroup>
                     </Grid>
-                    <Grid item xs={6}>   
+                    <Grid item xs={7}>   
                         <PlaceName/>
                     </Grid>
                     <Grid item xs={1}/>
                   </ListItem>
                   <ListItem>
-                    <Grid item xs={5}>
+                    <Grid item xs={4}>
                     <InputGroup><SetTime/><Typography style={{marginTop:2,fontSize:20,marginLeft:5,marginRight:5}}>-</Typography><SetTime/></InputGroup>
                     </Grid>
-                    <Grid item xs={6}>   
+                    <Grid item xs={7}>   
                         <PlaceName/>
                     </Grid>
                     <Grid item xs={1}/>
                   </ListItem>
                   <ListItem>
-                    <Grid item xs={5}>
+                    <Grid item xs={4}>
                     <InputGroup><SetTime/><Typography style={{marginTop:2,fontSize:20,marginLeft:5,marginRight:5}}>-</Typography><SetTime/></InputGroup>
                     </Grid>
-                    <Grid item xs={6}>   
+                    <Grid item xs={7}>   
                         <PlaceName/>
                     </Grid>
                     <Grid item xs={1}>
@@ -448,7 +571,7 @@ export function CreateAccordion(){
               </Paper>
         </AccordionDetails>
       </Accordion>
-
+*/}
         <Divider/>
         <div className={classes2.paper}>
         <form className={classes2.form} noValidate>
@@ -465,11 +588,12 @@ export function CreateAccordion(){
         </form>
         </div>
         </Scrollbars>
+
       </Paper>
+      
     </div>
   );
 }
-
 
 export function RatingClick() {
   const [show, setShow] = React.useState(false);
@@ -509,7 +633,6 @@ export function RatingClick() {
   );
 }
 
-
 export function RatingAllClick() {
   const [show, setShow] = React.useState(false);
   const container = React.useRef(null);
@@ -548,7 +671,6 @@ export function RatingAllClick() {
   );
 }
 
-
 const plannerUseStyles = makeStyles((theme) => ({
   paper: {
     display: 'flex',
@@ -556,7 +678,7 @@ const plannerUseStyles = makeStyles((theme) => ({
     alignItems: 'center',
   },
   form: {
-    width: '90%', // Fix IE 11 issue.
+    width: '80%', // Fix IE 11 issue.
     marginTop: theme.spacing(3),
     marginBottom: theme.spacing(2),
   },
@@ -568,8 +690,58 @@ const plannerUseStyles = makeStyles((theme) => ({
 
 }));
 
-export function PlannerForm() {
+export function PlannerForm({setPlaces}) {
+  const [submitvalues,setSubmitvalues] = useState({
+    user_id: localStorage.getItem('user_id'),
+    trip_name: '',
+    city_code: '',
+    start_trip_date: '',
+    end_trip_date: '',
+    hotel_id: '',
+    rating_point: 0,
+    trip_data: '',
+    lat:0,
+    lng:0,
+  })
   const classes = plannerUseStyles();
+  function setTripname(p){
+    setSubmitvalues({...submitvalues, trip_name: p})  
+  }
+  function setCitycode(p){
+    setSubmitvalues({...submitvalues, city_code: p})  
+  }
+  function setHotelname(p,lat,lng){
+    setSubmitvalues({...submitvalues, hotel_id: p, lat:lat, lng:lng}) 
+  }
+  function addDatestart(p){
+    setSubmitvalues({...submitvalues, start_trip_date: p})  
+  }
+  function addDateend(p){
+    setSubmitvalues({...submitvalues, end_trip_date: p})  
+  }
+  function submitForm(data) {
+    setPlaces(data.lat,data.lng)
+    console.log('submitform: ',data)  
+    axios.post("http://104.248.7.194:8000/api/trip_title_api/",{
+      user_id: data.user_id,
+      trip_name: data.trip_name,
+      city_code: data.city_code,
+      start_trip_date: data.start_trip_date,
+      end_trip_date: data.end_trip_date,
+      hotel_id: data.hotel_id,
+      rating_point: data.rating_point,
+      trip_data: data.trip_data,
+    },{
+      headers: {
+        'Content-Type': 'application/json'
+    }})
+      .then(function (response) {
+      console.log('TripResponse:',response.data);
+    })
+      .catch(function (error) {
+      console.log('TripError:',error);
+    });
+  }
   return(
     <Container fluid noGutters={true}>
     <div className={classes.paper}>
@@ -579,33 +751,55 @@ export function PlannerForm() {
             <Typography style={{fontFamily:"csPrajad" ,fontSize:16}}>ชื่อทริป :</Typography>
           </Grid>
           <Grid item xs={9}>
-            <TextField required id="standard-required" label="ชื่อทริป" style={{width:'100%',marginTop:-18}}/>
+            <TextField required id="standard-required" label="ชื่อทริป" style={{width:'100%',marginTop:-18}}
+            onChange={e => {
+              setTripname(e.target.value)
+            }} 
+            />
           </Grid>
           <Grid item xs={3}>
             <Typography style={{fontFamily:"csPrajad" ,fontSize:16}}>ชื่อจังหวัด :</Typography>
           </Grid>
           <Grid item xs={9}>
-            <CityName/>
+            <CityName 
+            setCitycode={setCitycode}
+            />
           </Grid>
           <Grid item xs={3}>
             <Typography style={{fontFamily:"csPrajad" ,fontSize:16}}>วันที่ไป :</Typography>
           </Grid>
           <Grid item xs={9}>
-            <DateStart/>
+            <DateStart
+            addDatestart = {addDatestart}
+            />
           </Grid>
           <Grid item xs={3}>
             <Typography style={{fontFamily:"csPrajad" ,fontSize:16}}>วันที่กลับ :</Typography>
           </Grid>
           <Grid item xs={9}>
-            <DateEnd/>
+            <DateEnd
+             addDateend = {addDateend}
+             />
           </Grid>
           <Grid item xs={3}>
             <Typography style={{fontFamily:"csPrajad" ,fontSize:16}}>ที่พัก :</Typography>
           </Grid>
           <Grid item xs={9}>
-            <HotelName/>
+            <HotelName
+            setHotelname={setHotelname}
+            />
           </Grid>
         </Grid>
+        <InputGroup style={{width:'80%'}}>
+              <Button
+                    variant="contained"
+                    color="primary"
+                    style={{width:'30%',height:'8%',margin:'5%',marginLeft:'45%',marginTop:'7%'}}
+                    onClick={() => {
+                      submitForm(submitvalues) 
+                    }}
+                >ยืนยัน</Button>
+            </InputGroup>
       </form>
     </div>
   </Container>
@@ -613,11 +807,24 @@ export function PlannerForm() {
   );
 }
 
-
-
 {/*     ////////       main     ///////    */ }
 export class MapContainer extends Component {
-  componentDidMount() { 
+  constructor(props){
+    super(props);
+    this.state = {
+      places:{
+        lat: 0,
+        lng: 0,
+      }
+    }
+
+  }
+  setPlace(p,q){
+    console.log("PQ:",p,q)
+    this.setState({places:{lat:p ,lng:q+0.0022141 }})
+    console.log("places:",this.state.places)
+  }
+  componentDidMount(){ 
     let data; 
     axios 
         .get("http://104.248.7.194:8000/api/login/") 
@@ -628,8 +835,8 @@ export class MapContainer extends Component {
         }) 
         .catch((err) => {}); 
 } 
-
   render() {
+    this.setPlace = this.setPlace.bind(this);
     return (
       <div className="Trip">
       <link
@@ -638,28 +845,37 @@ export class MapContainer extends Component {
         integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk"
         crossorigin="anonymous"
       />
-   
       <header className="App-header">
       </header>
 
       <section className="App-section">
-      <Container fluid >
-             
+      <Container fluid noGutters={true}>
       <Row>
-          <Paper elevation={5} style={{width:'30%',minHeight:637,height:'90%',marginTop:'5%',marginBottom:'5%',marginLeft:'3%'}}>
+      <Paper elevation={5} style={{width:'40%',height:'auto',marginTop:'5%',marginLeft:'7.5%'}}>
             <Card style={{backgroundColor:'#284B63',width:'auto'}}>
               <CardContent style={{color:'white'}}>
+                <Grid
+                  container
+                  spacing={0}
+                  direction="column"
+                  alignItems="center"
+                  justify="center"
+                >
                 <Typography style={{margin:10, fontFamily:"csPrajad" ,fontSize:20,fontWeight:'bold'}}>ข้อมูลทริป และเลือกที่พัก</Typography>
+              </Grid>
               </CardContent>
             </Card>
-            <PlannerForm/>
+            <PlannerForm 
+              setPlaces={this.setPlace}
+            >
+            </PlannerForm>
             <InputGroup style={{width:'100%',height:180}}>
               {/*    Hotel Map    */}
                 <Map
                 google={this.props.google}
                 zoom={17}
-                style={{width:'95%',height:'100%',margin:'2.5%'}}
-                disableDefaultUI ={true}
+                style={{width:'100%',height:'100%'}}
+                //disableDefaultUI ={true}
                 scrollwheel={false}
                 disableDoubleClickZoom = {true}
                 draggable={false}
@@ -672,35 +888,51 @@ export class MapContainer extends Component {
                     lng:  100.901878
                   }
                 }
+                center={{ lat:this.state.places.lat, lng: this.state.places.lng}}
               >
-            {hotelOptions.map(hotelOptions=>(
-              <Marker key={hotelOptions.Hotel_name[1]} position={{lat:hotelOptions.lat,lng:hotelOptions.lng}} />
-            ))}
+              <Marker
+                // onClick={this.onMarkerClick}
+                //name = {s.pname_th}
+                position={{ lat:this.state.places.lat, lng: this.state.places.lng}}
+              />
               </Map>     
             </InputGroup>
-            <InputGroup style={{width:'80%'}}>
-              <Button
-                    variant="contained"
-                    color="primary"
-                    style={{width:'30%',height:'8%',margin:'5%',marginLeft:'45%',marginTop:'7%'}}
-                >ยืนยัน</Button>
-            </InputGroup>
-          </Paper>
+      </Paper>
 
-          <Paper elevation={5} style={{width:'30%',minHeight:637,height:'90%',marginTop:'5%',marginBottom:'5%',marginLeft:'2%'}}>
+      <Paper elevation={5} style={{width:'40%',height:'auto',marginTop:'5%',marginLeft:'5%'}}>   
+        <Card style={{backgroundColor:'#284B63',width:'auto'}}>
+                <CardContent style={{color:'white'}}>
+                <Grid
+                  container
+                  spacing={0}
+                  direction="column"
+                  alignItems="center"
+                  justify="center"
+                >
+                <Typography style={{margin:10, fontFamily:"csPrajad" ,fontSize:20,fontWeight:'bold'}}>จัดการทริป</Typography>
+                </Grid>
+                </CardContent>
+              </Card>
+              {/*test Accordion--------*/}
+              <CreateAccordion/>
+      </Paper>
+      </Row>   
+
+
+      <Paper elevation={5} style={{width:'90%',height:'auto',margin:'5%'}}>
+        <Row noGutters>
+            <Col xs={12}>
             <Card style={{backgroundColor:'#284B63',width:'auto'}}>
               <CardContent style={{color:'white'}}>
-              <Typography style={{margin:10, fontFamily:"csPrajad" ,fontSize:20,fontWeight:'bold'}}>จัดการทริป</Typography>
-              </CardContent>
-            </Card>
-            {/*test Accordion--------*/}
-            <CreateAccordion/>
-          </Paper> 
-
-          <Paper elevation={5} style={{width:'30%',minHeight:637,height:'90%',marginTop:'5%',marginBottom:'5%',marginLeft:'2%'}}>
-            <Card style={{backgroundColor:'#284B63',width:'auto'}}>
-              <CardContent style={{color:'white'}}>
+              <Grid
+                  container
+                  spacing={0}
+                  direction="column"
+                  alignItems="center"
+                  justify="center"
+                >
               <Typography style={{margin:10, fontFamily:"csPrajad" ,fontSize:20,fontWeight:'bold'}}>แผนที่ทริป</Typography>
+              </Grid>
               </CardContent>
             </Card>
             <InputGroup style={{width:'100%',minHeight:547}}>
@@ -724,8 +956,10 @@ export class MapContainer extends Component {
                 }
               />     
             </InputGroup>
-          </Paper>  
-        </Row>  
+            </Col>
+        </Row>
+      </Paper>
+
       </Container>
       </section>
     </div>
