@@ -222,17 +222,17 @@ class trip_detail_analysisViewSet(viewsets.ModelViewSet):
         jTrip_type = []
         if trip_type != "":
             jTrip_type = list(json.loads(trip_type))
-        trip_type_list = _trip_type_list.loc[(_trip_type_list['pcat_1'].isin(jTrip_type)) | (_trip_type_list['pcat_2'].isin(jTrip_type)) | (_trip_type_list['pcat_3'].isin(jTrip_type))]
+        trip_type_list = _trip_type_list.loc[_trip_type_list['pcat_1'].isin(jTrip_type) | _trip_type_list['pcat_2'].isin(jTrip_type) | _trip_type_list['pcat_3'].isin(jTrip_type)]
 
         #Set json to dataframe pandas
-        _trip_all = pd.DataFrame(columns=('datetime_start', 'datetime_end', 'poi', 'lat', 'lon', 'locked'))
+        _trip_all = pd.DataFrame(columns=('datetime_start', 'datetime_end', 'trip_type', 'poi', 'lat', 'lon', 'locked'))
         for t in jTrip:
            _trip_all = _trip_all.append(t, ignore_index=True)
 
         #filter date_tourism with hotal's position in 100 km^2
         hotal_data = hotal_list[hotal_list.Id == int(hotal_id)]
-        date_tourism = _date_tourism[_date_tourism.lat >= float(hotal_data.Latitude) - 0.1][_date_tourism.lat <= float(hotal_data.Latitude) + 0.1]
-        date_tourism = date_tourism[_date_tourism.lng >= float(hotal_data.Longtitude) - 0.1][_date_tourism.lng <= float(hotal_data.Longtitude) + 0.1]
+        date_tourism = _date_tourism[_date_tourism.lat >= float(hotal_data.Latitude) - 0.2][_date_tourism.lat <= float(hotal_data.Latitude) + 0.2]
+        date_tourism = date_tourism[_date_tourism.lng >= float(hotal_data.Longtitude) - 0.2][_date_tourism.lng <= float(hotal_data.Longtitude) + 0.2]
 
         #Find time_period and place_list for random genetic
         trip_all = pd.DataFrame(columns=('datetime_start', 'datetime_end', 'poi', 'lat', 'lon', 'locked','time_trip','time_period', 'place_list', 'place_type'))
@@ -267,71 +267,148 @@ class trip_detail_analysisViewSet(viewsets.ModelViewSet):
                 row['time_period'] = 4
                 place_list = date_tourism[date_tourism.pp_night > 0]
                 row['place_list'] = place_list
-            
-            row['place_type'] = trip_type_list.loc[trip_type_list['poi'].isin(list(place_list.poi))]
+            if row.trip_type != "":
+                Trip_type = [row.trip_type]
+                trip_type_inline = _trip_type_list.loc[_trip_type_list['pcat_1'].isin(Trip_type) | _trip_type_list['pcat_2'].isin(Trip_type) | _trip_type_list['pcat_3'].isin(Trip_type)]
+                row['place_type'] = trip_type_inline.loc[trip_type_inline['poi'].isin(list(place_list.poi))]
+            else:
+                row['place_type'] = trip_type_list.loc[trip_type_list['poi'].isin(list(place_list.poi))]
             trip_all = trip_all.append(row, ignore_index=True)
         del _trip_all
-        
+
         trip_random_list = []
-        for i in range(5):
-            del i
-            trip_random = pd.DataFrame(columns=('datetime_start', 'datetime_end', 'poi', 'lat', 'lon', 'locked','time_trip', 'time_tour', 'pop_point'))
+        _sample =  trip_all[trip_all.locked == False].poi.count()
+        # จำนวนตัวอย่างที่สุ่ม
+        sample = 2048
+        if _sample < 12:
+            sample = 2 ** _sample
+        for i in range(8):
+            trip_random = pd.DataFrame(columns=('No','datetime_start', 'datetime_end', 'poi', 'lat', 'lon', 'locked','time_trip', 'time_tour', 'pop_point','pop_point_all'))
             for index, row in trip_all.iterrows():
                 del index
                 place_list = row.place_list
                 place_type = row.place_type
                 if row.locked:
-                    _place = place_list[place_list.poi == row.poi]
-                    place_type = place_type.query("poi not in " + str(list(_place.poi)))
-                    place_list = place_list.query("poi not in " + str(list(_place.poi)))
+                    if row.poi != "":
+                        _place = place_list[place_list.poi == row.poi]
+                        _trip = {'datetime_start':row.datetime_start, 'datetime_end':row.datetime_end, 
+                        'poi':_place.poi.max(), 'lat':_place.lat.max(), 'lon':_place.lng.max(), 'locked': row.locked}
+                        _trip['time_trip'] = row.time_trip
+                        _trip['time_tour'] = _place.travel_time.max()
+                    else:
+                        _trip = {'datetime_start':row.datetime_start, 'datetime_end':row.datetime_end, 
+                        'poi':row.poi, 'lat':row.lat, 'lon':row.lon, 'locked': row.locked}
+                        _trip['time_trip'] = row.time_trip
+                        _trip['time_tour'] = 0
+                        _trip['pop_point'] = 0
+
                 else:
                     # random tourlist place in dataframe
-                    _place = place_list.sample()
+                    place_type = place_type.query("poi not in " + str(list(trip_random.poi)))
+                    place_list = place_list.query("poi not in " + str(list(trip_random.poi)))
+                    
                     if not place_type.empty:
                         _place_type = place_type.sample()
-                        while _place_type.poi.max() in list(trip_random.poi):
-                            _place_type = place_type.sample()
                         _place = place_list[place_list.poi == _place_type.poi.max()]
-                        place_type = place_type.query("poi not in " + str(list(_place.poi)))
                     else:
-                        while _place.poi.max() in list(trip_random.poi):
-                            _place = place_list.sample()
-                    place_list = place_list.query("poi not in " + str(list(_place.poi)))
+                        _place = place_list.sample()
 
-                _trip = {'datetime_start':row.datetime_start, 'datetime_end':row.datetime_end, 
-                'poi':_place.poi.max(), 'lat':_place.lat.max(), 'lon':_place.lng.max(), 'locked': row.locked}
-                _trip['time_trip'] = row.time_trip
-                _trip['time_tour'] = _place.travel_time.max()
-                
-                if row.time_period == 0:
-                    _trip['pop_point'] = _place.pp_last_night.max()
-                elif row.time_period == 1:
-                    _trip['pop_point'] = _place.pp_morning.max()
-                elif row.time_period == 2:
-                    _trip['pop_point'] = _place.pp_afternoon.max()
-                elif row.time_period == 3:
-                    _trip['pop_point'] = _place.pp_evening.max()
-                elif row.time_period == 4:
-                    _trip['pop_point'] = _place.pp_night.max()        
+                    _trip = {'datetime_start':row.datetime_start, 'datetime_end':row.datetime_end, 
+                    'poi':_place.poi.max(), 'lat':_place.lat.max(), 'lon':_place.lng.max(), 'locked': row.locked}
+                    _trip['time_trip'] = row.time_trip
+                    _trip['time_tour'] = _place.travel_time.max()
+
+                _trip['No'] = i
+                _trip['pop_point_all'] = 0
+
+                if row.poi != "" or not row.locked:
+                    if row.time_period == 0:
+                        _trip['pop_point'] = _place.pp_last_night.max()
+                    elif row.time_period == 1:
+                        _trip['pop_point'] = _place.pp_morning.max()
+                    elif row.time_period == 2:
+                        _trip['pop_point'] = _place.pp_afternoon.max()
+                    elif row.time_period == 3:
+                        _trip['pop_point'] = _place.pp_evening.max()
+                    elif row.time_period == 4:
+                        _trip['pop_point'] = _place.pp_night.max()        
                 trip_random = trip_random.append(_trip, ignore_index=True)
             trip_random_list.append(trip_random)
 
+        #return Response(trip_random_list)
+
         #random mutation or crossover
-        for i in range(5):
-            rand_number = random.randint(0,1)
-            if rand_number == 0:
-                trip_random_list = mutation(trip_random_list, trip_all)
-            elif rand_number == 1:
-                trip_random_list = crossover(trip_random_list, trip_all)
-            
+        while len(trip_random_list) > 1:
+            trip_random_list = crossover(trip_random_list, trip_all)
+            trip_random_list = mutation(trip_random_list, trip_all)
+
         set_trip = trip_random_list[0]
-        for trip_random in trip_random_list:
+        resp = []
+        for index, row in set_trip.iterrows():
+            del index
+            if row.poi != "":
+                row.locked = True
+            else:
+                row.locked = False
+
+            _data = {'datetime_start':row.datetime_start, 'datetime_end':row.datetime_end, 
+            'poi':row.poi, 'lat':row.lat, 'lon':row.lon, 'locked':row.locked,
+            'time_trip':row.time_trip, 'time_tour':row.time_tour, 'pop_point':row.pop_point}
+            resp.append(_data)
+
+        return Response(resp)
+
+def mutation(datalist,trip_all):
+    #random trip in list
+    data_all = datalist
+    if random.randint(0, 1):
+        rand_trip = datalist[0]
+        for d in datalist:
+            if d.pop_point_all.max() < rand_trip.pop_point_all.max():
+                rand_trip = d
+
+        #random time_period to change tourlist place
+        rand_period = rand_trip[rand_trip.locked == False].sample()
+        trip_period = trip_all[trip_all.datetime_start == rand_period.datetime_start.max()]
+
+        place_list = trip_period.place_list.max().query("poi not in " + str(list(rand_trip.poi)))
+        if not place_list.empty:
+            _place = place_list.sample()
+        else:
+            return data_all
+
+        rand_period.No = rand_trip.No.max()
+        rand_period.poi = _place.poi.max()
+        rand_period.lat = _place.lat.max()
+        rand_period.lon = _place.lng.max()
+        rand_period.time_tour = _place.travel_time.max()
+
+        new_trip = pd.DataFrame(columns=('No','datetime_start', 'datetime_end', 'poi', 'lat', 'lon', 'locked','time_trip', 'time_tour', 'pop_point','pop_point_all'))
+        for index, row in rand_trip.iterrows():
+            del index
+            if row.datetime_start == rand_period.datetime_start.max() :
+                new_trip = new_trip.append(rand_period, ignore_index=True)
+            else:
+                new_trip = new_trip.append(row, ignore_index=True)
+
+        data_gen = [new_trip, rand_trip]
+
+        set_trip = data_gen[0]
+        for trip_random in data_gen:
             #get distance between tourist place
             set_position = [(row.lat,row.lon) for index, row in set_trip.iterrows()]
             set_dist = []
             for i in range(len(set_position)-1):
                 lat_1, lon_1 = set_position[i]
                 lat_2, lon_2 = set_position[i+1]
+                if lat_1 == '':
+                    lat_1 = 0
+                if lon_1 == '':
+                    lon_1 = 0
+                if lat_2 == '':
+                    lat_2 = 0
+                if lon_2 == '':
+                    lon_2 = 0
                 distance = math.sqrt(pow(lat_1-lat_2, 2) + pow(lon_1-lon_2, 2))
                 set_dist.append(distance)
             _set_dist = [round(x*10,0) for x in set_dist]
@@ -342,6 +419,14 @@ class trip_detail_analysisViewSet(viewsets.ModelViewSet):
             for i in range(len(trip_position)-1):
                 lat_1, lon_1 = trip_position[i]
                 lat_2, lon_2 = trip_position[i+1]
+                if lat_1 == '':
+                    lat_1 = 0
+                if lon_1 == '':
+                    lon_1 = 0
+                if lat_2 == '':
+                    lat_2 = 0
+                if lon_2 == '':
+                    lon_2 = 0
                 distance = math.sqrt(pow(lat_1-lat_2, 2) + pow(lon_1-lon_2, 2))
                 trip_dist.append(distance)
             _trip_dist = [round(x*10,0) for x in trip_dist]
@@ -352,82 +437,110 @@ class trip_detail_analysisViewSet(viewsets.ModelViewSet):
 
             if set_pop < trip_pop:
                 set_trip = trip_random
-
-        resp = []
-        for index, row in set_trip.iterrows():
-            del index
-            _data = {'datetime_start':row.datetime_start, 'datetime_end':row.datetime_end, 
-            'poi':row.poi, 'lat':row.lat, 'lon':row.lon, 'locked':row.locked,
-            'time_trip':row.time_trip, 'time_tour':row.time_tour, 'pop_point':row.pop_point}
-            resp.append(_data)
-
-        return Response(resp)
-
-def mutation(datalist,trip_all):
-    #random trip in list
-    rand_trip_list = random.choice(datalist)
-    #random time_period to change tourlist place
-    rand_period = rand_trip_list[rand_trip_list.locked == False].sample()
-    trip_period = trip_all[trip_all.datetime_start == rand_period.datetime_start.max()]
-
-    _place = trip_period.place_list.max().sample()
-    while _place.poi.max() in list(rand_trip_list.poi):
-        _place = trip_period.place_list.max().sample()
-
-    rand_period.poi = _place.poi.max()
-    rand_period.lat = _place.lat.max()
-    rand_period.lon = _place.lng.max()
-    rand_period.time_tour = _place.travel_time.max()
-
-    new_trip = pd.DataFrame(columns=('datetime_start', 'datetime_end', 'poi', 'lat', 'lon', 'locked','time_trip', 'time_tour', 'pop_point'))
-    for index, row in rand_trip_list.iterrows():
-        del index
-        if row.datetime_start == rand_period.datetime_start.max() :
-            new_trip = new_trip.append(rand_period, ignore_index=True)
-        else:
-            new_trip = new_trip.append(row, ignore_index=True)
-
-    new_datalist = datalist
-    new_datalist.append(new_trip)
-    return new_datalist
+            set_trip['pop_point_all'] = set_pop
+        
+        data_all = [i for i in datalist if rand_trip['No'].max() not in i['No'].values]
+        data_all.append(set_trip)
+    return data_all
 
 def crossover(datalist,trip_all):
-    #random trip in list
-    rand_trip_list1 = random.choice(datalist)
-    rand_trip_list2 = random.choice(datalist)
-    while rand_trip_list2.equals(rand_trip_list1):
-        rand_trip_list2 = random.choice(datalist)
+    data_all = datalist
+    data_new_gen = []
+    while len(data_all) > 0:
+        #random 2 sample trip in list
+        rand_trip_list = random.sample(data_all,2)
 
-    rand_period = rand_trip_list1[rand_trip_list1.locked == False].sample().datetime_start.max()
-    _trip1 = rand_trip_list1[rand_trip_list1.datetime_start == rand_period]
-    _trip2 = rand_trip_list2[rand_trip_list2.datetime_start == rand_period]
+        for rand_trip in rand_trip_list:
+            data_all = [i for i in data_all if rand_trip['No'].max() not in i['No'].values]
 
-    new_trip1 = pd.DataFrame(columns=('datetime_start', 'datetime_end', 'poi', 'lat', 'lon', 'locked','time_trip', 'time_tour', 'pop_point'))
-    if _trip2.poi.max() in list(rand_trip_list1.poi):
-        new_trip1 = mutation([rand_trip_list1], trip_all)[0]
-    else:
-        for index, row in rand_trip_list1.iterrows():
-            del index
-            if row.datetime_start == rand_period :
-                new_trip1 = new_trip1.append(_trip2, ignore_index=True)
-            else:
-                new_trip1 = new_trip1.append(row, ignore_index=True)
+        _trip1_ = rand_trip_list[0]
+        _trip2_ = rand_trip_list[1]
+        rand_period = trip_all[trip_all.locked == False].sample()
+        _trip1 = _trip1_[_trip1_.datetime_start == rand_period.datetime_start.max()]
+        _trip2 = _trip2_[_trip2_.datetime_start == rand_period.datetime_start.max()]
 
-    new_trip2 = pd.DataFrame(columns=('datetime_start', 'datetime_end', 'poi', 'lat', 'lon', 'locked','time_trip', 'time_tour', 'pop_point'))
-    if _trip1.poi.max() in list(rand_trip_list2.poi):
-        new_trip2 = mutation([rand_trip_list2], trip_all)[0]
-    else:
-        for index, row in rand_trip_list2.iterrows():
-            del index
-            if row.datetime_start == rand_period :
-                new_trip2 = new_trip2.append(_trip1, ignore_index=True)
-            else:
-                new_trip2 = new_trip2.append(row, ignore_index=True)
+        place_list1 = rand_period.place_list.max().query("poi not in " + str(list(_trip1_.poi)))
+        place_list2 = rand_period.place_list.max().query("poi not in " + str(list(_trip2_.poi)))
 
-    new_datalist = datalist
-    new_datalist.append(new_trip1)
-    new_datalist.append(new_trip2)
-    return new_datalist
+        new_trip1 = pd.DataFrame(columns=('No', 'datetime_start', 'datetime_end', 'poi', 'lat', 'lon', 'locked','time_trip', 'time_tour', 'pop_point','pop_point_all'))
+        if _trip2.poi.max() not in place_list1.poi:
+            new_trip1 = _trip1_
+        else:
+            for index, row in _trip1_.iterrows():
+                del index
+                _trip2['No'] = row.No
+                if row.datetime_start == rand_period.datetime_start.max() :
+                    new_trip1 = new_trip1.append(_trip2, ignore_index=True)
+                else:
+                    new_trip1 = new_trip1.append(row, ignore_index=True)
+
+        new_trip2 = pd.DataFrame(columns=('No', 'datetime_start', 'datetime_end', 'poi', 'lat', 'lon', 'locked','time_trip', 'time_tour', 'pop_point','pop_point_all'))
+        if _trip1.poi.max() not in place_list2.poi:
+            new_trip2 = _trip2_
+        else:
+            for index, row in _trip2_.iterrows():
+                del index
+                _trip1['No'] = row.No
+                if row.datetime_start == rand_period.datetime_start.max() :
+                    new_trip2 = new_trip2.append(_trip1, ignore_index=True)
+                else:
+                    new_trip2 = new_trip2.append(row, ignore_index=True)
+        
+        #data gen1 + gen2
+        data_gen = rand_trip_list
+        data_gen.append(new_trip1)
+        data_gen.append(new_trip2)
+
+        set_trip = data_gen[0]
+        for trip_random in data_gen:
+            #get distance between tourist place
+            set_position = [(row.lat,row.lon) for index, row in set_trip.iterrows()]
+            set_dist = []
+            for i in range(len(set_position)-1):
+                lat_1, lon_1 = set_position[i]
+                lat_2, lon_2 = set_position[i+1]
+                if lat_1 == '':
+                    lat_1 = 0
+                if lon_1 == '':
+                    lon_1 = 0
+                if lat_2 == '':
+                    lat_2 = 0
+                if lon_2 == '':
+                    lon_2 = 0
+
+                distance = math.sqrt(pow(lat_1-lat_2, 2) + pow(lon_1-lon_2, 2))
+                set_dist.append(distance)
+            _set_dist = [round(x*10,0) for x in set_dist]
+            _set_time = [round((row.time_trip-row.time_tour)/60,0) for index, row in set_trip.iterrows()]
+
+            trip_position = [(row.lat,row.lon) for index, row in trip_random.iterrows()]
+            trip_dist = []
+            for i in range(len(trip_position)-1):
+                lat_1, lon_1 = trip_position[i]
+                lat_2, lon_2 = trip_position[i+1]
+                if lat_1 == '':
+                    lat_1 = 0
+                if lon_1 == '':
+                    lon_1 = 0
+                if lat_2 == '':
+                    lat_2 = 0
+                if lon_2 == '':
+                    lon_2 = 0
+                distance = math.sqrt(pow(lat_1-lat_2, 2) + pow(lon_1-lon_2, 2))
+                trip_dist.append(distance)
+            _trip_dist = [round(x*10,0) for x in trip_dist]
+            _trip_time = [round((row.time_trip-row.time_tour)/60,0) for index, row in trip_random.iterrows()]
+
+            set_pop = set_trip.pop_point.sum() - sum(_set_dist) - sum(_set_time)
+            trip_pop = trip_random.pop_point.sum() - sum(_trip_dist) - sum(_trip_time)
+
+            if set_pop < trip_pop:
+                set_trip = trip_random
+            
+            set_trip['pop_point_all'] = set_pop
+        data_new_gen.append(set_trip)
+
+    return data_new_gen
 
     
 
