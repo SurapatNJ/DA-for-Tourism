@@ -209,6 +209,7 @@ class trip_detail_analysisViewSet(viewsets.ModelViewSet):
         date_end = searchData['date_end'] # end datetime
         hotal_id = searchData['hotal_id'] # hotal for trip
         trip_data = searchData['trip_data'] # trip details
+        date_analysis = searchData['date_analysis'] # date for random trip
 
         #pop data in year
         _date_tourism = pd.read_csv(main_path + "/data_car_stop/all_date_tourism.csv", encoding='TIS620')
@@ -238,42 +239,47 @@ class trip_detail_analysisViewSet(viewsets.ModelViewSet):
         trip_all = pd.DataFrame(columns=('datetime_start', 'datetime_end', 'poi', 'lat', 'lon', 'locked','time_trip','time_period', 'place_list', 'place_type'))
         for index, row in _trip_all.iterrows():
             del index
-            time_start = dt.datetime.strptime(row.datetime_start, '%Y-%m-%d %H:%M:%S')
-            time_end = dt.datetime.strptime(row.datetime_end, '%Y-%m-%d %H:%M:%S')
+            if row.datetime_start != "" and row.datetime_end != "":
+                time_start = dt.datetime.strptime(row.datetime_start, '%Y-%m-%d %H:%M:%S')
+                time_end = dt.datetime.strptime(row.datetime_end, '%Y-%m-%d %H:%M:%S')
 
-            _y = time_start.year
-            _m = time_start.month
-            _d = time_start.day
-            dTime = time_end - time_start
+                _y = time_start.year
+                _m = time_start.month
+                _d = time_start.day
+                dTime = time_end - time_start
 
-            row['time_trip'] = round(dTime.seconds/60,2)
-            if time_start >= dt.datetime(_y,_m,_d,0) - dTime/2 and time_end < dt.datetime(_y,_m,_d,6) + dTime/2:
-                row['time_period'] = 0
-                place_list = date_tourism[date_tourism.pp_last_night > 0]
-                row['place_list'] = place_list
-            elif time_start >= dt.datetime(_y,_m,_d,6) - dTime/2 and time_end < dt.datetime(_y,_m,_d,12) + dTime/2:
-                row['time_period'] = 1
-                place_list = date_tourism[date_tourism.pp_morning > 0]
-                row['place_list'] = place_list
-            elif time_start >= dt.datetime(_y,_m,_d,12) - dTime/2 and time_end < dt.datetime(_y,_m,_d,16) + dTime/2:
-                row['time_period'] = 2
-                place_list = date_tourism[date_tourism.pp_afternoon > 0]
-                row['place_list'] = place_list
-            elif time_start >= dt.datetime(_y,_m,_d,16) - dTime/2 and time_end < dt.datetime(_y,_m,_d,20) + dTime/2:
-                row['time_period'] = 3
-                place_list = date_tourism[date_tourism.pp_evening > 0]
-                row['place_list'] = place_list
-            elif time_start >= dt.datetime(_y,_m,_d,20) - dTime/2 and time_end <= dt.datetime(_y,_m,_d,23,59) + dTime/2:
-                row['time_period'] = 4
-                place_list = date_tourism[date_tourism.pp_night > 0]
-                row['place_list'] = place_list
-            if row.trip_type != "":
-                Trip_type = [row.trip_type]
-                trip_type_inline = _trip_type_list.loc[_trip_type_list['pcat_1'].isin(Trip_type) | _trip_type_list['pcat_2'].isin(Trip_type) | _trip_type_list['pcat_3'].isin(Trip_type)]
-                row['place_type'] = trip_type_inline.loc[trip_type_inline['poi'].isin(list(place_list.poi))]
-            else:
-                row['place_type'] = trip_type_list.loc[trip_type_list['poi'].isin(list(place_list.poi))]
-            trip_all = trip_all.append(row, ignore_index=True)
+                if date_analysis != "":
+                    if str(time_start.date()) != date_analysis:
+                        row['locked'] = True
+
+                row['time_trip'] = round(dTime.seconds/60,2)
+                if time_start >= dt.datetime(_y,_m,_d,0) - dTime/2 and time_end < dt.datetime(_y,_m,_d,6) + dTime/2:
+                    row['time_period'] = 0
+                    place_list = date_tourism[date_tourism.pp_last_night > 0]
+                    row['place_list'] = place_list
+                elif time_start >= dt.datetime(_y,_m,_d,6) - dTime/2 and time_end < dt.datetime(_y,_m,_d,12) + dTime/2:
+                    row['time_period'] = 1
+                    place_list = date_tourism[date_tourism.pp_morning > 0]
+                    row['place_list'] = place_list
+                elif time_start >= dt.datetime(_y,_m,_d,12) - dTime/2 and time_end < dt.datetime(_y,_m,_d,16) + dTime/2:
+                    row['time_period'] = 2
+                    place_list = date_tourism[date_tourism.pp_afternoon > 0]
+                    row['place_list'] = place_list
+                elif time_start >= dt.datetime(_y,_m,_d,16) - dTime/2 and time_end < dt.datetime(_y,_m,_d,20) + dTime/2:
+                    row['time_period'] = 3
+                    place_list = date_tourism[date_tourism.pp_evening > 0]
+                    row['place_list'] = place_list
+                elif time_start >= dt.datetime(_y,_m,_d,20) - dTime/2 and time_end <= dt.datetime(_y,_m,_d,23,59) + dTime/2:
+                    row['time_period'] = 4
+                    place_list = date_tourism[date_tourism.pp_night > 0]
+                    row['place_list'] = place_list
+                if row.trip_type != "":
+                    Trip_type = [row.trip_type]
+                    trip_type_inline = _trip_type_list.loc[_trip_type_list['pcat_1'].isin(Trip_type) | _trip_type_list['pcat_2'].isin(Trip_type) | _trip_type_list['pcat_3'].isin(Trip_type)]
+                    row['place_type'] = trip_type_inline.loc[trip_type_inline['poi'].isin(list(place_list.poi))]
+                else:
+                    row['place_type'] = trip_type_list.loc[trip_type_list['poi'].isin(list(place_list.poi))]
+                trip_all = trip_all.append(row, ignore_index=True)
         del _trip_all
 
         trip_random_list = []
