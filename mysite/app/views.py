@@ -217,12 +217,12 @@ class trip_detail_analysisViewSet(viewsets.ModelViewSet):
         _trip_type_list = pd.read_csv(main_path + "/data_car_stop/poi_category.csv", encoding='TIS620')
 
         #get trip_data to json
-        jTrip = json.loads(trip_data)
+        jTrip = trip_data
 
         #get trip type
         jTrip_type = []
         if trip_type != "":
-            jTrip_type = list(json.loads(trip_type))
+            jTrip_type = trip_type
         trip_type_list = _trip_type_list.loc[_trip_type_list['pcat_1'].isin(jTrip_type) | _trip_type_list['pcat_2'].isin(jTrip_type) | _trip_type_list['pcat_3'].isin(jTrip_type)]
 
         #Set json to dataframe pandas
