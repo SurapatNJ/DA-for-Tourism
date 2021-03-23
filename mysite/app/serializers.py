@@ -32,13 +32,13 @@ class trip_detail_analysisSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = trip_detail_analysis
-        fields = ['trip_type', 'date_start', 'date_end', 'hotal_id', 'trip_data', 'date_analysis']
+        fields = ['trip_type', 'date_start', 'date_end', 'hotel_id', 'trip_data', 'date_analysis']
 
 class rating_analysisSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = rating_analysis
-        fields = ['id','rating_point', 'hotal_id', 'trip_data']
+        fields = ['id','rating_point', 'hotel_id', 'trip_data']
 
 
 class signup_Serializer(serializers.ModelSerializer):

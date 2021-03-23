@@ -47,12 +47,12 @@ class trip_detail_analysis(models.Model):
     date_start = models.DateField(default=dt.datetime(2019,1,1))
     date_end = models.DateField(default=dt.datetime(2019,1,2))
     date_analysis = models.DateField(default=dt.datetime(2019,1,1))
-    hotal_id = models.CharField(max_length=100, null=True, blank=True)
+    hotel_id = models.CharField(max_length=100, null=True, blank=True)
     trip_data = models.TextField(max_length=1000, null=True, blank=True)
 
 class rating_analysis(models.Model):
     rating_point = models.IntegerField(default=0)
-    hotal_id = models.CharField(max_length=100, null=True, blank=True)
+    hotel_id = models.CharField(max_length=100, null=True, blank=True)
     trip_data = models.TextField(max_length=1000, null=True, blank=True)
 
 #User System model

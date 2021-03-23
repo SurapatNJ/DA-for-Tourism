@@ -207,13 +207,13 @@ class trip_detail_analysisViewSet(viewsets.ModelViewSet):
         trip_type = searchData['trip_type']
         date_start = searchData['date_start'] # start datetime
         date_end = searchData['date_end'] # end datetime
-        hotal_id = searchData['hotal_id'] # hotal for trip
+        hotel_id = searchData['hotel_id'] # hotel for trip
         trip_data = searchData['trip_data'] # trip details
         date_analysis = searchData['date_analysis'] # date for random trip
 
         #pop data in year
         _date_tourism = pd.read_csv(main_path + "/data_car_stop/all_date_tourism.csv", encoding='TIS620')
-        hotal_list = pd.read_csv(main_path + "/data_car_stop/cbi_hotels_data.csv", encoding='utf8')
+        hotel_list = pd.read_csv(main_path + "/data_car_stop/cbi_hotels_data.csv", encoding='utf8')
         _trip_type_list = pd.read_csv(main_path + "/data_car_stop/poi_category.csv", encoding='TIS620')
 
         #get trip_data to json
@@ -230,10 +230,10 @@ class trip_detail_analysisViewSet(viewsets.ModelViewSet):
         for t in jTrip:
            _trip_all = _trip_all.append(t, ignore_index=True)
 
-        #filter date_tourism with hotal's position in 100 km^2
-        hotal_data = hotal_list[hotal_list.Id == int(hotal_id)]
-        date_tourism = _date_tourism[_date_tourism.lat >= float(hotal_data.Latitude) - 0.2][_date_tourism.lat <= float(hotal_data.Latitude) + 0.2]
-        date_tourism = date_tourism[_date_tourism.lng >= float(hotal_data.Longtitude) - 0.2][_date_tourism.lng <= float(hotal_data.Longtitude) + 0.2]
+        #filter date_tourism with hotel's position in 100 km^2
+        hotel_data = hotel_list[hotel_list.Id == int(hotel_id)]
+        date_tourism = _date_tourism[_date_tourism.lat >= float(hotel_data.Latitude) - 0.2][_date_tourism.lat <= float(hotel_data.Latitude) + 0.2]
+        date_tourism = date_tourism[_date_tourism.lng >= float(hotel_data.Longtitude) - 0.2][_date_tourism.lng <= float(hotel_data.Longtitude) + 0.2]
 
         #Find time_period and place_list for random genetic
         trip_all = pd.DataFrame(columns=('datetime_start', 'datetime_end', 'poi', 'lat', 'lon', 'locked','time_trip','time_period', 'place_list', 'place_type'))
