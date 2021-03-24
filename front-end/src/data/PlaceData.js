@@ -1,5 +1,65 @@
 export default [
   {
+    "trip_type" : "ธรรมชาติ",
+    "pname" : "ธรรมชาติ"
+  },
+  {
+    "trip_type" : "วัฒนธรรม",
+    "pname" : "วัฒนธรรม"
+  },
+  {
+    "trip_type" : "นันทนาการ",
+    "pname" : "นันทนาการ"
+  },
+  {
+    "trip_type" : "ทะเล",
+    "pname" : "ทะเล"
+  },
+  {
+    "trip_type" : "ป่าชายเลน",
+    "pname" : "ป่าชายเลน"
+  },
+  {
+    "trip_type" : "ภูเขา",
+    "pname" : "ภูเขา"
+  },
+  {
+    "trip_type" : "น้ำตก",
+    "pname" : "น้ำตก"
+  },
+  {
+    "trip_type" : "ถ้ำ",
+    "pname" : "ถ้ำ"
+  },
+  {
+    "trip_type" : "อนุสรณ์สถาน",
+    "pname" : "อนุสรณ์สถาน"
+  },
+  {
+    "trip_type" : "พิพิธภัณฑ์",
+    "pname" : "พิพิธภัณฑ์"
+  },
+  {
+    "trip_type" : "วัด",
+    "pname" : "วัด"
+  },
+  {
+    "trip_type" : "ศาสนสถาน",
+    "pname" : "ศาสนสถาน"
+  },
+  {
+    "trip_type" : "ตลาด",
+    "pname" : "ตลาด"
+  },
+  {
+    "trip_type" : "สวนสนุก",
+    "pname" : "สวนสนุก"
+  },
+  {
+    "trip_type" : "ฟาร์ม",
+    "pname" : "ฟาร์ม"
+  },
+  {
     "id": 0,
     "poi": "cbi-001",
     "pname_en": "Laem Thaen",
