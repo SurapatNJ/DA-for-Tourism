@@ -742,6 +742,7 @@ export function CreateAccordion({datainterval}){
     const defaultProps = {
       options: placeOptions,
       getOptionLabel: (option) => option.pname,
+      groupBy:(option) => option.trip_type!=null? "ประเภทของสถานที่" : "ชื่อสถานที่ท่องเที่ยว"
     }
     return (
       <div style={{ width: '100%',marginTop:-22}}>
