@@ -37,6 +37,7 @@ import ThumbDownIcon from '@material-ui/icons/ThumbDown';
 import ThumbDownOutlinedIcon from '@material-ui/icons/ThumbDownOutlined';
 import AssistantOutlinedIcon from '@material-ui/icons/AssistantOutlined';
 import AddBoxIcon from '@material-ui/icons/AddBox';
+import DeleteIcon from '@material-ui/icons/Delete';
 import IndeterminateCheckBoxIcon from '@material-ui/icons/IndeterminateCheckBox';
 import axios from 'axios';
 
@@ -49,7 +50,7 @@ import { ThumbDownAltRounded, ThumbsUpDownOutlined } from '@material-ui/icons';
 //------------------ Input -----------------------//
 
 export function TripName(val) {
-  return (console.log(val))
+  return (console.log("TripName:",val))
 }
 
 export function CityName({setCitycode}) {
@@ -73,28 +74,6 @@ export function CityName({setCitycode}) {
     </div>
   );
 }
-
-export function PlaceName() {
-  const defaultProps = {
-    options: placeOptions,
-    getOptionLabel: (option) => option.pname,
-  }
-  return (
-    <div style={{ width: '100%',marginTop:-22}}>
-      <Autocomplete
-        {...defaultProps}
-        id="placeName"
-        autoComplete
-        includeInputInList
-        renderInput={(params) => <TextField  {...params} label="ชื่อสถานที่ท่องเที่ยว" />}
-        onChange={(event, value) => {
-          console.log("value:",value)
-        }}
-      />
-    </div>
-  );
-}
-
 
 export function ModeName() {
   const defaultProps = {
@@ -228,50 +207,6 @@ export function Place_cat({addCattype}) {
   );
 }
 
-export function SetTime() {
-  const [startTime, setStartTime] = React.useState("");
-
-  const handleChange = (event) => {
-    setStartTime(event.target.value);
-    console.log("value:",event.target.value)
-  };
-  return (
-    <div>
-      <FormControl  size="small" >
-        <Select
-          labelId="selectStartTime"
-          id="selectStartTime"
-          onChange={handleChange}
-        >
-          <MenuItem value={"00:00"}>00:00</MenuItem>
-          <MenuItem value={"01:00"}>01:00</MenuItem>
-          <MenuItem value={"02:00"}>02:00</MenuItem>
-          <MenuItem value={"03:00"}>03:00</MenuItem>
-          <MenuItem value={"04:00"}>04:00</MenuItem>
-          <MenuItem value={"05:00"}>05:00</MenuItem>
-          <MenuItem value={"06:00"}>06:00</MenuItem>
-          <MenuItem value={"07:00"}>07:00</MenuItem>
-          <MenuItem value={"08:00"}>08:00</MenuItem>
-          <MenuItem value={"09:00"}>09:00</MenuItem>
-          <MenuItem value={"10:00"}>10:00</MenuItem>
-          <MenuItem value={"11:00"}>11:00</MenuItem>
-          <MenuItem value={"12:00"}>12:00</MenuItem>
-          <MenuItem value={"13:00"}>13:00</MenuItem>
-          <MenuItem value={"14:00"}>14:00</MenuItem>
-          <MenuItem value={"15:00"}>15:00</MenuItem>
-          <MenuItem value={"16:00"}>16:00</MenuItem>
-          <MenuItem value={"17:00"}>17:00</MenuItem>
-          <MenuItem value={"18:00"}>18:00</MenuItem>
-          <MenuItem value={"19:00"}>19:00</MenuItem>
-          <MenuItem value={"20:00"}>20:00</MenuItem>
-          <MenuItem value={"21:00"}>21:00</MenuItem>
-          <MenuItem value={"22:00"}>22:00</MenuItem>
-          <MenuItem value={"23:00"}>23:00</MenuItem>
-        </Select>
-      </FormControl>
-    </div>
-  );
-}
 
 const useStyles1 = makeStyles((theme) => ({
   root: {
@@ -330,55 +265,447 @@ const AccordionDetails = withStyles((theme) => ({
 export function CreateAccordion({datainterval}){
   const [submitvalues,setSubmitvalues] = useState({
     trip_type:[],
+    trip_data:[{
+      datetime_start:"",
+      date_end:"",
+      poi:"",
+      lat:0,
+      lon:0,
+      locked:true
+    }],
     start:"2020-11-29",
     end:"2020-12-03",
-    
+    hotel_id:"",
+    trip_name:"",
+    city_code: '',
+    rating_point: ''
   })
   const [rowdatas,setRowdatas] = useState({
     date:[{
-      id : "",
+      id:0,
       trips: [{
-        id: 0,
+        id:0,
         start: "",
         end: "",
         place: ""
-      }],
-      count: 0
+      }]
     }]
   })
-  console.log("DI_CA:",datainterval)
+  const defaultdatas = {
+      trips:[{
+        id:0,
+        start: "09:00",
+        end: "12:00",
+        place: ""
+      },
+      {
+        id:1,
+        start: "12:00",
+        end: "15:00",
+        place: ""
+      },
+      {
+        id:2,
+        start: "15:00",
+        end: "18:00",
+        place: ""
+      }]
+  }
+  const initialArray = {
+    date:[{
+      id:0,
+      trips: [{
+        id:0,
+        start: "09:00",
+        end: "12:00",
+        place: ""
+      },
+      {
+        id:1,
+        start: "12:00",
+        end: "15:00",
+        place: ""
+      },
+      {
+        id:2,
+        start: "15:00",
+        end: "18:00",
+        place: ""
+      }]
+    }]
+  }
   const classes2 = plannerUseStyles();
   const [expanded, setExpanded] = React.useState(false);
   const handleChange = (panel) => (event, newExpanded) => {
     setExpanded(newExpanded ? panel : false);
   };
-  const handleToggle= () => {
-    // rowdatas.date[index].trips.push({
-    //   id: 0,
-    //   start: "",
-    //   end: "",
-    //   place: ""
-    // })
+  function SetTime({time,index,id,type}) {
+    const [startTime, setStartTime] = React.useState("");
+    useEffect(() => {
+      const fetch = () => {
+        setStartTime(time)
+      }
+      fetch()
+      },[time])
+      // rowdatas.date[index].trips[id].place
+    const handleChange = (event) => {
+      if (type == 'start'){
+        setStartTime(event.target.value);
+        rowdatas.date[index].trips[id].start = event.target.value
+      }
+      else if (type == 'end' && event.target.value > rowdatas.date[index].trips[id].start){
+        setStartTime(event.target.value);
+        rowdatas.date[index].trips[id].end = event.target.value
+      }
+      else alert("เวลาไม่ถูกต้อง")
+      console.log("value:",rowdatas.date[index].trips[id])
+    };
+    
+    return (
+      <div>
+        <FormControl  size="small" >
+          <Select
+            labelId="selectStartTime"
+            id="selectStartTime"
+            onChange={handleChange}
+            value={startTime}
+          >
+            <MenuItem value={"00:00"}>00:00</MenuItem>
+            <MenuItem value={"01:00"}>01:00</MenuItem>
+            <MenuItem value={"02:00"}>02:00</MenuItem>
+            <MenuItem value={"03:00"}>03:00</MenuItem>
+            <MenuItem value={"04:00"}>04:00</MenuItem>
+            <MenuItem value={"05:00"}>05:00</MenuItem>
+            <MenuItem value={"06:00"}>06:00</MenuItem>
+            <MenuItem value={"07:00"}>07:00</MenuItem>
+            <MenuItem value={"08:00"}>08:00</MenuItem>
+            <MenuItem value={"09:00"}>09:00</MenuItem>
+            <MenuItem value={"10:00"}>10:00</MenuItem>
+            <MenuItem value={"11:00"}>11:00</MenuItem>
+            <MenuItem value={"12:00"}>12:00</MenuItem>
+            <MenuItem value={"13:00"}>13:00</MenuItem>
+            <MenuItem value={"14:00"}>14:00</MenuItem>
+            <MenuItem value={"15:00"}>15:00</MenuItem>
+            <MenuItem value={"16:00"}>16:00</MenuItem>
+            <MenuItem value={"17:00"}>17:00</MenuItem>
+            <MenuItem value={"18:00"}>18:00</MenuItem>
+            <MenuItem value={"19:00"}>19:00</MenuItem>
+            <MenuItem value={"20:00"}>20:00</MenuItem>
+            <MenuItem value={"21:00"}>21:00</MenuItem>
+            <MenuItem value={"22:00"}>22:00</MenuItem>
+            <MenuItem value={"23:00"}>23:00</MenuItem>
+          </Select>
+        </FormControl>
+      </div>
+    );
   }
+  function RatingClick({data,rowdata,heading}) {
+    const [show, setShow] = React.useState(false);
+    const container = React.useRef(null);
+    const handleClick = () => {
+      const tripdatas = []
+      let count = 0
+      for (var d = new Date(data.start); d <= new Date(data.end); d.setDate(d.getDate() + 1)){
+        var format = new Date(d).getFullYear() +"-"+ ("0"+(new Date(d).getMonth()+1)).slice(-2) +"-"+ ("0"+new Date(d).getDate()).slice(-2)
+        for (var j = 0; j< rowdata.date[count].trips.length; j++){
+          if(rowdata.date[count].trips[j].place !== ""){ 
+            console.log(rowdata.date[count].trips[j].place) 
+            tripdatas.push({
+            datetime_start:format+" "+rowdata.date[count].trips[j].start+":00",
+            datetime_end:format+" "+rowdata.date[count].trips[j].end+":00",
+            trip_type:"",
+            poi:placeOptions.find(el => el.id === rowdata.date[count].trips[j].place).poi,
+            lat:0,
+            lon:0,
+            locked:true
+            })
+          }
+          else{
+            tripdatas.push({
+            datetime_start:format+" "+rowdata.date[count].trips[j].start+":00",
+            datetime_end:format+" "+rowdata.date[count].trips[j].end+":00",
+            trip_type:"",
+            poi:"",
+            lat:0,
+            lon:0,
+            locked:false
+            })
+          }
+        }
+        count+=1
+      }
+      setShow(true);
+      console.log("\ntrip_type:",data.trip_type,
+        "\ndate_start:",data.start,
+        "\ndate_end:",data.end,
+        "\nhotel_id:",data.hotel_id,
+        "\ntrip_data:",tripdatas,
+        "\ndate_analysis:",heading)
+      axios.post("http://104.248.7.194:8000/api/trip_detail_analysis/",{
+        trip_type:data.trip_type,
+        date_start:data.start,
+        date_end:data.end,
+        hotel_id:data.hotel_id,
+        trip_data:tripdatas,
+        date_analysis:heading
+      },{
+        headers: {
+          'Content-Type': 'application/json'
+      }})
+      .then(function (response) {
+        console.log('FormResponse: ',response.data)
+      })
+      .catch(function (error) {
+        console.log('FormError: ',error);
+      });
+    };
+    return(
+      <div>
+        <Grid container spacing={2}>
+          <Grid item xs={3}>
+          <Button
+          variant="outlined"
+          color="primary"
+          style={{width:80,height:30}}
+          onClick={handleClick}
+        >สุ่มทริป</Button>
+        </Grid>
+        <Grid item xs={9}>
+          {show ? (
+            <Portal container={container.current}>     
+                <InputGroup>
+                  <Typography style={{fontSize:'12',fontFamily:'csPrajad',marginRight:'3%'}}>ให้คะแนนทริป </Typography>
+                    <RadioGroup row>
+                      <FormControlLabel style={{marginTop:'-5%'}} control={<Checkbox icon={<FavoriteBorder />} checkedIcon={<Favorite />} />}/>
+                      <FormControlLabel style={{marginTop:'-5%'}} control={<Checkbox icon={<ThumbUpAltOutlinedIcon/>} checkedIcon={<ThumbUpAltIcon />} />}/>
+                      <FormControlLabel style={{marginTop:'-5%'}} control={<Checkbox icon={<ThumbDownOutlinedIcon />} checkedIcon={<ThumbDownIcon />} />}/>
+                    </RadioGroup>
+                </InputGroup>
+            </Portal>
+            ) : null}
+          <div ref={container} />
+          </Grid>
+          </Grid>
+      </div>
+  
+    );
+  }
+  
+  function RatingAllClick({data,rowdata}) {
+    const [show, setShow] = React.useState(false);
+    const [tripdatas,setTripdatas] = React.useState([]);
+    const container = React.useRef(null);
+    const handleClick = () => {
+      let count = 0
+      for (var d = new Date(data.start); d <= new Date(data.end); d.setDate(d.getDate() + 1)){
+        // console.log(d)
+        var format = new Date(d).getFullYear() +"-"+ ("0"+(new Date(d).getMonth()+1)).slice(-2) +"-"+ ("0"+new Date(d).getDate()).slice(-2)
+        for (var j = 0; j< rowdata.date[count].trips.length; j++){
+        // console.log(format+" "+rowdata.date[count].trips[j].start)
+          if(rowdata.date[count].trips[j].place !== ""){ 
+            console.log(rowdata.date[count].trips[j].place) 
+            tripdatas.push({
+            datetime_start:format+" "+rowdata.date[count].trips[j].start+":00",
+            datetime_end:format+" "+rowdata.date[count].trips[j].end+":00",
+            trip_type:"",
+            poi:placeOptions.find(el => el.id === rowdata.date[count].trips[j].place).poi,
+            lat:0,
+            lon:0,
+            locked:true
+            })
+          }
+          else{
+            tripdatas.push({
+            datetime_start:format+" "+rowdata.date[count].trips[j].start+":00",
+            datetime_end:format+" "+rowdata.date[count].trips[j].end+":00",
+            trip_type:"",
+            poi:"",
+            lat:0,
+            lon:0,
+            locked:false
+            })
+          }
+        }
+        count+=1
+      }
+      setShow(true);
+      console.log("\ntrip_type:",data.trip_type,
+        "\ndate_start:",data.start,
+        "\ndate_end:",data.end,
+        "\nhotel_id:",data.hotel_id,
+        "\ntrip_data:",tripdatas,
+        "\ndate_analysis:","")
+      axios.post("http://104.248.7.194:8000/api/trip_detail_analysis/",{
+        trip_type:data.trip_type,
+        date_start:data.start,
+        date_end:data.end,
+        hotel_id:data.hotel_id,
+        trip_data:tripdatas,
+        date_analysis:""
+      },{
+        headers: {
+          'Content-Type': 'application/json'
+      }})
+      .then(function (response) {
+        console.log('FormResponse: ',response.data)
+        for (var i = 0;i < tripdatas.length;i++){
+          setTripdatas(tripdatas[i].poi = response.data[i].poi)
+        }
+        console.log(tripdatas)
+        console.log(rowdatas)
+      })
+      .catch(function (error) {
+        console.log('FormError: ',error);
+      });
+    };
+    return(
+      <div>
+        <Grid container spacing={2}>
+          <Grid item xs={3}>
+          <Button
+          variant="outlined"
+          color="primary"
+          style={{width:95,height:30}}
+          onClick={handleClick}
+        >สุ่มทั้งหมด</Button>
+        </Grid>
+        <Grid item xs={9}>
+          {show ? (
+            <Portal container={container.current}>     
+                <InputGroup>
+                  <Typography style={{fontSize:'12',fontFamily:'csPrajad',marginRight:'3%',marginLeft:10,marginTop:3}}>ให้คะแนนทริป </Typography>
+                    <RadioGroup row>
+                      <FormControlLabel style={{marginTop:'-5%'}} control={<Checkbox icon={<FavoriteBorder />} checkedIcon={<Favorite />} />}/>
+                      <FormControlLabel style={{marginTop:'-5%'}} control={<Checkbox icon={<ThumbUpAltOutlinedIcon/>} checkedIcon={<ThumbUpAltIcon />} />}/>
+                      <FormControlLabel style={{marginTop:'-5%'}} control={<Checkbox icon={<ThumbDownOutlinedIcon />} checkedIcon={<ThumbDownIcon />} />}/>
+                    </RadioGroup>
+                </InputGroup>
+            </Portal>
+            ) : null}
+          <div ref={container} />
+          </Grid>
+          </Grid>
+      </div>
+  
+    );
+  }
+  
+  function submitForm(data,rowdata) {
+    const tripdatas = []
+      let count = 0
+      for (var d = new Date(data.start); d <= new Date(data.end); d.setDate(d.getDate() + 1)){
+        // console.log(d)
+        var format = new Date(d).getFullYear() +"-"+ ("0"+(new Date(d).getMonth()+1)).slice(-2) +"-"+ ("0"+new Date(d).getDate()).slice(-2)
+        for (var j = 0; j< rowdata.date[count].trips.length; j++){
+        // console.log(format+" "+rowdata.date[count].trips[j].start)
+          if(rowdata.date[count].trips[j].place !== ""){ 
+            console.log(rowdata.date[count].trips[j].place) 
+            tripdatas.push({
+            datetime_start:format+" "+rowdata.date[count].trips[j].start+":00",
+            datetime_end:format+" "+rowdata.date[count].trips[j].end+":00",
+            trip_type:"",
+            poi:placeOptions.find(el => el.id === rowdata.date[count].trips[j].place).poi,
+            lat:0,
+            lon:0,
+            locked:true
+            })
+          }
+          else{
+            tripdatas.push({
+            datetime_start:format+" "+rowdata.date[count].trips[j].start+":00",
+            datetime_end:format+" "+rowdata.date[count].trips[j].end+":00",
+            trip_type:"",
+            poi:"",
+            lat:0,
+            lon:0,
+            locked:false
+            })
+          }
+        }
+        count+=1
+      }
+    console.log("DataSaved",
+      "\nuser_id:",localStorage.getItem('user_id'),
+      "\ntrip_name:",data.trip_name,
+      "\ncity_code:", data.city_code,
+      "\nstart_trip_date:",data.start,
+      "\nend_trip_date:",data.end,
+      "\nhotel_id:",data.hotel_id,
+      "\ntrip_data:",JSON.stringify(tripdatas))
+    axios.post("http://104.248.7.194:8000/api/trip_title_api/",{
+      user_id:localStorage.getItem('user_id'),
+      trip_name:data.trip_name,
+      city_code: data.city_code,
+      start_trip_date:data.start,
+      end_trip_date:data.end,
+      hotel_id:data.hotel_id,
+      trip_data:JSON.stringify(tripdatas)
+    },{
+      headers: {
+        'Content-Type': 'application/json'
+    }})
+    .then(function (response) {
+      console.log('FormResponse: ',response.data)
+    })
+    .catch(function (error) {
+      alert(error)
+      console.log('FormError: ',error);
+    });
+  }
+
+  const handleToggle= (selected,id) => {
+    console.log("dateID",rowdatas.date[selected].id,"AddID:",Math.max.apply(Math,rowdatas.date[selected].trips.map(o => o.id))+1)
+    rowdatas.date[selected].trips.push({
+      id: Math.max.apply(Math,rowdatas.date[selected].trips.map(o => o.id))+1,
+      start: "",
+      end: "",
+      place: ""
+    })
+  console.log("addData:",rowdatas)
+  }
+
+  const handleDelete= (selected,id) => {
+    if(id!==0){
+      var array=[...rowdatas.date[selected].trips]
+      if(array.length > 1)
+        {
+          console.log("DelID:",array.find(o => o.id === id).id)
+          if (array.find(o => o.id === id).id === id)
+          {
+            array=array.filter(x => x.id !== id);
+            console.log("POPsucessID:",id)
+            rowdatas.date[selected].trips = [...array]
+          }
+          console.log("NewData:",rowdatas.date[selected])
+        } 
+    }
+  }
+
   useEffect(() => {
     const fetch = () => {
-      if (datainterval.start === ""){
-        console.log("DI_CA2:",datainterval)
-      }
-      else{
-        setSubmitvalues({...submitvalues, start: datainterval.start, end:datainterval.end}) 
+      if (datainterval.start !== ""){
+        setSubmitvalues({...submitvalues, 
+          start: datainterval.start, 
+          end:datainterval.end,
+          hotel_id:datainterval.hotel_id,
+          trip_name:datainterval.trip_name,
+          city_code: datainterval.city_code,
+          rating_point: datainterval.rating_point}) 
         console.log("submit:",submitvalues)
-      }
-    }
+      }} 
+      setRowdatas({...initialArray})
     fetch()
   },[datainterval])
   const start = submitvalues.start
   const end = submitvalues.end
 
   var daysOfYear = [];
+  var daysOfYearOld = [];
   for (var d = new Date(start); d <= new Date(end); d.setDate(d.getDate() + 1)) {
     var format = ("0"+new Date(d).getDate()).slice(-2) +"/"+ ("0"+(new Date(d).getMonth()+1)).slice(-2) +"/"+ new Date(d).getFullYear()
+    var formatOld = new Date(d).getFullYear() +"-"+ ("0"+(new Date(d).getMonth()+1)).slice(-2) +"-" + ("0"+new Date(d).getDate()).slice(-2)
     daysOfYear.push(format);
+    daysOfYearOld.push(formatOld);
   }
   const diffDate = (new Date(end) - new Date(start))/ (1000 * 60 * 60 * 24)
 
@@ -387,25 +714,97 @@ export function CreateAccordion({datainterval}){
     accordion_data.push(
       {id: i,
       heading: daysOfYear[i],
-      date: daysOfYear[i].replaceAll("/","-")}
+      // date: daysOfYear[i].replaceAll("/","-")}
+      date: daysOfYearOld[i]}
     )
-    rowdatas.date.push(
-      {
-        id: i,
-        trips: [{
-          id: 0,
-          start: "",
-          end: "",
-          place: ""
-        }]
-      }
-    )
+    //console.log("i:",i,"rowdatas:",rowdatas)
+    if (rowdatas.date.find(o => o.id === i)=== undefined )
+    {
+      rowdatas.date.push(
+        {
+          id: i,
+          trips: defaultdatas.trips
+        }
+      )
+    }
   }
 
   function addCattype(p){
     setSubmitvalues({...submitvalues, trip_type: p})  
   }
 
+  function addPlace(index,id,p){
+    rowdatas.date[index].trips[id].place = p
+    console.log(rowdatas.date[index])
+  }
+  
+  function PlaceName({index,id}) {
+    const defaultProps = {
+      options: placeOptions,
+      getOptionLabel: (option) => option.pname,
+      groupBy:(option) => option.trip_type!=null? "ประเภทของสถานที่" : "ชื่อสถานที่ท่องเที่ยว"
+    }
+    return (
+      <div style={{ width: '100%',marginTop:-22}}>
+        <Autocomplete
+          {...defaultProps}
+          id="placeName"
+          autoComplete
+          includeInputInList
+          renderInput={(params) => <TextField  {...params} label="ชื่อสถานที่ท่องเที่ยว" />}
+          value = {placeOptions.find(x => x.id === rowdatas.date[index].trips[id].place)}
+          onChange={(event, value)=>{
+            if (value){
+              console.log("value:",value)
+              addPlace(index,id,value.id)
+            }
+            else 
+            {
+              console.log("value:","")
+              addPlace(index,id,"")
+            }
+          }}
+        />
+      </div>
+    );
+  }
+  function generateRows(index){
+    return rowdatas.date[index].trips.map((d,i) => {
+      return(
+        <ListItem key={i} data-id={d.id}>
+          <Grid item xs={4}>
+          <InputGroup>
+            <SetTime
+            time={rowdatas.date[index].trips[d.id].start}
+            index = {index}
+            id = {d.id}
+            type = "start"/>
+            <Typography style={{marginTop:2,fontSize:20,marginLeft:5,marginRight:5}}>
+              -
+            </Typography>
+            <SetTime 
+            time={rowdatas.date[index].trips[d.id].end} 
+            index = {index}
+            id = {d.id}
+            type = "end"/>
+          </InputGroup>
+          </Grid>
+          <Grid item xs={7}>   
+              <PlaceName 
+              index = {index}
+              id = {d.id}/>
+          </Grid>
+          <Grid item xs={1}>
+            <ListItemIcon>
+              <IconButton size="small"><AddBoxIcon style={{ color: green[500]}} onClick={()=>handleToggle(index,d.id)}/></IconButton>
+              <IconButton size="small"><DeleteIcon onClick={()=>handleDelete(index,d.id)}/></IconButton>
+            </ListItemIcon>
+          </Grid>
+        </ListItem>
+      )
+    })
+  }
+  // console.log("rowdatasinGenerate:",rowdatas)
   return (
     <div>
       <Paper elevation={0}>
@@ -427,8 +826,7 @@ export function CreateAccordion({datainterval}){
         </div>
         <Scrollbars style={{height:415}}>
         {accordion_data.map((accordion,index) => {
-        console.log("index:",index)
-        const { id, heading,date} = accordion; //date = var for add Trip_data
+        const { id, heading,date} = accordion;
         return (
           <Accordion
           expanded={expanded === id}
@@ -449,28 +847,14 @@ export function CreateAccordion({datainterval}){
                 <form className={classes2.form2} noValidate>
                   <Grid container style={{marginTop:-20}} >
                     <Grid item xs={12}>
-                        <RatingClick/>
+                        <RatingClick
+                        heading = {date}
+                        data={submitvalues} 
+                        rowdata={rowdatas}/>
                     </Grid>
                       <Divider style={{marginTop:5}}/>
                     <List style={{width:'100%',marginLeft:'-1%'}}>
-                      {rowdatas.date[index].trips.map((d,i) => {
-                        return(
-                        <ListItem>
-                        <Grid item xs={4}>
-                        <InputGroup><SetTime/><Typography style={{marginTop:2,fontSize:20,marginLeft:5,marginRight:5}}>-</Typography><SetTime/></InputGroup>
-                        </Grid>
-                        <Grid item xs={7}>   
-                            <PlaceName/>
-                        </Grid>
-                        <Grid item xs={1}>
-                          <ListItemIcon>
-                            <IconButton size="small"><AddBoxIcon style={{ color: green[500]}} onClick={handleToggle}/></IconButton>
-                            <IconButton size="small"><IndeterminateCheckBoxIcon color="action"/></IconButton>
-                          </ListItemIcon>
-                        </Grid>
-                      </ListItem>
-                      )
-                      })}
+                      {generateRows(index)}
                     </List>
                       <Divider style={{marginTop:15}}/>
                     </Grid>
@@ -485,12 +869,15 @@ export function CreateAccordion({datainterval}){
         <div className={classes2.paper}>
         <form className={classes2.form} noValidate>
         <Grid container>
-        <Grid item xs={10}><RatingAllClick/></Grid>
+        <Grid item xs={10}><RatingAllClick data={submitvalues} rowdata={rowdatas}/></Grid>
         <Grid item xs={2}>
         <Button
               variant="contained"
               color="Secondary"
               style={{height:30}}
+              onClick={() => {
+                submitForm(submitvalues,rowdatas) 
+              }}
           >บันทึก</Button>
           </Grid>
           </Grid>
@@ -501,81 +888,6 @@ export function CreateAccordion({datainterval}){
       </Paper>
       
     </div>
-  );
-}
-export function RatingClick() {
-  const [show, setShow] = React.useState(false);
-  const container = React.useRef(null);
-  const handleClick = () => {
-    setShow(true);
-  };
-  return(
-    <div>
-      <Grid container spacing={2}>
-        <Grid item xs={3}>
-        <Button
-        variant="outlined"
-        color="primary"
-        style={{width:80,height:30}}
-        onClick={handleClick}
-      >สุ่มทริป</Button>
-      </Grid>
-      <Grid item xs={9}>
-        {show ? (
-          <Portal container={container.current}>     
-              <InputGroup>
-                <Typography style={{fontSize:'12',fontFamily:'csPrajad',marginRight:'3%'}}>ให้คะแนนทริป </Typography>
-                  <RadioGroup row>
-                    <FormControlLabel style={{marginTop:'-5%'}} control={<Checkbox icon={<FavoriteBorder />} checkedIcon={<Favorite />} />}/>
-                    <FormControlLabel style={{marginTop:'-5%'}} control={<Checkbox icon={<ThumbUpAltOutlinedIcon/>} checkedIcon={<ThumbUpAltIcon />} />}/>
-                    <FormControlLabel style={{marginTop:'-5%'}} control={<Checkbox icon={<ThumbDownOutlinedIcon />} checkedIcon={<ThumbDownIcon />} />}/>
-                  </RadioGroup>
-              </InputGroup>
-          </Portal>
-          ) : null}
-        <div ref={container} />
-        </Grid>
-        </Grid>
-    </div>
-
-  );
-}
-
-export function RatingAllClick() {
-  const [show, setShow] = React.useState(false);
-  const container = React.useRef(null);
-  const handleClick = () => {
-    setShow(true);
-  };
-  return(
-    <div>
-      <Grid container spacing={2}>
-        <Grid item xs={3}>
-        <Button
-        variant="outlined"
-        color="primary"
-        style={{width:95,height:30}}
-        onClick={handleClick}
-      >สุ่มทั้งหมด</Button>
-      </Grid>
-      <Grid item xs={9}>
-        {show ? (
-          <Portal container={container.current}>     
-              <InputGroup>
-                <Typography style={{fontSize:'12',fontFamily:'csPrajad',marginRight:'3%',marginLeft:10,marginTop:3}}>ให้คะแนนทริป </Typography>
-                  <RadioGroup row>
-                    <FormControlLabel style={{marginTop:'-5%'}} control={<Checkbox icon={<FavoriteBorder />} checkedIcon={<Favorite />} />}/>
-                    <FormControlLabel style={{marginTop:'-5%'}} control={<Checkbox icon={<ThumbUpAltOutlinedIcon/>} checkedIcon={<ThumbUpAltIcon />} />}/>
-                    <FormControlLabel style={{marginTop:'-5%'}} control={<Checkbox icon={<ThumbDownOutlinedIcon />} checkedIcon={<ThumbDownIcon />} />}/>
-                  </RadioGroup>
-              </InputGroup>
-          </Portal>
-          ) : null}
-        <div ref={container} />
-        </Grid>
-        </Grid>
-    </div>
-
   );
 }
 
@@ -630,26 +942,42 @@ export function PlannerForm({setPlaces,setDateIntervals}) {
   function submitForm(data) {
     setPlaces(data.lat,data.lng)
     setDateIntervals(data)
-    console.log('submitform: ',data)  
-    axios.post("http://104.248.7.194:8000/api/trip_title_api/",{
-      user_id: data.user_id,
-      trip_name: data.trip_name,
-      city_code: data.city_code,
-      start_trip_date: data.start_trip_date,
-      end_trip_date: data.end_trip_date,
-      hotel_id: data.hotel_id,
-      rating_point: data.rating_point,
-      trip_data: data.trip_data,
-    },{
-      headers: {
-        'Content-Type': 'application/json'
-    }})
-      .then(function (response) {
-      console.log('TripResponse:',response.data);
-    })
-      .catch(function (error) {
-      console.log('TripError:',error);
-    });
+    console.log('submitform: ',data)
+    if(data.hotel_id !== '' && data.trip_name !== '')
+    {   
+      console.log("DataSent",
+      "\nuser_id:", data.user_id,
+      "\ntrip_name:", data.trip_name,
+      "\ncity_code:", data.city_code,
+      "\nstart_trip_date:", data.start_trip_date,
+      "\nend_trip_date:", data.end_trip_date,
+      "\nhotel_id:", data.hotel_id,
+      "\nrating_point:", data.rating_point,
+      "\ntrip_data:", data.trip_data,)
+      // axios.post("http://104.248.7.194:8000/api/trip_title_api/",
+      // {
+      //   user_id: data.user_id,
+      //   trip_name: data.trip_name,
+      //   city_code: data.city_code,
+      //   start_trip_date: data.start_trip_date,
+      //   end_trip_date: data.end_trip_date,
+      //   hotel_id: data.hotel_id,
+      //   rating_point: data.rating_point,
+      //   trip_data: data.trip_data,
+      // },{
+      //   headers: {
+      //     'Content-Type': 'application/json'
+      // }})
+      //   .then(function (response) {
+      //   console.log('TripResponse:',response.data);
+      // })
+      //   .catch(function (error) {
+      //   console.log('TripError:',error);
+      // });
+    }
+    else{
+      alert("กรุณากรอบข้อมูลให้ครบถ้วน")
+    }
   }
   return(
     <Container fluid noGutters={true}>
@@ -727,7 +1055,11 @@ export class MapContainer extends Component {
       },
       dateinterval:{
         start:'',
-        end:''
+        end:'',
+        hotel_id: '',
+        trip_name: '',
+        city_code: '',
+        rating_point: ''
       }
     }
 
@@ -735,12 +1067,17 @@ export class MapContainer extends Component {
   setPlace(p,q){
     console.log("PQ:",p,q)
     this.setState({places:{lat:p ,lng:q+0.0022141 }})
-    // console.log("places:",this.state.places)
   }
   setDateInterval(p){
     console.log("DI:",p)
-    this.setState({dateinterval:{start:p.start_trip_date,end:p.end_trip_date}})
-    // console.log("date:",this.state.dateinterval)
+    this.setState({dateinterval:{
+      start:p.start_trip_date,
+      end:p.end_trip_date,
+      hotel_id:p.hotel_id,
+      trip_name:p.trip_name,
+      city_code:p.city_code,
+      rating_point:p.rating_point
+    }})
   }
   componentDidMount(){ 
     let data; 
@@ -833,8 +1170,9 @@ export class MapContainer extends Component {
                 </Grid>
                 </CardContent>
               </Card>
-              {/*test Accordion--------*/}
-              <CreateAccordion datainterval={this.state.dateinterval}/>
+              <CreateAccordion 
+              datainterval={this.state.dateinterval}
+              />
       </Paper>
       </Row>   
 
@@ -859,9 +1197,9 @@ export class MapContainer extends Component {
               {/*    Hotel Map    */}
                 <Map
                 google={this.props.google}
-                zoom={13}
+                zoom={10}
                 style={{width:'100%',height:'auto'}}
-                disableDefaultUI ={true}
+                //disableDefaultUI ={true}
                 scrollwheel={false}
                 disableDoubleClickZoom = {true}
                 draggable={false}
