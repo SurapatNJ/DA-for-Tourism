@@ -69,8 +69,11 @@ export function CityName({addCity}) {
   );
 }
 export function PlaceName({addPlace}) {
+  const placeOptionsFilter = placeOptions.filter((place) => {
+    return place.trip_type==null
+  });
   const defaultProps = {
-    options: placeOptions,
+    options: placeOptionsFilter,
     getOptionLabel: (option) => option.pname,
     renderOption: (option) => (
       <React.Fragment>
