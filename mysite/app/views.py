@@ -186,6 +186,23 @@ class trip_title_apiViewSet(viewsets.ModelViewSet):
     filter_backends = [DjangoFilterBackend]
     filterset_fields = ['user_id']
 
+    def create(self, request):
+        #Get input
+        searchData = request.data
+        user_id = searchData['user_id']
+        trip_name = searchData['trip_name']
+        city_code = searchData['city_code']
+        start_trip_date = searchData['start_trip_date'] # start datetime
+        end_trip_date = searchData['end_trip_date'] # end datetime
+        hotel_id = searchData['hotel_id'] # hotel for trip
+        trip_data = searchData['trip_data'] # trip details
+
+        trip_date = str(trip_data)
+
+        return Response(trip_date)
+
+
+
 # trip_title_api
 class rating_analysisViewSet(viewsets.ModelViewSet):
     #Set model 
@@ -298,9 +315,14 @@ class trip_detail_analysisViewSet(viewsets.ModelViewSet):
                     if row.poi != "":
                         _place = place_list[place_list.poi == row.poi]
                         _trip = {'datetime_start':row.datetime_start, 'datetime_end':row.datetime_end, 
-                        'poi':_place.poi.max(), 'lat':_place.lat.max(), 'lon':_place.lng.max(), 'locked': row.locked}
+                        'poi':row.poi, 'lat':row.lat, 'lon':row.lon, 'locked': row.locked}
+                        if _place.empty:
+                            _trip['time_tour'] = 0
+                            _trip['pop_point'] = 0
+                        else:
+                            _trip['time_tour'] = _place.travel_time.max()
                         _trip['time_trip'] = row.time_trip
-                        _trip['time_tour'] = _place.travel_time.max()
+                        
                     else:
                         _trip = {'datetime_start':row.datetime_start, 'datetime_end':row.datetime_end, 
                         'poi':row.poi, 'lat':row.lat, 'lon':row.lon, 'locked': row.locked}
@@ -327,7 +349,7 @@ class trip_detail_analysisViewSet(viewsets.ModelViewSet):
                 _trip['No'] = i
                 _trip['pop_point_all'] = 0
 
-                if row.poi != "" or not row.locked:
+                if (row.poi != "" or not row.locked) and not _place.empty:
                     if row.time_period == 0:
                         _trip['pop_point'] = _place.pp_last_night.max()
                     elif row.time_period == 1:
