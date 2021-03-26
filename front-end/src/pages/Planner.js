@@ -283,15 +283,6 @@ export function CreateAccordion({datainterval}){
   const [rowdatas,setRowdatas] = useState({
     date:[{
       id:0,
-      trips: [{
-        id:0,
-        start: "",
-        end: "",
-        place: ""
-      }]
-    }]
-  })
-  const defaultdatas = {
       trips:[{
         id:0,
         start: "09:00",
@@ -310,65 +301,47 @@ export function CreateAccordion({datainterval}){
         end: "18:00",
         place: ""
       }]
-  }
-  const initialArray = {
-    date:[{
-      id:0,
-      trips: [{
-        id:0,
-        start: "09:00",
-        end: "12:00",
-        place: ""
-      },
-      {
-        id:1,
-        start: "12:00",
-        end: "15:00",
-        place: ""
-      },
-      {
-        id:2,
-        start: "15:00",
-        end: "18:00",
-        place: ""
-      }]
     }]
-  }
+  })
+
   const classes2 = plannerUseStyles();
   const [expanded, setExpanded] = React.useState(false);
   const handleChange = (panel) => (event, newExpanded) => {
     setExpanded(newExpanded ? panel : false);
   };
   function SetTime({time,index,id,type}) {
-    const [startTime, setStartTime] = React.useState("");
+    const [starttime, setStarttime] = React.useState("00:00");
+    var arraysettime = rowdatas.date
+    // console.log(arraysettime)
     useEffect(() => {
       const fetch = () => {
-        setStartTime(time)
+        setStarttime(time)
       }
+      // console.log(starttime)
       fetch()
       },[time])
       // rowdatas.date[index].trips[id].place
-    const handleChange = (event) => {
+    const handleChangeSetTime = (event) => {
       if (type == 'start'){
-        setStartTime(event.target.value);
-        rowdatas.date[index].trips[id].start = event.target.value
+        setStarttime(event.target.value);
+        arraysettime[index].trips[id].start = event.target.value
       }
       else if (type == 'end' && event.target.value > rowdatas.date[index].trips[id].start){
-        setStartTime(event.target.value);
-        rowdatas.date[index].trips[id].end = event.target.value
+        setStarttime(event.target.value);
+        arraysettime[index].trips[id].end = event.target.value
       }
       else alert("เวลาไม่ถูกต้อง")
-      console.log("value:",rowdatas.date[index].trips[id])
+      // rowdatas.date[index].trips[id] = arraysettime[index].trips[id]   
     };
-    
+    // console.log(arraysettime[index].trips[id])
     return (
       <div>
         <FormControl  size="small" >
           <Select
             labelId="selectStartTime"
             id="selectStartTime"
-            onChange={handleChange}
-            value={startTime}
+            onChange={handleChangeSetTime}
+            value={starttime}
           >
             <MenuItem value={"00:00"}>00:00</MenuItem>
             <MenuItem value={"01:00"}>01:00</MenuItem>
@@ -404,17 +377,17 @@ export function CreateAccordion({datainterval}){
     const container = React.useRef(null);
     const handleClick = () => {
       const tripdatas = []
-      let count = 0
+      let daycount = 0
       for (var d = new Date(data.start); d <= new Date(data.end); d.setDate(d.getDate() + 1)){
         var format = new Date(d).getFullYear() +"-"+ ("0"+(new Date(d).getMonth()+1)).slice(-2) +"-"+ ("0"+new Date(d).getDate()).slice(-2)
-        for (var j = 0; j< rowdata.date[count].trips.length; j++){
-          if(rowdata.date[count].trips[j].place !== ""){ 
-            console.log(rowdata.date[count].trips[j].place) 
+        for (var j = 0; j< rowdata.date[daycount].trips.length; j++){
+          if(rowdata.date[daycount].trips[j].place !== ""){ 
+            console.log(rowdata.date[daycount].trips[j].place) 
             tripdatas.push({
-            datetime_start:format+" "+rowdata.date[count].trips[j].start+":00",
-            datetime_end:format+" "+rowdata.date[count].trips[j].end+":00",
+            datetime_start:format+" "+rowdata.date[daycount].trips[j].start+":00",
+            datetime_end:format+" "+rowdata.date[daycount].trips[j].end+":00",
             trip_type:"",
-            poi:placeOptions.find(el => el.id === rowdata.date[count].trips[j].place).poi,
+            poi:placeOptions.find(el => el.id === rowdata.date[daycount].trips[j].place).poi,
             lat:0,
             lon:0,
             locked:true
@@ -422,8 +395,8 @@ export function CreateAccordion({datainterval}){
           }
           else{
             tripdatas.push({
-            datetime_start:format+" "+rowdata.date[count].trips[j].start+":00",
-            datetime_end:format+" "+rowdata.date[count].trips[j].end+":00",
+            datetime_start:format+" "+rowdata.date[daycount].trips[j].start+":00",
+            datetime_end:format+" "+rowdata.date[daycount].trips[j].end+":00",
             trip_type:"",
             poi:"",
             lat:0,
@@ -432,7 +405,7 @@ export function CreateAccordion({datainterval}){
             })
           }
         }
-        count+=1
+        daycount+=1
       }
       setShow(true);
       console.log("\ntrip_type:",data.trip_type,
@@ -456,6 +429,7 @@ export function CreateAccordion({datainterval}){
         console.log('FormResponse: ',response.data)
       })
       .catch(function (error) {
+        alert(error)
         console.log('FormError: ',error);
       });
     };
@@ -493,22 +467,23 @@ export function CreateAccordion({datainterval}){
   
   function RatingAllClick({data,rowdata}) {
     const [show, setShow] = React.useState(false);
-    const [tripdatas,setTripdatas] = React.useState([]);
     const container = React.useRef(null);
     const handleClick = () => {
-      let count = 0
+      let daycount = 0
+      const tripdatas = []
       for (var d = new Date(data.start); d <= new Date(data.end); d.setDate(d.getDate() + 1)){
         // console.log(d)
         var format = new Date(d).getFullYear() +"-"+ ("0"+(new Date(d).getMonth()+1)).slice(-2) +"-"+ ("0"+new Date(d).getDate()).slice(-2)
-        for (var j = 0; j< rowdata.date[count].trips.length; j++){
-        // console.log(format+" "+rowdata.date[count].trips[j].start)
-          if(rowdata.date[count].trips[j].place !== ""){ 
-            console.log(rowdata.date[count].trips[j].place) 
+        for (var j = 0; j< rowdata.date[daycount].trips.length; j++){
+        // console.log(format+" "+rowdata.date[daycount].trips[j].start)
+          if(rowdata.date[daycount].trips[j].place !== ""){ 
             tripdatas.push({
-            datetime_start:format+" "+rowdata.date[count].trips[j].start+":00",
-            datetime_end:format+" "+rowdata.date[count].trips[j].end+":00",
+            datetime_start:format+" "+rowdata.date[daycount].trips[j].start+":00",
+            datetime_end:format+" "+rowdata.date[daycount].trips[j].end+":00",
             trip_type:"",
-            poi:placeOptions.find(el => el.id === rowdata.date[count].trips[j].place).poi,
+            poi:placeOptions.find(el => el.id === rowdata.date[daycount].trips[j].place).poi,
+            // lat:placeOptions.find(el => el.id === rowdata.date[daycount].trips[j].place).lat.toFixed(3),
+            // lon:placeOptions.find(el => el.id === rowdata.date[daycount].trips[j].place).lon.toFixed(3),
             lat:0,
             lon:0,
             locked:true
@@ -516,8 +491,8 @@ export function CreateAccordion({datainterval}){
           }
           else{
             tripdatas.push({
-            datetime_start:format+" "+rowdata.date[count].trips[j].start+":00",
-            datetime_end:format+" "+rowdata.date[count].trips[j].end+":00",
+            datetime_start:format+" "+rowdata.date[daycount].trips[j].start+":00",
+            datetime_end:format+" "+rowdata.date[daycount].trips[j].end+":00",
             trip_type:"",
             poi:"",
             lat:0,
@@ -526,7 +501,7 @@ export function CreateAccordion({datainterval}){
             })
           }
         }
-        count+=1
+        daycount+=1
       }
       setShow(true);
       console.log("\ntrip_type:",data.trip_type,
@@ -548,14 +523,32 @@ export function CreateAccordion({datainterval}){
       }})
       .then(function (response) {
         console.log('FormResponse: ',response.data)
-        for (var i = 0;i < tripdatas.length;i++){
-          setTripdatas(tripdatas[i].poi = response.data[i].poi)
+        var daycount = 0
+        var responsecount = 0
+        var array=[...rowdatas.date]
+        for (var d = new Date(response.data[0].datetime_start); d <= new Date(response.data[response.data.length-1].datetime_start); d.setDate(d.getDate() + 1)){
+          for (var f=0;f < (rowdatas.date[daycount].trips.length);f++){
+            console.log (
+              "daycount",daycount,
+              "f",f,"rescount",responsecount,
+              "poi",response.data[responsecount].poi,
+              "Input",placeOptions.find(el => el.poi === response.data[responsecount].poi).id,
+              "InitialOutput:",array[daycount].trips[f].place
+            )
+            // if (daycount==2)
+            array[daycount].trips[f].place = placeOptions.find(el => el.poi === response.data[responsecount].poi).id
+            responsecount+=1
+           // console.log(response.data[responsecount].poi,placeOptions.find(el => el.poi === response.data[responsecount].poi).id)
+          }
+          console.log("X:",daycount,array[daycount])
+          daycount+=1
         }
-        console.log(tripdatas)
-        console.log(rowdatas)
+        rowdatas.date = array
+        console.log(rowdatas,array)
       })
       .catch(function (error) {
         console.log('FormError: ',error);
+        alert(error)
       });
     };
     return(
@@ -592,19 +585,19 @@ export function CreateAccordion({datainterval}){
   
   function submitForm(data,rowdata) {
     const tripdatas = []
-      let count = 0
+      let daycount = 0
       for (var d = new Date(data.start); d <= new Date(data.end); d.setDate(d.getDate() + 1)){
         // console.log(d)
         var format = new Date(d).getFullYear() +"-"+ ("0"+(new Date(d).getMonth()+1)).slice(-2) +"-"+ ("0"+new Date(d).getDate()).slice(-2)
-        for (var j = 0; j< rowdata.date[count].trips.length; j++){
-        // console.log(format+" "+rowdata.date[count].trips[j].start)
-          if(rowdata.date[count].trips[j].place !== ""){ 
-            console.log(rowdata.date[count].trips[j].place) 
+        for (var j = 0; j< rowdata.date[daycount].trips.length; j++){
+        // console.log(format+" "+rowdata.date[daycount].trips[j].start)
+          if(rowdata.date[daycount].trips[j].place !== ""){ 
+            console.log(rowdata.date[daycount].trips[j].place) 
             tripdatas.push({
-            datetime_start:format+" "+rowdata.date[count].trips[j].start+":00",
-            datetime_end:format+" "+rowdata.date[count].trips[j].end+":00",
+            datetime_start:format+" "+rowdata.date[daycount].trips[j].start+":00",
+            datetime_end:format+" "+rowdata.date[daycount].trips[j].end+":00",
             trip_type:"",
-            poi:placeOptions.find(el => el.id === rowdata.date[count].trips[j].place).poi,
+            poi:placeOptions.find(el => el.id === rowdata.date[daycount].trips[j].place).poi,
             lat:0,
             lon:0,
             locked:true
@@ -612,8 +605,8 @@ export function CreateAccordion({datainterval}){
           }
           else{
             tripdatas.push({
-            datetime_start:format+" "+rowdata.date[count].trips[j].start+":00",
-            datetime_end:format+" "+rowdata.date[count].trips[j].end+":00",
+            datetime_start:format+" "+rowdata.date[daycount].trips[j].start+":00",
+            datetime_end:format+" "+rowdata.date[daycount].trips[j].end+":00",
             trip_type:"",
             poi:"",
             lat:0,
@@ -622,7 +615,7 @@ export function CreateAccordion({datainterval}){
             })
           }
         }
-        count+=1
+        daycount+=1
       }
     console.log("DataSaved",
       "\nuser_id:",localStorage.getItem('user_id'),
@@ -652,19 +645,24 @@ export function CreateAccordion({datainterval}){
       console.log('FormError: ',error);
     });
   }
-
-  const handleToggle= (selected,id) => {
+  const [test,setTest] = useState(false)
+  const handleToggle= (selected) => {
+  setTest(!test)
     console.log("dateID",rowdatas.date[selected].id,"AddID:",Math.max.apply(Math,rowdatas.date[selected].trips.map(o => o.id))+1)
-    rowdatas.date[selected].trips.push({
+    var array=[...rowdatas.date[selected].trips]
+    array.push({
       id: Math.max.apply(Math,rowdatas.date[selected].trips.map(o => o.id))+1,
       start: "",
       end: "",
       place: ""
     })
+    rowdatas.date[selected].trips = array
   console.log("addData:",rowdatas)
+  // setRowdatas(rowdatas)
   }
 
   const handleDelete= (selected,id) => {
+    setTest(!test)
     if(id!==0){
       var array=[...rowdatas.date[selected].trips]
       if(array.length > 1)
@@ -680,6 +678,7 @@ export function CreateAccordion({datainterval}){
         } 
     }
   }
+  const [accordion_data,setAccordion_data] = useState([]);
 
   useEffect(() => {
     const fetch = () => {
@@ -692,50 +691,73 @@ export function CreateAccordion({datainterval}){
           city_code: datainterval.city_code,
           rating_point: datainterval.rating_point}) 
         console.log("submit:",submitvalues)
-      }} 
-      setRowdatas({...initialArray})
+      }
+      pushday(datainterval.start,datainterval.end)
+      // console.log(accordion_data)
+    } 
+      // setRowdatas({...initialArray})
     fetch()
   },[datainterval])
-  const start = submitvalues.start
-  const end = submitvalues.end
+  // const start = submitvalues.start
+  // const end = submitvalues.end                                                        
 
   var daysOfYear = [];
   var daysOfYearOld = [];
-  for (var d = new Date(start); d <= new Date(end); d.setDate(d.getDate() + 1)) {
-    var format = ("0"+new Date(d).getDate()).slice(-2) +"/"+ ("0"+(new Date(d).getMonth()+1)).slice(-2) +"/"+ new Date(d).getFullYear()
-    var formatOld = new Date(d).getFullYear() +"-"+ ("0"+(new Date(d).getMonth()+1)).slice(-2) +"-" + ("0"+new Date(d).getDate()).slice(-2)
-    daysOfYear.push(format);
-    daysOfYearOld.push(formatOld);
-  }
-  const diffDate = (new Date(end) - new Date(start))/ (1000 * 60 * 60 * 24)
+  
 
-  const accordion_data = [];
-  for(var i=0;i<diffDate+1;i++){
-    accordion_data.push(
-      {id: i,
-      heading: daysOfYear[i],
-      // date: daysOfYear[i].replaceAll("/","-")}
-      date: daysOfYearOld[i]}
-    )
-    //console.log("i:",i,"rowdatas:",rowdatas)
-    if (rowdatas.date.find(o => o.id === i)=== undefined )
-    {
-      rowdatas.date.push(
-        {
-          id: i,
-          trips: defaultdatas.trips
-        }
+  function pushday(start,end){
+    const diffDate = (new Date(end) - new Date(start))/ (1000 * 60 * 60 * 24)
+    // var temprowdatas = rowdatas;
+    var tempaccordion_data = []
+    for (var d = new Date(start); d <= new Date(end); d.setDate(d.getDate() + 1)) {
+      var format = ("0"+new Date(d).getDate()).slice(-2) +"/"+ ("0"+(new Date(d).getMonth()+1)).slice(-2) +"/"+ new Date(d).getFullYear()
+      var formatOld = new Date(d).getFullYear() +"-"+ ("0"+(new Date(d).getMonth()+1)).slice(-2) +"-" + ("0"+new Date(d).getDate()).slice(-2)
+      daysOfYear.push(format);
+      daysOfYearOld.push(formatOld);
+    }           
+    for(var i=0;i<=diffDate;i++){
+      // console.log("temp",rowdatas,"\nrow",rowdatas)
+      tempaccordion_data.push(
+        {id: i,
+        heading: daysOfYear[i],
+        // date: daysOfYear[i].replaceAll("/","-")}
+        date: daysOfYearOld[i]}
       )
+      //console.log("i:",i,"rowdatas:",rowdatas)
+      if (rowdatas.date.find(o => o.id === i)=== undefined )
+      {
+        rowdatas.date.push(
+          {
+            id: i,
+            trips:[{
+              id:0,
+              start: "09:00",
+              end: "12:00",
+              place: ""
+            },
+            {
+              id:1,
+              start: "12:00",
+              end: "15:00",
+              place: ""
+            },
+            {
+              id:2,
+              start: "15:00",
+              end: "18:00",
+              place: ""
+            }]
+          }
+        )
+      }
     }
+    setAccordion_data(tempaccordion_data)
+    // setRowdatas({rowdatas})
   }
+  
 
   function addCattype(p){
     setSubmitvalues({...submitvalues, trip_type: p})  
-  }
-
-  function addPlace(index,id,p){
-    rowdatas.date[index].trips[id].place = p
-    console.log(rowdatas.date[index])
   }
   
   function PlaceName({index,id}) {
@@ -748,21 +770,23 @@ export function CreateAccordion({datainterval}){
       <div style={{ width: '100%',marginTop:-22}}>
         <Autocomplete
           {...defaultProps}
-          id="placeName"
           autoComplete
           includeInputInList
           renderInput={(params) => <TextField  {...params} label="ชื่อสถานที่ท่องเที่ยว" />}
           value = {placeOptions.find(x => x.id === rowdatas.date[index].trips[id].place)}
           onChange={(event, value)=>{
             if (value){
-              console.log("value:",value)
-              addPlace(index,id,value.id)
+              console.log("value:",value,"index",index,"id",id)
+              rowdatas.date[index].trips[id].place = value.id
+              console.log("addPlace:",rowdatas.date[index])
             }
             else 
             {
-              console.log("value:","")
-              addPlace(index,id,"")
+              console.log("value:","","index",index,"id",id)
+              rowdatas.date[index].trips[id].place = ""
+              console.log("addPlace:","")
             }
+            setTest(!test)
           }}
         />
       </div>
@@ -770,34 +794,35 @@ export function CreateAccordion({datainterval}){
   }
   function generateRows(index){
     return rowdatas.date[index].trips.map((d,i) => {
+      // console.log("rowdatasIndex&D",index,d,i)
       return(
-        <ListItem key={i} data-id={d.id}>
+        <ListItem >
           <Grid item xs={4}>
           <InputGroup>
             <SetTime
-            time={rowdatas.date[index].trips[d.id].start}
+            time={rowdatas.date[index].trips[i].start}
             index = {index}
-            id = {d.id}
+            id = {i}
             type = "start"/>
             <Typography style={{marginTop:2,fontSize:20,marginLeft:5,marginRight:5}}>
               -
             </Typography>
             <SetTime 
-            time={rowdatas.date[index].trips[d.id].end} 
+            time={rowdatas.date[index].trips[i].end} 
             index = {index}
-            id = {d.id}
+            id = {i}
             type = "end"/>
           </InputGroup>
           </Grid>
           <Grid item xs={7}>   
               <PlaceName 
               index = {index}
-              id = {d.id}/>
+              id = {i}/>
           </Grid>
           <Grid item xs={1}>
             <ListItemIcon>
-              <IconButton size="small"><AddBoxIcon style={{ color: green[500]}} onClick={()=>handleToggle(index,d.id)}/></IconButton>
-              <IconButton size="small"><DeleteIcon onClick={()=>handleDelete(index,d.id)}/></IconButton>
+              <IconButton size="small"><AddBoxIcon style={{ color: green[500]}} onClick={()=>handleToggle(index)}/></IconButton>
+              <IconButton size="small"><DeleteIcon onClick={()=>handleDelete(index,i)}/></IconButton>
             </ListItemIcon>
           </Grid>
         </ListItem>
@@ -805,6 +830,7 @@ export function CreateAccordion({datainterval}){
     })
   }
   // console.log("rowdatasinGenerate:",rowdatas)
+  // console.log(accordion_data)
   return (
     <div>
       <Paper elevation={0}>
@@ -827,7 +853,8 @@ export function CreateAccordion({datainterval}){
         <Scrollbars style={{height:415}}>
         {accordion_data.map((accordion,index) => {
         const { id, heading,date} = accordion;
-        return (
+        // console.log("Accordian:",accordion)
+        return ( 
           <Accordion
           expanded={expanded === id}
           key={id}
@@ -836,7 +863,7 @@ export function CreateAccordion({datainterval}){
           <AccordionSummary
               expandIcon={<ExpandMoreIcon />}
               aria-controls="panel1bh-content"
-              id="panel1bh-header"
+              id={"panel1bh-header"}
               style={{backgroundColor:'#3C6E71',color:'white'}}
             >
               <Typography style={{fontFamily:'csPrajad'}}>วันที่ {heading}</Typography>
@@ -976,7 +1003,7 @@ export function PlannerForm({setPlaces,setDateIntervals}) {
       // });
     }
     else{
-      alert("กรุณากรอบข้อมูลให้ครบถ้วน")
+      // alert("กรุณากรอบข้อมูลให้ครบถ้วน")
     }
   }
   return(
@@ -1006,6 +1033,7 @@ export function PlannerForm({setPlaces,setDateIntervals}) {
             <Typography style={{fontFamily:"csPrajad" ,fontSize:16}}>วันที่ไป :</Typography>
           </Grid>
           <Grid item xs={9}>
+            
             <DateStart
             addDatestart = {addDatestart}
             />
