@@ -8,7 +8,7 @@ import options from '../data/PlaceData';
 import Jumbotron from 'react-bootstrap/Jumbotron';
 import 'react-bootstrap-typeahead/css/Typeahead.css';
 import Autocomplete from '@material-ui/lab/Autocomplete';
-import { Link } from 'react-router-dom';
+import { Link, Redirect } from 'react-router-dom';
 import InputGroup from 'react-bootstrap/InputGroup';
 import { Scrollbars } from 'react-custom-scrollbars';
 import {Typography,Button,Paper,Grid,Tab,Tabs,Box,TextField,InputLabel,MenuItem,FormControl,Select,Fab,IconButton,Card,CardContent,Divider,Avatar,List,ListItem,ListItemIcon,Table,TableBody,TableCell,TableContainer,TableHead,TableRow,TableFooter,TablePagination,Collapse,Portal,Checkbox,FormControlLabel,Radio,RadioGroup,FormGroup} from "@material-ui/core";
@@ -768,7 +768,7 @@ export function CreateAccordion({datainterval,setMarker}){
   }
   
   function PlaceName({index,id}) {
-    setMarker(rowdatas)
+    //setMarker(rowdatas)
     const defaultProps = {
       options: placeOptions,
       getOptionLabel: (option) => option.pname,
@@ -945,8 +945,9 @@ const plannerUseStyles = makeStyles((theme) => ({
 
 }));
 
-export function PlannerForm({setPlaces,setDateIntervals}) {
+export function PlannerForm({setPlaces,setDateIntervals,setRedirect}) {
   const [submitvalues,setSubmitvalues] = useState({
+    id: 0,
     user_id: localStorage.getItem('user_id'),
     trip_name: '',
     city_code: '',
@@ -959,6 +960,9 @@ export function PlannerForm({setPlaces,setDateIntervals}) {
     lng:0,
   })
   const classes = plannerUseStyles();
+  function setId(p){
+    setSubmitvalues({...submitvalues, id: p})  
+  }
   function setTripname(p){
     setSubmitvalues({...submitvalues, trip_name: p})  
   }
@@ -991,6 +995,7 @@ export function PlannerForm({setPlaces,setDateIntervals}) {
       "\ntrip_data:", data.trip_data,)
       axios.post("http://104.248.7.194:8000/api/trip_title_api/",
       {
+        id: data.id,
         user_id: data.user_id,
         trip_name: data.trip_name,
         city_code: data.city_code,
@@ -1004,8 +1009,9 @@ export function PlannerForm({setPlaces,setDateIntervals}) {
           'Content-Type': 'application/json'
       }})
         .then(function (response) {
-        console.log('TripResponse:',response.data);
-      })
+          console.log('TripResponse:',response.data);
+          setRedirect(response.data.id)
+        })
         .catch(function (error) {
         console.log('TripError:',error);
       });
@@ -1014,6 +1020,7 @@ export function PlannerForm({setPlaces,setDateIntervals}) {
       alert("กรุณากรอบข้อมูลให้ครบถ้วน")
     }
   }
+  
   return(
     <Container fluid noGutters={true}>
     <div className={classes.paper}>
@@ -1071,8 +1078,8 @@ export function PlannerForm({setPlaces,setDateIntervals}) {
                     onClick={() => {
                       submitForm(submitvalues) 
                     }}
-                    // component={Link}
-                    // to={"/pages/EditPlanner/"+row.id}
+                    //component={Link}
+                    //to={"/pages/EditPlanner/"+ submitvalues.id}
                 >ยืนยัน</Button>
             </InputGroup>
       </form>
@@ -1120,11 +1127,25 @@ export class MapContainer extends Component {
                 end: "18:00",
                 place: ""
                 }]
-      }]
-      }
+        }]
+      },
+      redirect: 0
     }
 
   }
+
+  /*change to edit planner*/
+  setRedirect = (id) => {
+    this.setState({
+      redirect: id
+    })
+  }
+  renderRedirect = () => {
+    if (this.state.redirect) {
+      return <Redirect to={"/pages/EditPlanner/"+ this.state.redirect} />
+    }
+  }
+
   setPlace(p,q){
     console.log("PQ:",p,q)
     this.setState({places:{lat:p ,lng:q+0.0022141 }})
@@ -1170,6 +1191,11 @@ export class MapContainer extends Component {
       <header className="App-header">
       </header>
 
+      
+      <div>
+        {/*this.renderRedirect()*/}
+      </div>
+
       <section className="App-section">
       <Container fluid noGutters={true}>
       <Row>
@@ -1190,6 +1216,7 @@ export class MapContainer extends Component {
             <PlannerForm 
               setPlaces={this.setPlace}
               setDateIntervals={this.setDateInterval}
+              setRedirect={this.setRedirect}
             >
             </PlannerForm>
             <InputGroup style={{width:'100%',height:180}}>
