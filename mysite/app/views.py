@@ -186,22 +186,6 @@ class trip_title_apiViewSet(viewsets.ModelViewSet):
     filter_backends = [DjangoFilterBackend]
     filterset_fields = ['user_id']
 
-    def create(self, request):
-        #Get input
-        searchData = request.data
-        user_id = searchData['user_id']
-        trip_name = searchData['trip_name']
-        city_code = searchData['city_code']
-        start_trip_date = searchData['start_trip_date'] # start datetime
-        end_trip_date = searchData['end_trip_date'] # end datetime
-        hotel_id = searchData['hotel_id'] # hotel for trip
-        trip_data = searchData['trip_data'] # trip details
-
-        trip_date = str(trip_data)
-
-        return Response(trip_date)
-
-
 
 # trip_title_api
 class rating_analysisViewSet(viewsets.ModelViewSet):
@@ -301,11 +285,12 @@ class trip_detail_analysisViewSet(viewsets.ModelViewSet):
 
         trip_random_list = []
         _sample =  trip_all[trip_all.locked == False].poi.count()
+        
         # จำนวนตัวอย่างที่สุ่ม
         sample = 2048
         if _sample < 12:
             sample = 2 ** _sample
-        for i in range(8):
+        for i in range(sample):
             trip_random = pd.DataFrame(columns=('No','datetime_start', 'datetime_end', 'poi', 'lat', 'lon', 'locked','time_trip', 'time_tour', 'pop_point','pop_point_all'))
             for index, row in trip_all.iterrows():
                 del index
