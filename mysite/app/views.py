@@ -287,8 +287,8 @@ class trip_detail_analysisViewSet(viewsets.ModelViewSet):
         _sample =  trip_all[trip_all.locked == False].poi.count()
         
         # จำนวนตัวอย่างที่สุ่ม
-        sample = 2048
-        if _sample < 12:
+        sample = 32
+        if _sample < 5:
             sample = 2 ** _sample
         for i in range(sample):
             trip_random = pd.DataFrame(columns=('No','datetime_start', 'datetime_end', 'poi', 'lat', 'lon', 'locked','time_trip', 'time_tour', 'pop_point','pop_point_all'))
