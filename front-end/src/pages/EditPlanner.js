@@ -70,6 +70,7 @@ export function CityName({setCitycode,defaultCity}) {
     }
     defaultTest()
   }, [defaultCity])
+
   return (
     <div style={{ width: '100%'}}>
       
@@ -83,12 +84,15 @@ export function CityName({setCitycode,defaultCity}) {
           {...params} 
           label="ชื่อจังหวัด"   
           required id="standard-required" 
-          style={{marginTop:-18}}/>}
+          style={{marginTop:-18}}/>
+        }
+        defaultValue={city}
         onChange={(event, value) => {       
           setCitycode(value.city_code)
         }}
-        defaultValue={city}
+        
       />
+      {console.log("city3",city)}
     </div>
   );
 }
@@ -185,7 +189,7 @@ export function DateStart({addDatestart,defaultDatestart}) {
   );
 }
 
-export function DateEnd({addDateend}) {
+export function DateEnd({addDateend,defaultDateend}) {
   return (
     <form noValidate>
       <TextField
@@ -197,6 +201,7 @@ export function DateEnd({addDateend}) {
         InputLabelProps={{
           shrink: true,
         }}
+        value={defaultDateend}
         onChange={(event, value) => {
           addDateend(event.target.value)
           console.log("value:",event.target.value)
@@ -705,6 +710,7 @@ export function PlannerForm({setPlaces,setData}) {
           <Grid item xs={9}>
             <DateEnd
              addDateend = {addDateend}
+             defaultDateend={setData.end_trip_date}
              />
           </Grid>
           <Grid item xs={3}>
