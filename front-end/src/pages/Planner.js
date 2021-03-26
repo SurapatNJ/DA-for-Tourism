@@ -1099,7 +1099,7 @@ export class MapContainer extends Component {
         city_code: '',
         rating_point: ''
       },
-      markerdata:{
+      rowdatas:{
         date:[{
           id:0,
                 trips:[{
@@ -1141,8 +1141,8 @@ export class MapContainer extends Component {
     }})
   }
   setMarker(data){
-    this.setState({markerdata:data})
-    console.log(data,this.state.markerdata)
+    this.setState({rowdatas:data})
+    // console.log(data,this.state.rowdatas)
   }
   componentDidMount(){ 
     let data; 
