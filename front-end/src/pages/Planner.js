@@ -262,7 +262,7 @@ const AccordionDetails = withStyles((theme) => ({
   },
 }))(MuiAccordionDetails);
 
-export function CreateAccordion({datainterval}){
+export function CreateAccordion({datainterval,setMarker}){
   const [submitvalues,setSubmitvalues] = useState({
     trip_type:[],
     trip_data:[{
@@ -540,11 +540,11 @@ export function CreateAccordion({datainterval}){
             responsecount+=1
            // console.log(response.data[responsecount].poi,placeOptions.find(el => el.poi === response.data[responsecount].poi).id)
           }
-          console.log("X:",daycount,array[daycount])
+          // console.log("X:",daycount,array[daycount])
           daycount+=1
         }
         rowdatas.date = array
-        console.log(rowdatas,array)
+        // console.log(rowdatas,array)
       })
       .catch(function (error) {
         console.log('FormError: ',error);
@@ -698,6 +698,13 @@ export function CreateAccordion({datainterval}){
       // setRowdatas({...initialArray})
     fetch()
   },[datainterval])
+
+  // useEffect(()=> {
+  //   const fectchMarker = () => {
+  //     console.log("123")
+  //   }
+  //   fectchMarker()
+  // },[rowdatas])
   // const start = submitvalues.start
   // const end = submitvalues.end                                                        
 
@@ -761,6 +768,7 @@ export function CreateAccordion({datainterval}){
   }
   
   function PlaceName({index,id}) {
+    setMarker(rowdatas)
     const defaultProps = {
       options: placeOptions,
       getOptionLabel: (option) => option.pname,
@@ -981,29 +989,29 @@ export function PlannerForm({setPlaces,setDateIntervals}) {
       "\nhotel_id:", data.hotel_id,
       "\nrating_point:", data.rating_point,
       "\ntrip_data:", data.trip_data,)
-      // axios.post("http://104.248.7.194:8000/api/trip_title_api/",
-      // {
-      //   user_id: data.user_id,
-      //   trip_name: data.trip_name,
-      //   city_code: data.city_code,
-      //   start_trip_date: data.start_trip_date,
-      //   end_trip_date: data.end_trip_date,
-      //   hotel_id: data.hotel_id,
-      //   rating_point: data.rating_point,
-      //   trip_data: data.trip_data,
-      // },{
-      //   headers: {
-      //     'Content-Type': 'application/json'
-      // }})
-      //   .then(function (response) {
-      //   console.log('TripResponse:',response.data);
-      // })
-      //   .catch(function (error) {
-      //   console.log('TripError:',error);
-      // });
+      axios.post("http://104.248.7.194:8000/api/trip_title_api/",
+      {
+        user_id: data.user_id,
+        trip_name: data.trip_name,
+        city_code: data.city_code,
+        start_trip_date: data.start_trip_date,
+        end_trip_date: data.end_trip_date,
+        hotel_id: data.hotel_id,
+        rating_point: data.rating_point,
+        trip_data: data.trip_data,
+      },{
+        headers: {
+          'Content-Type': 'application/json'
+      }})
+        .then(function (response) {
+        console.log('TripResponse:',response.data);
+      })
+        .catch(function (error) {
+        console.log('TripError:',error);
+      });
     }
     else{
-      // alert("กรุณากรอบข้อมูลให้ครบถ้วน")
+      alert("กรุณากรอบข้อมูลให้ครบถ้วน")
     }
   }
   return(
@@ -1063,6 +1071,8 @@ export function PlannerForm({setPlaces,setDateIntervals}) {
                     onClick={() => {
                       submitForm(submitvalues) 
                     }}
+                    // component={Link}
+                    // to={"/pages/EditPlanner/"+row.id}
                 >ยืนยัน</Button>
             </InputGroup>
       </form>
@@ -1088,6 +1098,29 @@ export class MapContainer extends Component {
         trip_name: '',
         city_code: '',
         rating_point: ''
+      },
+      markerdata:{
+        date:[{
+          id:0,
+                trips:[{
+                id:0,
+                start: "09:00",
+                end: "12:00",
+                place: ""
+                },
+                {
+                id:1,
+                start: "12:00",
+                end: "15:00",
+                place: ""
+                },
+                {
+                id:2,
+                start: "15:00",
+                end: "18:00",
+                place: ""
+                }]
+      }]
       }
     }
 
@@ -1107,6 +1140,10 @@ export class MapContainer extends Component {
       rating_point:p.rating_point
     }})
   }
+  setMarker(data){
+    this.setState({markerdata:data})
+    console.log(data,this.state.markerdata)
+  }
   componentDidMount(){ 
     let data; 
     axios 
@@ -1121,6 +1158,7 @@ export class MapContainer extends Component {
   render() {
     this.setPlace = this.setPlace.bind(this);
     this.setDateInterval = this.setDateInterval.bind(this);
+    this.setMarker = this.setMarker.bind(this);
     return (
       <div className="Trip">
       <link
@@ -1200,6 +1238,7 @@ export class MapContainer extends Component {
               </Card>
               <CreateAccordion 
               datainterval={this.state.dateinterval}
+              setMarker={this.setMarker}
               />
       </Paper>
       </Row>   
@@ -1222,15 +1261,15 @@ export class MapContainer extends Component {
               </CardContent>
             </Card>
             <InputGroup style={{width:'100%',minHeight:547}}>
-              {/*    Hotel Map    */}
+              {/*    แผนที่ทริป */}
                 <Map
                 google={this.props.google}
                 zoom={10}
                 style={{width:'100%',height:'auto'}}
-                //disableDefaultUI ={true}
+                disableDefaultUI ={true}
                 scrollwheel={false}
                 disableDoubleClickZoom = {true}
-                draggable={false}
+                // draggable={false}
                 zoomControl={false}
                 onReady={this.handleMapReady}
                 onBounds_changed={this.handleMapMount}
@@ -1240,7 +1279,24 @@ export class MapContainer extends Component {
                     lng:  101.20
                   }
                 }
-              />     
+                >     
+                {this.state.rowdatas.date.map((date,dateindex) => { 
+                  return(
+                  date.trips.map((trips,tripsindex) => {
+                    console.log("Test2:",trips)
+                    console.log(placeOptions.find(el => el.id === trips.place))
+                    if(trips.place!== ""){
+                      return(
+                        <Marker
+                        // onClick={trips[tripsindex].onMarkerClick}
+                        name = {placeOptions.find(el => el.id === trips.place).pname}
+                        position={{ lat:placeOptions.find(el => el.id === trips.place).lat, lng: placeOptions.find(el => el.id === trips.place).lon}}
+                        />
+                      )
+                    }
+                  }))
+                })}
+                </Map>
             </InputGroup>
             </Col>
         </Row>

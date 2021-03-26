@@ -334,7 +334,7 @@ function CustomizedTables() {
                <StyledTableCell align="center">{row.created.replace('T'," ").split("",19)}</StyledTableCell>
                <StyledTableCell align="center">
                  <IconButton aria-label="edit" size="small" 
-                  componen t={Link}
+                  component={Link}
                   to={"/pages/EditPlanner/"+row.id}
                  ><EditRoundedIcon/></IconButton>  
                  <IconButton aria-label="delete" size="small" onClick={() => handleDelete(myGroups[index].id,index)}><DeleteForeverRoundedIcon/></IconButton>
