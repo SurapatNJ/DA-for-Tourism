@@ -42,7 +42,7 @@ import IndeterminateCheckBoxIcon from '@material-ui/icons/IndeterminateCheckBox'
 import axios from 'axios';
 
 //Google Map
-import { Map, GoogleApiWrapper,Rectangle,HeatMap,Marker} from 'google-maps-react';
+import { Map, GoogleApiWrapper,Rectangle,HeatMap,InfoWindow,Marker} from 'google-maps-react';
 import { ThumbDownAltRounded, ThumbsUpDownOutlined } from '@material-ui/icons';
 
 
@@ -376,18 +376,21 @@ export function CreateAccordion({datainterval,setMarker}){
     const [show, setShow] = React.useState(false);
     const container = React.useRef(null);
     const handleClick = () => {
-      const tripdatas = []
       let daycount = 0
+      const tripdatas = []
       for (var d = new Date(data.start); d <= new Date(data.end); d.setDate(d.getDate() + 1)){
+        // console.log(d)
         var format = new Date(d).getFullYear() +"-"+ ("0"+(new Date(d).getMonth()+1)).slice(-2) +"-"+ ("0"+new Date(d).getDate()).slice(-2)
         for (var j = 0; j< rowdata.date[daycount].trips.length; j++){
+        // console.log(format+" "+rowdata.date[daycount].trips[j].start)
           if(rowdata.date[daycount].trips[j].place !== ""){ 
-            console.log(rowdata.date[daycount].trips[j].place) 
             tripdatas.push({
             datetime_start:format+" "+rowdata.date[daycount].trips[j].start+":00",
             datetime_end:format+" "+rowdata.date[daycount].trips[j].end+":00",
             trip_type:"",
             poi:placeOptions.find(el => el.id === rowdata.date[daycount].trips[j].place).poi,
+            // lat:placeOptions.find(el => el.id === rowdata.date[daycount].trips[j].place).lat.toFixed(3),
+            // lon:placeOptions.find(el => el.id === rowdata.date[daycount].trips[j].place).lon.toFixed(3),
             lat:0,
             lon:0,
             locked:true
@@ -427,10 +430,42 @@ export function CreateAccordion({datainterval,setMarker}){
       }})
       .then(function (response) {
         console.log('FormResponse: ',response.data)
+        var daycount = 0
+        var responsecount = 0
+        var array=[...rowdatas.date]
+        for (var d = new Date(response.data[0].datetime_start); d <= new Date(response.data[response.data.length-1].datetime_start); d.setDate(d.getDate() + 1)){
+          for (var f=0;f < (rowdatas.date[daycount].trips.length);f++){
+            if (response.data[responsecount].poi!==""){
+            console.log ("daycount",daycount)
+            console.log ("f",f)
+            console.log ("rescount",responsecount)
+            console.log ("poi",response.data[responsecount].poi)
+            console.log ("Input",placeOptions.find(el => el.poi === response.data[responsecount].poi).id)
+            console.log ("InitialOutput:",array[daycount].trips[f].place)
+            // console.log (
+            //   "daycount",daycount,
+            //   "f",f,"rescount",responsecount,
+            //   "poi",response.data[responsecount].poi,
+            //   "Input",placeOptions.find(el => el.poi === response.data[responsecount].poi).id,
+            //   "InitialOutput:",array[daycount].trips[f].place
+            // )
+            // if (daycount==2)
+            array[daycount].trips[f].place = placeOptions.find(el => el.poi === response.data[responsecount].poi).id
+            responsecount+=1
+            }
+           // console.log(response.data[responsecount].poi,placeOptions.find(el => el.poi === response.data[responsecount].poi).id)
+          }
+          // console.log("X:",daycount,array[daycount])
+          daycount+=1
+        }
+        rowdatas.date = array
+        // console.log(rowdatas,array)
+        alert("Trip Calculated")
+        setMarker(rowdatas)
       })
       .catch(function (error) {
-        alert(error)
         console.log('FormError: ',error);
+        // alert(error)
       });
     };
     return(
@@ -545,6 +580,8 @@ export function CreateAccordion({datainterval,setMarker}){
         }
         rowdatas.date = array
         // console.log(rowdatas,array)
+        alert("Trip Calculated")
+        setMarker(rowdatas)
       })
       .catch(function (error) {
         console.log('FormError: ',error);
@@ -795,6 +832,8 @@ export function CreateAccordion({datainterval,setMarker}){
               console.log("addPlace:","")
             }
             setTest(!test)
+            
+            setMarker(rowdatas)
           }}
         />
       </div>
@@ -1094,6 +1133,9 @@ export class MapContainer extends Component {
   constructor(props){
     super(props);
     this.state = {
+    showingInfoWindow: false,
+    activeMarker: {},
+    selectedPlace: {},
       places:{
         lat: 0,
         lng: 0,
@@ -1106,7 +1148,7 @@ export class MapContainer extends Component {
         city_code: '',
         rating_point: ''
       },
-      rowdatas:{
+      markerdata:{
         date:[{
           id:0,
                 trips:[{
@@ -1131,7 +1173,6 @@ export class MapContainer extends Component {
       },
       redirect: 0
     }
-
   }
 
   /*change to edit planner*/
@@ -1146,6 +1187,21 @@ export class MapContainer extends Component {
     }
   }
 
+  onMarkerClick = (props, marker, e) =>
+    this.setState({
+      selectedPlace: props,
+      activeMarker: marker,
+      showingInfoWindow: true
+    });
+
+  onMapClicked = (props) => {
+    if (this.state.showingInfoWindow) {
+      this.setState({
+        showingInfoWindow: false,
+        activeMarker: null
+      })
+    }
+  };
   setPlace(p,q){
     console.log("PQ:",p,q)
     this.setState({places:{lat:p ,lng:q+0.0022141 }})
@@ -1162,7 +1218,7 @@ export class MapContainer extends Component {
     }})
   }
   setMarker(data){
-    this.setState({rowdatas:data})
+    this.setState({markerdata:data})
     // console.log(data,this.state.rowdatas)
   }
   componentDidMount(){ 
@@ -1193,7 +1249,7 @@ export class MapContainer extends Component {
 
       
       <div>
-        {/*this.renderRedirect()*/}
+        {this.renderRedirect()}
       </div>
 
       <section className="App-section">
@@ -1244,6 +1300,20 @@ export class MapContainer extends Component {
                 // onClick={this.onMarkerClick}
                 //name = {s.pname_th}
                 position={{ lat:this.state.places.lat, lng: this.state.places.lng}}
+                icon=
+                // "https://developers.google.com/maps/documentation/javascript/examples/full/images/beachflag.png"
+              
+                {{
+                  path:
+                  "M18.121,9.88l-7.832-7.836c-0.155-0.158-0.428-0.155-0.584,0L1.842,9.913c-0.262,0.263-0.073,0.705,0.292,0.705h2.069v7.042c0,0.227,0.187,0.414,0.414,0.414h3.725c0.228,0,0.414-0.188,0.414-0.414v-3.313h2.483v3.313c0,0.227,0.187,0.414,0.413,0.414h3.726c0.229,0,0.414-0.188,0.414-0.414v-7.042h2.068h0.004C18.331,10.617,18.389,10.146,18.121,9.88 M14.963,17.245h-2.896v-3.313c0-0.229-0.186-0.415-0.414-0.415H8.342c-0.228,0-0.414,0.187-0.414,0.415v3.313H5.032v-6.628h9.931V17.245z M3.133,9.79l6.864-6.868l6.867,6.868H3.133z",                  fillColor: "blue",
+                  fillColor: "blue",
+                  fillOpacity: 1,
+                  strokeWeight: 1,
+                  strokeOpacity: 1,
+                  rotation: 0,
+                  scale: 2,
+                  anchor: new this.props.google.maps.Point(11.5, 20),
+                }}
               />
               </Map>     
             </InputGroup>
@@ -1293,9 +1363,11 @@ export class MapContainer extends Component {
                 google={this.props.google}
                 zoom={10}
                 style={{width:'100%',height:'auto'}}
-                disableDefaultUI ={true}
-                scrollwheel={false}
-                disableDoubleClickZoom = {true}
+                // streetViewControl= {false}
+                //disableDefaultUI ={true}
+                // scrollwheel={false}
+                // disableDoubleClickZoom = {true}
+                onClick={this.onMapClicked}
                 // draggable={false}
                 zoomControl={false}
                 onReady={this.handleMapReady}
@@ -1307,15 +1379,19 @@ export class MapContainer extends Component {
                   }
                 }
                 >     
-                {this.state.rowdatas.date.map((date,dateindex) => { 
+                {this.state.markerdata.date.map((date,dateindex) => { 
                   return(
                   date.trips.map((trips,tripsindex) => {
                     console.log("Test2:",trips)
-                    console.log(placeOptions.find(el => el.id === trips.place))
+                    // console.log(placeOptions.find(el => el.id === trips.place))
                     if(trips.place!== ""){
                       return(
                         <Marker
+                        onClick={this.onMarkerClick}
                         // onClick={trips[tripsindex].onMarkerClick}
+                        date = {trips.id+1}
+                        start = {trips.start}
+                        end = {trips.end}
                         name = {placeOptions.find(el => el.id === trips.place).pname}
                         position={{ lat:placeOptions.find(el => el.id === trips.place).lat, lng: placeOptions.find(el => el.id === trips.place).lon}}
                         />
@@ -1323,6 +1399,17 @@ export class MapContainer extends Component {
                     }
                   }))
                 })}
+                <InfoWindow
+                  marker={this.state.activeMarker}
+                  visible={this.state.showingInfoWindow}
+                  onClose={this.onInfoWindowClose}>
+                    <div>
+                      <p>วันที่{this.state.selectedPlace.date}</p>
+                      <p>เวลา: {this.state.selectedPlace.start} - {this.state.selectedPlace.end}</p>
+                      <p>ชื่อสถานที่: {this.state.selectedPlace.name}</p>
+                    </div>
+                </InfoWindow>
+
                 </Map>
             </InputGroup>
             </Col>
