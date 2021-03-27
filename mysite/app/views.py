@@ -232,7 +232,7 @@ class trip_title_apiViewSet(viewsets.ModelViewSet):
                     'hotel_id':tta.hotel_id, 'trip_data':trip_data,
                     'last_updated':tta.last_updated, 'created':tta.created}
             resp.append(_data)
-        return Response(resp)
+        return Response(resp[0])
 
 
     #Post tourist_place data
@@ -271,7 +271,7 @@ class trip_title_apiViewSet(viewsets.ModelViewSet):
         'last_updated':tta.last_updated, 'created':tta.created}
         resp.append(_data)
 
-        return Response(resp)
+        return Response(resp[0])
 
     def update(self, request, pk):
         searchData = request.data
@@ -311,7 +311,7 @@ class trip_title_apiViewSet(viewsets.ModelViewSet):
         'last_updated':tta.last_updated, 'created':tta.created}
         resp.append(_data)
 
-        return Response(resp)
+        return Response(resp[0])
 
 
 
