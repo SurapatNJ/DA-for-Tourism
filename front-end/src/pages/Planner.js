@@ -383,19 +383,32 @@ export function CreateAccordion({datainterval,setMarker,setRedirect}){
         var format = new Date(d).getFullYear() +"-"+ ("0"+(new Date(d).getMonth()+1)).slice(-2) +"-"+ ("0"+new Date(d).getDate()).slice(-2)
         for (var j = 0; j< rowdata.date[daycount].trips.length; j++){
         // console.log(format+" "+rowdata.date[daycount].trips[j].start)
-          if(rowdata.date[daycount].trips[j].place !== ""){ 
-            tripdatas.push({
+        if(rowdata.date[daycount].trips[j].place !== "" && placeOptions.find(x => x.id === rowdata.date[daycount].trips[j].place) !== undefined){ 
+          tripdatas.push({
+          datetime_start:format+" "+rowdata.date[daycount].trips[j].start+":00",
+          datetime_end:format+" "+rowdata.date[daycount].trips[j].end+":00",
+          trip_type:"",
+          poi:placeOptions.find(el => el.id === rowdata.date[daycount].trips[j].place).poi,
+          // lat:placeOptions.find(el => el.id === rowdata.date[daycount].trips[j].place).lat.toFixed(3),
+          // lon:placeOptions.find(el => el.id === rowdata.date[daycount].trips[j].place).lon.toFixed(3),
+          lat:0,
+          lon:0,
+          locked:true
+          })
+        }
+        else if(rowdata.date[daycount].trips[j].place !== "" && placeOptions.find(x => x.trip_type === rowdata.date[daycount].trips[j].place) !== undefined){ 
+          tripdatas.push({
             datetime_start:format+" "+rowdata.date[daycount].trips[j].start+":00",
             datetime_end:format+" "+rowdata.date[daycount].trips[j].end+":00",
-            trip_type:"",
-            poi:placeOptions.find(el => el.id === rowdata.date[daycount].trips[j].place).poi,
+            trip_type:placeOptions.find(el => el.trip_type === rowdata.date[daycount].trips[j].place).trip_type,
+            poi:"",
             // lat:placeOptions.find(el => el.id === rowdata.date[daycount].trips[j].place).lat.toFixed(3),
             // lon:placeOptions.find(el => el.id === rowdata.date[daycount].trips[j].place).lon.toFixed(3),
             lat:0,
             lon:0,
-            locked:true
+            locked:false
             })
-          }
+        }
           else{
             tripdatas.push({
             datetime_start:format+" "+rowdata.date[daycount].trips[j].start+":00",
@@ -511,7 +524,7 @@ export function CreateAccordion({datainterval,setMarker,setRedirect}){
         var format = new Date(d).getFullYear() +"-"+ ("0"+(new Date(d).getMonth()+1)).slice(-2) +"-"+ ("0"+new Date(d).getDate()).slice(-2)
         for (var j = 0; j< rowdata.date[daycount].trips.length; j++){
         // console.log(format+" "+rowdata.date[daycount].trips[j].start)
-          if(rowdata.date[daycount].trips[j].place !== ""){ 
+          if(rowdata.date[daycount].trips[j].place !== "" && placeOptions.find(x => x.id === rowdata.date[daycount].trips[j].place) !== undefined){ 
             tripdatas.push({
             datetime_start:format+" "+rowdata.date[daycount].trips[j].start+":00",
             datetime_end:format+" "+rowdata.date[daycount].trips[j].end+":00",
@@ -523,6 +536,19 @@ export function CreateAccordion({datainterval,setMarker,setRedirect}){
             lon:0,
             locked:true
             })
+          }
+          else if(rowdata.date[daycount].trips[j].place !== "" && placeOptions.find(x => x.trip_type === rowdata.date[daycount].trips[j].place) !== undefined){ 
+            tripdatas.push({
+              datetime_start:format+" "+rowdata.date[daycount].trips[j].start+":00",
+              datetime_end:format+" "+rowdata.date[daycount].trips[j].end+":00",
+              trip_type:placeOptions.find(el => el.trip_type === rowdata.date[daycount].trips[j].place).trip_type,
+              poi:"",
+              // lat:placeOptions.find(el => el.id === rowdata.date[daycount].trips[j].place).lat.toFixed(3),
+              // lon:placeOptions.find(el => el.id === rowdata.date[daycount].trips[j].place).lon.toFixed(3),
+              lat:0,
+              lon:0,
+              locked:false
+              })
           }
           else{
             tripdatas.push({
@@ -833,8 +859,7 @@ export function CreateAccordion({datainterval,setMarker,setRedirect}){
 
   function addPlace(index,id,p){
     rowdatas.date[index].trips[id].place = p
-    console.log(rowdatas.date[index])
-
+    // console.log(rowdatas.date[index])
   }
   
   function PlaceName({index,id}) {
@@ -844,6 +869,12 @@ export function CreateAccordion({datainterval,setMarker,setRedirect}){
       getOptionLabel: (option) => option.pname,
       groupBy:(option) => option.trip_type!=null? "ประเภทของสถานที่" : "ชื่อสถานที่ท่องเที่ยว"
     }
+    var nameplace = []
+    if(placeOptions.find(x => x.id === rowdatas.date[index].trips[id].place) === undefined)
+    {
+      nameplace = placeOptions.find(x => x.trip_type === rowdatas.date[index].trips[id].place)
+    }
+    else nameplace = placeOptions.find(x => x.id === rowdatas.date[index].trips[id].place)
     return (
       <div style={{ width: '100%',marginTop:-22}}>
         <Autocomplete
@@ -851,7 +882,7 @@ export function CreateAccordion({datainterval,setMarker,setRedirect}){
           autoComplete
           includeInputInList
           renderInput={(params) => <TextField  {...params} label="ชื่อสถานที่ท่องเที่ยว" />}
-          value = {placeOptions.find(x => x.id === rowdatas.date[index].trips[id].place)}
+          value = {nameplace}
           onChange={(event, value)=>{
             if (value){
               console.log("value:",value)
@@ -1418,7 +1449,7 @@ export class MapContainer extends Component {
                   date.trips.map((trips,tripsindex) => {
                     // console.log("Test2:",trips)
                     // console.log(placeOptions.find(el => el.id === trips.place))
-                    if(trips.place!== ""){
+                    if(trips.place!== ""&&placeOptions.find(el => el.id === trips.place) !== undefined){
                       return(
                         <Marker
                         onClick={this.onMarkerClick}
