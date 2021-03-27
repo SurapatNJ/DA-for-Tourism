@@ -23,6 +23,7 @@ import Container from '@material-ui/core/Container';
 import GoogleLogin from 'react-google-login';
 import {Alert, AlertTitle} from '@material-ui/lab/';
 import axios from 'axios';
+import { Redirect } from 'react-router-dom';
 
 const responseGoogle = (response) => {
   console.log(response);
@@ -131,6 +132,7 @@ export class SignUp extends React.Component {
             }
             else{
               this.setState({success : true})
+              
             }
             /*
             if(res.data.status!="Error"){
@@ -176,6 +178,7 @@ export class SignUp extends React.Component {
                    <Alert severity="success">
                       <AlertTitle>Sign Up Success&nbsp;&nbsp;
                         <Link href="/pages/Login" variant="body2">{"Log in"}</Link>
+                        <Redirect to={"/pages/Login"} />
                       </AlertTitle>
                     </Alert>
                     :null

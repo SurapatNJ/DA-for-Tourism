@@ -454,7 +454,7 @@ export class MapContainer extends Component {
               </CardContent>
             </Card>
             </Box>
-            <Box ml={'14%'}>
+            {/*<Box ml={'14%'}>
               <Button
                   variant="contained"
                   color="secondary"
@@ -468,7 +468,7 @@ export class MapContainer extends Component {
                   color="primary"
                   style={{width:'75%',height:50}}
               >Recommended Trip</Button>
-            </Box>
+              </Box>*/}
             </Col>
             <Col>
             <Box py={5} ml={'-10%'}>
