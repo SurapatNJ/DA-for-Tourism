@@ -262,7 +262,7 @@ const AccordionDetails = withStyles((theme) => ({
   },
 }))(MuiAccordionDetails);
 
-export function CreateAccordion({datainterval,setMarker}){
+export function CreateAccordion({datainterval,setMarker,setRedirect}){
   const [submitvalues,setSubmitvalues] = useState({
     trip_type:[],
     trip_data:[{
@@ -619,7 +619,7 @@ export function CreateAccordion({datainterval,setMarker}){
   
     );
   }
-  
+  //บันทึก
   function submitForm(data,rowdata) {
     const tripdatas = []
       let daycount = 0
@@ -633,10 +633,10 @@ export function CreateAccordion({datainterval,setMarker}){
             tripdatas.push({
             datetime_start:format+" "+rowdata.date[daycount].trips[j].start+":00",
             datetime_end:format+" "+rowdata.date[daycount].trips[j].end+":00",
-            trip_type:"",
+            //trip_type:"",
             poi:placeOptions.find(el => el.id === rowdata.date[daycount].trips[j].place).poi,
-            lat:0,
-            lon:0,
+            lat:placeOptions.find(el => el.id === rowdata.date[daycount].trips[j].place).lat,
+            lon:placeOptions.find(el => el.id === rowdata.date[daycount].trips[j].place).lng,
             locked:true
             })
           }
@@ -644,7 +644,7 @@ export function CreateAccordion({datainterval,setMarker}){
             tripdatas.push({
             datetime_start:format+" "+rowdata.date[daycount].trips[j].start+":00",
             datetime_end:format+" "+rowdata.date[daycount].trips[j].end+":00",
-            trip_type:"",
+            //trip_type:"",
             poi:"",
             lat:0,
             lon:0,
@@ -676,6 +676,7 @@ export function CreateAccordion({datainterval,setMarker}){
     }})
     .then(function (response) {
       console.log('FormResponse: ',response.data)
+      setRedirect(response.data.id)
     })
     .catch(function (error) {
       alert(error)
@@ -1017,12 +1018,13 @@ export function PlannerForm({setPlaces,setDateIntervals,setRedirect}) {
   function addDateend(p){
     setSubmitvalues({...submitvalues, end_trip_date: p})
   }
+  // ยืนยัน
   function submitForm(data) {
     setPlaces(data.lat,data.lng)
-    setDateIntervals(data)
     console.log('submitform: ',data)
     if(data.hotel_id !== '' && data.trip_name !== '')
     {   
+      setDateIntervals(data)
       console.log("DataSent",
       "\nuser_id:", data.user_id,
       "\ntrip_name:", data.trip_name,
@@ -1032,28 +1034,28 @@ export function PlannerForm({setPlaces,setDateIntervals,setRedirect}) {
       "\nhotel_id:", data.hotel_id,
       "\nrating_point:", data.rating_point,
       "\ntrip_data:", data.trip_data,)
-      axios.post("http://104.248.7.194:8000/api/trip_title_api/",
-      {
-        id: data.id,
-        user_id: data.user_id,
-        trip_name: data.trip_name,
-        city_code: data.city_code,
-        start_trip_date: data.start_trip_date,
-        end_trip_date: data.end_trip_date,
-        hotel_id: data.hotel_id,
-        rating_point: data.rating_point,
-        trip_data: data.trip_data,
-      },{
-        headers: {
-          'Content-Type': 'application/json'
-      }})
-        .then(function (response) {
-          console.log('TripResponse:',response.data);
-          setRedirect(response.data.id)
-        })
-        .catch(function (error) {
-        console.log('TripError:',error);
-      });
+    //   axios.post("http://104.248.7.194:8000/api/trip_title_api/",
+    //   {
+    //     id: data.id,
+    //     user_id: data.user_id,
+    //     trip_name: data.trip_name,
+    //     city_code: data.city_code,
+    //     start_trip_date: data.start_trip_date,
+    //     end_trip_date: data.end_trip_date,
+    //     hotel_id: data.hotel_id,
+    //     rating_point: data.rating_point,
+    //     trip_data: data.trip_data,
+    //   },{
+    //     headers: {
+    //       'Content-Type': 'application/json'
+    //   }})
+    //     .then(function (response) {
+    //       console.log('TripResponse:',response.data);
+    //       setRedirect(response.data.id)
+    //     })
+    //     .catch(function (error) {
+    //     console.log('TripError:',error);
+    //   });
     }
     else{
       alert("กรุณากรอบข้อมูลให้ครบถ้วน")
@@ -1117,8 +1119,6 @@ export function PlannerForm({setPlaces,setDateIntervals,setRedirect}) {
                     onClick={() => {
                       submitForm(submitvalues) 
                     }}
-                    //component={Link}
-                    //to={"/pages/EditPlanner/"+ submitvalues.id}
                 >ยืนยัน</Button>
             </InputGroup>
       </form>
@@ -1334,6 +1334,8 @@ export class MapContainer extends Component {
                 </CardContent>
               </Card>
               <CreateAccordion 
+              
+              setRedirect={this.setRedirect}
               datainterval={this.state.dateinterval}
               setMarker={this.setMarker}
               />
@@ -1382,7 +1384,7 @@ export class MapContainer extends Component {
                 {this.state.markerdata.date.map((date,dateindex) => { 
                   return(
                   date.trips.map((trips,tripsindex) => {
-                    console.log("Test2:",trips)
+                    // console.log("Test2:",trips)
                     // console.log(placeOptions.find(el => el.id === trips.place))
                     if(trips.place!== ""){
                       return(
