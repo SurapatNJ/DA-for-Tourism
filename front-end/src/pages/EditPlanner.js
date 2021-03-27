@@ -70,7 +70,7 @@ export function CityName({setCitycode,valuedefault}) {
     format = 
     [{
       city_code:valuedefault,
-      cname_th: cityOptions.find(e => e.city_code === valuedefault).cname_th,
+      cname_th:cityOptions.find(e => e.city_code === valuedefault).cname_th,
       cname_en:cityOptions.find(e => e.city_code === valuedefault).cname_en
     }]
     // console.log("format",format)
@@ -348,40 +348,13 @@ export function CreateAccordion({datainterval,setMarker,setRedirect,setData}){
       }]
     }]
   })
-  useEffect(() => {
-    let daycount = 0
-    if (setData.trip_data !== "")
-    {
-      console.log("trip_data:", setData.trip_data)
-      // console.log("trip_dataLength:", setData.trip_data.length-1)
-      console.log("time[0]",new Date(setData.trip_data[0].datetime_start.slice(0,11)))
-      var startdate = setData.trip_data[0].datetime_start.slice(0,11)
-      var stopdate = setData.trip_data[setData.trip_data.length-1].datetime_start.slice(0,11)
-      for (var d = new Date(startdate);
-            d < new Date(stopdate);
-            d.setDate(d.getDate() + 1)){
-        // rowdatas.date[daycount]
-        console.log(daycount) 
-        daycount+=1
-      }
-      daycount+=1
-    }
-    // var jsonObj = JSON.parse(setData.trip_data)
-    // setData.trip_data.slice(1,-1)
-    // JSON.parse(setData)
+  useEffect(() => { 
     const fetch = () => { 
-      // console.log("SetDataCA:",(jsonObj))
-      // setRowdatas({...rowdatas, 
-      //   trip_name: setData.trip_name,
-      //   city_code: setData.city_code,
-      //   start_trip_date:setData.start_trip_date,
-      //   end_trip_date: setData.end_trip_date,
-      //   hotel_id: setData.hotel_id,
-      //   id: setData.id,
-      //   trip_data: setData.trip_data
-      // })  
-
-      // console.log("UseEffect(setData):",submitvalues)
+      if (setData.trip_data.length != 0)
+      {
+        setRowdatas({...rowdatas,date:setData.trip_data})
+        console.log("rowdatas",rowdatas)
+      }
     }
     fetch()
   },[setData])
@@ -762,6 +735,7 @@ export function CreateAccordion({datainterval,setMarker,setRedirect,setData}){
         daycount+=1
       }
     console.log("DataSaved",
+      "\nid:",setData.id,
       "\nuser_id:",localStorage.getItem('user_id'),
       "\ntrip_name:",data.trip_name,
       "\ncity_code:", data.city_code,
@@ -769,7 +743,7 @@ export function CreateAccordion({datainterval,setMarker,setRedirect,setData}){
       "\nend_trip_date:",data.end,
       "\nhotel_id:",data.hotel_id,
       "\ntrip_data:",JSON.stringify(tripdatas))
-    axios.post("http://104.248.7.194:8000/api/trip_title_api/",{
+    axios.put("http://104.248.7.194:8000/api/trip_title_api/"+setData.id,{
       user_id:localStorage.getItem('user_id'),
       trip_name:data.trip_name,
       city_code: data.city_code,
@@ -915,19 +889,21 @@ export function CreateAccordion({datainterval,setMarker,setRedirect,setData}){
     rowdatas.date[index].trips[id].place = p
     // console.log(rowdatas.date[index])
   }
-  function PlaceName({index,id}) {
+  function PlaceName({index,id,placedefault}) {
     //setMarker(rowdatas)
     const defaultProps = {
       options: placeOptions,
       getOptionLabel: (option) => option.pname,
       groupBy:(option) => option.trip_type!=null? "ประเภทของสถานที่" : "ชื่อสถานที่ท่องเที่ยว"
     }
-    var nameplace = []
+    var nameplace = placedefault
+    console.log("TE",placedefault)
     if(placeOptions.find(x => x.id === rowdatas.date[index].trips[id].place) === undefined)
     {
       nameplace = placeOptions.find(x => x.trip_type === rowdatas.date[index].trips[id].place)
     }
     else nameplace = placeOptions.find(x => x.id === rowdatas.date[index].trips[id].place)
+    console.log("TE2",nameplace)
     return (
       <div style={{ width: '100%',marginTop:-22}}>
         <Autocomplete
@@ -948,8 +924,7 @@ export function CreateAccordion({datainterval,setMarker,setRedirect,setData}){
               rowdatas.date[index].trips[id].place = ""
               console.log("addPlace:","")
             }
-            setTest(!test)
-            
+            setTest(!test) 
             setMarker(rowdatas)
           }}
         />
@@ -980,6 +955,7 @@ export function CreateAccordion({datainterval,setMarker,setRedirect,setData}){
           </Grid>
           <Grid item xs={7}>   
               <PlaceName 
+              placedefault = {rowdatas.date[index].trips[i].place}
               index = {index}
               id = {i}/>
           </Grid>
@@ -1132,6 +1108,21 @@ export function PlannerForm({setPlaces,setDateIntervals,setRedirect,setData}) {
   })
   useEffect(() => {
     const fetch = () => { 
+      if (setData.trip_data.length != 0)
+      {
+        console.log("trip_data:", setData.trip_data)
+        var arraychangepoi = setData
+        // console.log("trip_data:", arraychangepoi.trip_data[0].trips[0])
+        for (let daycount = 0; daycount < setData.trip_data.length; daycount++){
+          for (let placecount = 0; placecount < setData.trip_data[daycount].trips.length; placecount++){
+            if(arraychangepoi.trip_data[daycount].trips[placecount].place !== ""){
+            var poitoplace = placeOptions.find(el => el.poi === arraychangepoi.trip_data[daycount].trips[placecount].place).id
+            setData.trip_data[daycount].trips[placecount].place = poitoplace
+            // console.log(setData)
+            }   
+          }
+        }
+      }
       console.log("SetDataPF:",setData)
       setSubmitvalues({...submitvalues, 
         trip_name: setData.trip_name,
@@ -1142,7 +1133,6 @@ export function PlannerForm({setPlaces,setDateIntervals,setRedirect,setData}) {
         id: setData.id,
         trip_data: setData.trip_data
       })  
-
       // console.log("UseEffect(setData):",submitvalues)
     }
     fetch()
@@ -1300,16 +1290,15 @@ export class MapContainer extends Component {
       activeMarker: {},
       selectedPlace: {},
       editdata:{
+        id: 0,
+        user_id: 0,
+        trip_name: "",
         city_code: "",
-        created: "",
         end_trip_date: "",
         hotel_id: "",
-        id: 0,
+        trip_data: [],
         last_updated: "",
-        start_trip_date: "",
-        trip_data: "",
-        trip_name: "",
-        user_id: 0,
+        created: ""
       },
       places:{
         lat: 0,
