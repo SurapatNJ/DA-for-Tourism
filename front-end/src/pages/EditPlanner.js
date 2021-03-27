@@ -971,8 +971,18 @@ export function CreateAccordion({datainterval,setMarker,setRedirect,setData}){
           <Grid item xs={1}>
             {(Math.max.apply(Math,rowdatas.date[index].trips.map(o => o.id)) == d.id)? (
               <ListItemIcon>
-                <IconButton size="small"><AddBoxIcon style={{ color: green[500]}} onClick={()=>handleToggle(index)}/></IconButton>
-                <IconButton size="small"><DeleteIcon onClick={()=>handleDelete(index,d.id)}/></IconButton>
+                {(Math.max.apply(Math,rowdatas.date[index].trips.map(o => o.id)) == 4)? (
+                  <IconButton size="small"></IconButton>
+                  ):(
+                    <IconButton size="small"><AddBoxIcon style={{ color: green[500]}} onClick={()=>handleToggle(index)}/></IconButton>
+                  )
+                }
+                {(Math.max.apply(Math,rowdatas.date[index].trips.map(o => o.id)) == 0)? (
+                  <IconButton size="small"></IconButton>
+                  ):(
+                    <IconButton size="small"><DeleteIcon onClick={()=>handleDelete(index,d.id)}/></IconButton>
+                  )
+                }
               </ListItemIcon>
               ):(
                 <ListItemIcon> </ListItemIcon>
