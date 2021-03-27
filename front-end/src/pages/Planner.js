@@ -678,7 +678,7 @@ export function CreateAccordion({datainterval,setMarker,setRedirect}){
     }})
     .then(function (response) {
       console.log('FormResponse: ',response.data);
-      setRedirect(response.data[0].id);
+      setRedirect(response.data.id);
     })
     .catch(function (error) {
       alert(error);

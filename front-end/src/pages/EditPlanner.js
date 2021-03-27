@@ -349,7 +349,7 @@ export function CreateAccordion({datainterval,setMarker,setRedirect,setData}){
     }]
   })
   useEffect(() => {
-    console.log(setData.trip_data)
+    console.log("trip_data:", setData.trip_data)
     // var jsonObj = JSON.parse(setData.trip_data)
     // setData.trip_data.slice(1,-1)
     // JSON.parse(setData)
