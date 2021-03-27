@@ -186,6 +186,79 @@ class trip_title_apiViewSet(viewsets.ModelViewSet):
     filter_backends = [DjangoFilterBackend]
     filterset_fields = ['user_id']
 
+    #Post tourist_place data
+    def create(self, request):
+        #Get input
+        searchData = request.data
+        user_id = searchData['user_id']
+        trip_name = searchData['trip_name']
+        city_code = searchData['city_code']
+        start_trip_date = searchData['start_trip_date'] # start datetime
+        end_trip_date = searchData['end_trip_date'] # end datetime
+        hotel_id = searchData['hotel_id'] # hotel for trip
+        trip_data = searchData['trip_data'] # trip details
+
+        if user_id == '':
+            return Response("not found this user", status=status.HTTP_404_NOT_FOUND)
+
+        tta = trip_title_api(user_id = user_id)
+        tta.trip_name = trip_name
+        tta.city_code = city_code
+        tta.start_trip_date = start_trip_date
+        tta.end_trip_date = end_trip_date
+        tta.hotel_id = hotel_id
+        tta.trip_data = str(trip_data)
+        tta.save()
+
+        resp = []
+        _data = {'id':tta.id, 'user_id':tta.user_id, 'city_code':tta.city_code, 
+        'start_trip_date':tta.start_trip_date, 'end_trip_date':tta.end_trip_date, 
+        'hotel_id':tta.hotel_id, 'trip_data':tta.trip_data,
+        'last_updated':tta.last_updated, 'created':tta.created}
+        resp.append(_data)
+
+        return Response(resp)
+
+    def update(self, request, pk):
+        searchData = request.data
+        user_id = searchData['user_id']
+        trip_name = searchData['trip_name']
+        city_code = searchData['city_code']
+        start_trip_date = searchData['start_trip_date'] # start datetime
+        end_trip_date = searchData['end_trip_date'] # end datetime
+        hotel_id = searchData['hotel_id'] # hotel for trip
+        trip_data = searchData['trip_data'] # trip details
+
+        if user_id == '':
+            return Response("not found this user", status=status.HTTP_404_NOT_FOUND)
+
+        tta = trip_title_api.objects.filter(id = pk)
+        if tta != []:
+            tta = tta[0]
+        else:
+            return Response("not found this trip", status=status.HTTP_404_NOT_FOUND)
+        tta.trip_name = trip_name
+        tta.city_code = city_code
+        tta.start_trip_date = start_trip_date
+        tta.end_trip_date = end_trip_date
+        tta.hotel_id = hotel_id
+        tta.trip_data = str(trip_data)
+        tta.save()
+
+        resp = []
+        _data = {'id':tta.id, 'user_id':tta.user_id, 'city_code':tta.city_code, 
+        'start_trip_date':tta.start_trip_date, 'end_trip_date':tta.end_trip_date, 
+        'hotel_id':tta.hotel_id, 'trip_data':tta.trip_data,
+        'last_updated':tta.last_updated, 'created':tta.created}
+        resp.append(_data)
+
+        return Response(resp)
+
+
+
+
+
+
 
 # trip_title_api
 class rating_analysisViewSet(viewsets.ModelViewSet):
@@ -287,8 +360,8 @@ class trip_detail_analysisViewSet(viewsets.ModelViewSet):
         _sample =  trip_all[trip_all.locked == False].poi.count()
         
         # จำนวนตัวอย่างที่สุ่ม
-        sample = 32
-        if _sample < 5:
+        sample = 16
+        if _sample < 4:
             sample = 2 ** _sample
         for i in range(sample):
             trip_random = pd.DataFrame(columns=('No','datetime_start', 'datetime_end', 'poi', 'lat', 'lon', 'locked','time_trip', 'time_tour', 'pop_point','pop_point_all'))
