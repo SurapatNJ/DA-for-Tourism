@@ -742,8 +742,8 @@ export function CreateAccordion({datainterval,setMarker,setRedirect}){
     var array=[...rowdatas.date[selected].trips]
     array.push({
       id: Math.max.apply(Math,rowdatas.date[selected].trips.map(o => o.id))+1,
-      start: "",
-      end: "",
+      start: "00:00",
+      end: "00:00",
       place: ""
     })
     rowdatas.date[selected].trips = array
