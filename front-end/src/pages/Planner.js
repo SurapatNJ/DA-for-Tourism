@@ -905,7 +905,7 @@ export function CreateAccordion({datainterval,setMarker,setRedirect}){
   }
   function generateRows(index){
     return rowdatas.date[index].trips.map((d,i) => {
-      // console.log("rowdatasIndex&D",index,d,i)
+      console.log("rowdatasIndex&D",index,d,i)
       return(
         <ListItem >
           <Grid item xs={4}>
@@ -931,10 +931,16 @@ export function CreateAccordion({datainterval,setMarker,setRedirect}){
               id = {i}/>
           </Grid>
           <Grid item xs={1}>
-            <ListItemIcon>
-              <IconButton size="small"><AddBoxIcon style={{ color: green[500]}} onClick={()=>handleToggle(index)}/></IconButton>
-              <IconButton size="small"><DeleteIcon onClick={()=>handleDelete(index,i)}/></IconButton>
-            </ListItemIcon>
+            {(Math.max.apply(Math,rowdatas.date[index].trips.map(o => o.id)) == d.id)? (
+              <ListItemIcon>
+                <IconButton size="small"><AddBoxIcon style={{ color: green[500]}} onClick={()=>handleToggle(index)}/></IconButton>
+                <IconButton size="small"><DeleteIcon onClick={()=>handleDelete(index,d.id)}/></IconButton>
+              </ListItemIcon>
+              ):(
+                <ListItemIcon> </ListItemIcon>
+              )
+            }
+            
           </Grid>
         </ListItem>
       )
