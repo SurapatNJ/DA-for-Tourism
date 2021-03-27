@@ -73,7 +73,7 @@ export function CityName({setCitycode,valuedefault}) {
       cname_th: cityOptions.find(e => e.city_code === valuedefault).cname_th,
       cname_en:cityOptions.find(e => e.city_code === valuedefault).cname_en
     }]
-    console.log("format",format)
+    // console.log("format",format)
   }
   return (
     <div style={{ width: '100%'}}>
@@ -137,8 +137,8 @@ export function HotelName({setHotelname,valuedefault}) {
       Id:hotelOptions.find(e => e.Id == valuedefault).Id,
       Hotel_name: hotelOptions.find(e => e.Id == valuedefault).Hotel_name,
       Coordinate:"",
-      lat:"",
-      lng: 0,
+      lat:hotelOptions.find(e => e.Id == valuedefault).lat,
+      lng: hotelOptions.find(e => e.Id == valuedefault).lng,
       Attitude:""
     }]
     console.log("format",format)
@@ -307,7 +307,7 @@ const AccordionDetails = withStyles((theme) => ({
   },
 }))(MuiAccordionDetails);
 
-export function CreateAccordion({datainterval,setMarker,setRedirect}){
+export function CreateAccordion({datainterval,setMarker,setRedirect,setData}){
   const [submitvalues,setSubmitvalues] = useState({
     trip_type:[],
     trip_data:[{
@@ -348,6 +348,27 @@ export function CreateAccordion({datainterval,setMarker,setRedirect}){
       }]
     }]
   })
+  useEffect(() => {
+    console.log(setData.trip_data)
+    // var jsonObj = JSON.parse(setData.trip_data)
+    // setData.trip_data.slice(1,-1)
+    // JSON.parse(setData)
+    const fetch = () => { 
+      // console.log("SetDataCA:",(jsonObj))
+      // setRowdatas({...rowdatas, 
+      //   trip_name: setData.trip_name,
+      //   city_code: setData.city_code,
+      //   start_trip_date:setData.start_trip_date,
+      //   end_trip_date: setData.end_trip_date,
+      //   hotel_id: setData.hotel_id,
+      //   id: setData.id,
+      //   trip_data: setData.trip_data
+      // })  
+
+      // console.log("UseEffect(setData):",submitvalues)
+    }
+    fetch()
+  },[setData])
 
   const classes2 = plannerUseStyles();
   const [expanded, setExpanded] = React.useState(false);
@@ -1046,7 +1067,7 @@ export function PlannerForm({setPlaces,setDateIntervals,setRedirect,setData}) {
   })
   useEffect(() => {
     const fetch = () => { 
-      console.log("SetData:",setData)
+      console.log("SetDataPF:",setData)
       setSubmitvalues({...submitvalues, 
         trip_name: setData.trip_name,
         city_code: setData.city_code,
@@ -1057,7 +1078,7 @@ export function PlannerForm({setPlaces,setDateIntervals,setRedirect,setData}) {
         trip_data: setData.trip_data
       })  
 
-      console.log("UseEffect(setData):",submitvalues)
+      // console.log("UseEffect(setData):",submitvalues)
     }
     fetch()
   },[setData])
@@ -1193,6 +1214,7 @@ export function PlannerForm({setPlaces,setDateIntervals,setRedirect,setData}) {
                     style={{width:'30%',height:'8%',margin:'5%',marginLeft:'45%',marginTop:'7%'}}
                     onClick={() => {
                       submitForm(submitvalues) 
+                      console.log(submitvalues)
                     }}
                 >ยืนยัน</Button>
             </InputGroup>
@@ -1433,10 +1455,10 @@ export class MapContainer extends Component {
                 </CardContent>
               </Card>
               <CreateAccordion 
-              
               setRedirect={this.setRedirect}
               datainterval={this.state.dateinterval}
               setMarker={this.setMarker}
+              setData={this.state.editdata}
               />
       </Paper>
       </Row>   
