@@ -206,10 +206,10 @@ class trip_title_apiViewSet(viewsets.ModelViewSet):
             except:
                 trip_data = tta.trip_data
             
-            _data = {'id':tta.id, 'user_id':tta.user_id, 'city_code':tta.city_code, 
-            'start_trip_date':tta.start_trip_date, 'end_trip_date':tta.end_trip_date, 
-            'hotel_id':tta.hotel_id, 'trip_data':trip_data,
-            'last_updated':tta.last_updated, 'created':tta.created}
+            _data = {'id':tta.id, 'user_id':tta.user_id, 'trip_name':tta.trip_name, 'city_code':tta.city_code, 
+                    'start_trip_date':tta.start_trip_date, 'end_trip_date':tta.end_trip_date, 
+                    'hotel_id':tta.hotel_id, 'trip_data':trip_data,
+                    'last_updated':tta.last_updated, 'created':tta.created}
             resp.append(_data)
 
         return Response(resp)
@@ -227,10 +227,10 @@ class trip_title_apiViewSet(viewsets.ModelViewSet):
                 trip_data = json.loads(tta.trip_data)
             except:
                 trip_data = tta.trip_data
-            _data = {'id':tta.id, 'user_id':tta.user_id, 'city_code':tta.city_code, 
-            'start_trip_date':tta.start_trip_date, 'end_trip_date':tta.end_trip_date, 
-            'hotel_id':tta.hotel_id, 'trip_data':trip_data,
-            'last_updated':tta.last_updated, 'created':tta.created}
+            _data = {'id':tta.id, 'user_id':tta.user_id, 'trip_name':tta.trip_name, 'city_code':tta.city_code, 
+                    'start_trip_date':tta.start_trip_date, 'end_trip_date':tta.end_trip_date, 
+                    'hotel_id':tta.hotel_id, 'trip_data':trip_data,
+                    'last_updated':tta.last_updated, 'created':tta.created}
             resp.append(_data)
         return Response(resp)
 
@@ -265,7 +265,7 @@ class trip_title_apiViewSet(viewsets.ModelViewSet):
             trip_data = json.loads(tta.trip_data)
         except:
             trip_data = tta.trip_data
-        _data = {'id':tta.id, 'user_id':tta.user_id, 'city_code':tta.city_code, 
+        _data = {'id':tta.id, 'user_id':tta.user_id, 'trip_name':tta.trip_name, 'city_code':tta.city_code, 
         'start_trip_date':tta.start_trip_date, 'end_trip_date':tta.end_trip_date, 
         'hotel_id':tta.hotel_id, 'trip_data':trip_data,
         'last_updated':tta.last_updated, 'created':tta.created}
@@ -305,7 +305,7 @@ class trip_title_apiViewSet(viewsets.ModelViewSet):
             trip_data = json.loads(tta.trip_data)
         except:
             trip_data = tta.trip_data
-        _data = {'id':tta.id, 'user_id':tta.user_id, 'city_code':tta.city_code, 
+        _data = {'id':tta.id, 'user_id':tta.user_id, 'trip_name':tta.trip_name, 'city_code':tta.city_code, 
         'start_trip_date':tta.start_trip_date, 'end_trip_date':tta.end_trip_date, 
         'hotel_id':tta.hotel_id, 'trip_data':trip_data,
         'last_updated':tta.last_updated, 'created':tta.created}
