@@ -349,7 +349,23 @@ export function CreateAccordion({datainterval,setMarker,setRedirect,setData}){
     }]
   })
   useEffect(() => {
-    console.log("trip_data:", setData.trip_data)
+    let daycount = 0
+    if (setData.trip_data !== "")
+    {
+      console.log("trip_data:", setData.trip_data)
+      // console.log("trip_dataLength:", setData.trip_data.length-1)
+      console.log("time[0]",new Date(setData.trip_data[0].datetime_start.slice(0,11)))
+      var startdate = setData.trip_data[0].datetime_start.slice(0,11)
+      var stopdate = setData.trip_data[setData.trip_data.length-1].datetime_start.slice(0,11)
+      for (var d = new Date(startdate);
+            d < new Date(stopdate);
+            d.setDate(d.getDate() + 1)){
+        // rowdatas.date[daycount]
+        console.log(daycount) 
+        daycount+=1
+      }
+      daycount+=1
+    }
     // var jsonObj = JSON.parse(setData.trip_data)
     // setData.trip_data.slice(1,-1)
     // JSON.parse(setData)
@@ -445,7 +461,6 @@ export function CreateAccordion({datainterval,setMarker,setRedirect,setData}){
       let daycount = 0
       const tripdatas = []
       for (var d = new Date(data.start); d <= new Date(data.end); d.setDate(d.getDate() + 1)){
-        // console.log(d)
         var format = new Date(d).getFullYear() +"-"+ ("0"+(new Date(d).getMonth()+1)).slice(-2) +"-"+ ("0"+new Date(d).getDate()).slice(-2)
         for (var j = 0; j< rowdata.date[daycount].trips.length; j++){
         // console.log(format+" "+rowdata.date[daycount].trips[j].start)
