@@ -8,7 +8,7 @@ import options from '../data/PlaceData';
 import Jumbotron from 'react-bootstrap/Jumbotron';
 import 'react-bootstrap-typeahead/css/Typeahead.css';
 import Autocomplete from '@material-ui/lab/Autocomplete';
-import { Link } from 'react-router-dom';
+import { Link, Redirect } from 'react-router-dom';
 import InputGroup from 'react-bootstrap/InputGroup';
 import { Scrollbars } from 'react-custom-scrollbars';
 import {Typography,Button,Paper,Grid,Tab,Tabs,Box,TextField,InputLabel,MenuItem,FormControl,Select,Fab,IconButton,Card,CardContent,Divider,Avatar,List,ListItem,ListItemIcon,Table,TableBody,TableCell,TableContainer,TableHead,TableRow,TableFooter,TablePagination,Collapse,Portal,Checkbox,FormControlLabel,Radio,RadioGroup,FormGroup} from "@material-ui/core";
@@ -42,7 +42,7 @@ import IndeterminateCheckBoxIcon from '@material-ui/icons/IndeterminateCheckBox'
 import axios from 'axios';
 
 //Google Map
-import { Map, GoogleApiWrapper,Rectangle,HeatMap,Marker} from 'google-maps-react';
+import { Map, GoogleApiWrapper,Rectangle,HeatMap,InfoWindow,Marker} from 'google-maps-react';
 import { ThumbDownAltRounded, ThumbsUpDownOutlined } from '@material-ui/icons';
 
 
@@ -262,7 +262,7 @@ const AccordionDetails = withStyles((theme) => ({
   },
 }))(MuiAccordionDetails);
 
-export function CreateAccordion({datainterval}){
+export function CreateAccordion({datainterval,setMarker,setRedirect}){
   const [submitvalues,setSubmitvalues] = useState({
     trip_type:[],
     trip_data:[{
@@ -283,15 +283,6 @@ export function CreateAccordion({datainterval}){
   const [rowdatas,setRowdatas] = useState({
     date:[{
       id:0,
-      trips: [{
-        id:0,
-        start: "",
-        end: "",
-        place: ""
-      }]
-    }]
-  })
-  const defaultdatas = {
       trips:[{
         id:0,
         start: "09:00",
@@ -310,65 +301,47 @@ export function CreateAccordion({datainterval}){
         end: "18:00",
         place: ""
       }]
-  }
-  const initialArray = {
-    date:[{
-      id:0,
-      trips: [{
-        id:0,
-        start: "09:00",
-        end: "12:00",
-        place: ""
-      },
-      {
-        id:1,
-        start: "12:00",
-        end: "15:00",
-        place: ""
-      },
-      {
-        id:2,
-        start: "15:00",
-        end: "18:00",
-        place: ""
-      }]
     }]
-  }
+  })
+
   const classes2 = plannerUseStyles();
   const [expanded, setExpanded] = React.useState(false);
   const handleChange = (panel) => (event, newExpanded) => {
     setExpanded(newExpanded ? panel : false);
   };
   function SetTime({time,index,id,type}) {
-    const [startTime, setStartTime] = React.useState("");
+    const [starttime, setStarttime] = React.useState("00:00");
+    var arraysettime = rowdatas.date
+    // console.log(arraysettime)
     useEffect(() => {
       const fetch = () => {
-        setStartTime(time)
+        setStarttime(time)
       }
+      // console.log(starttime)
       fetch()
       },[time])
       // rowdatas.date[index].trips[id].place
-    const handleChange = (event) => {
+    const handleChangeSetTime = (event) => {
       if (type == 'start'){
-        setStartTime(event.target.value);
-        rowdatas.date[index].trips[id].start = event.target.value
+        setStarttime(event.target.value);
+        arraysettime[index].trips[id].start = event.target.value
       }
       else if (type == 'end' && event.target.value > rowdatas.date[index].trips[id].start){
-        setStartTime(event.target.value);
-        rowdatas.date[index].trips[id].end = event.target.value
+        setStarttime(event.target.value);
+        arraysettime[index].trips[id].end = event.target.value
       }
       else alert("เวลาไม่ถูกต้อง")
-      console.log("value:",rowdatas.date[index].trips[id])
+      // rowdatas.date[index].trips[id] = arraysettime[index].trips[id]   
     };
-    
+    // console.log(arraysettime[index].trips[id])
     return (
       <div>
         <FormControl  size="small" >
           <Select
             labelId="selectStartTime"
             id="selectStartTime"
-            onChange={handleChange}
-            value={startTime}
+            onChange={handleChangeSetTime}
+            value={starttime}
           >
             <MenuItem value={"00:00"}>00:00</MenuItem>
             <MenuItem value={"01:00"}>01:00</MenuItem>
@@ -403,18 +376,21 @@ export function CreateAccordion({datainterval}){
     const [show, setShow] = React.useState(false);
     const container = React.useRef(null);
     const handleClick = () => {
+      let daycount = 0
       const tripdatas = []
-      let count = 0
       for (var d = new Date(data.start); d <= new Date(data.end); d.setDate(d.getDate() + 1)){
+        // console.log(d)
         var format = new Date(d).getFullYear() +"-"+ ("0"+(new Date(d).getMonth()+1)).slice(-2) +"-"+ ("0"+new Date(d).getDate()).slice(-2)
-        for (var j = 0; j< rowdata.date[count].trips.length; j++){
-          if(rowdata.date[count].trips[j].place !== ""){ 
-            console.log(rowdata.date[count].trips[j].place) 
+        for (var j = 0; j< rowdata.date[daycount].trips.length; j++){
+        // console.log(format+" "+rowdata.date[daycount].trips[j].start)
+          if(rowdata.date[daycount].trips[j].place !== ""){ 
             tripdatas.push({
-            datetime_start:format+" "+rowdata.date[count].trips[j].start+":00",
-            datetime_end:format+" "+rowdata.date[count].trips[j].end+":00",
+            datetime_start:format+" "+rowdata.date[daycount].trips[j].start+":00",
+            datetime_end:format+" "+rowdata.date[daycount].trips[j].end+":00",
             trip_type:"",
-            poi:placeOptions.find(el => el.id === rowdata.date[count].trips[j].place).poi,
+            poi:placeOptions.find(el => el.id === rowdata.date[daycount].trips[j].place).poi,
+            // lat:placeOptions.find(el => el.id === rowdata.date[daycount].trips[j].place).lat.toFixed(3),
+            // lon:placeOptions.find(el => el.id === rowdata.date[daycount].trips[j].place).lon.toFixed(3),
             lat:0,
             lon:0,
             locked:true
@@ -422,8 +398,8 @@ export function CreateAccordion({datainterval}){
           }
           else{
             tripdatas.push({
-            datetime_start:format+" "+rowdata.date[count].trips[j].start+":00",
-            datetime_end:format+" "+rowdata.date[count].trips[j].end+":00",
+            datetime_start:format+" "+rowdata.date[daycount].trips[j].start+":00",
+            datetime_end:format+" "+rowdata.date[daycount].trips[j].end+":00",
             trip_type:"",
             poi:"",
             lat:0,
@@ -432,7 +408,7 @@ export function CreateAccordion({datainterval}){
             })
           }
         }
-        count+=1
+        daycount+=1
       }
       setShow(true);
       console.log("\ntrip_type:",data.trip_type,
@@ -454,9 +430,42 @@ export function CreateAccordion({datainterval}){
       }})
       .then(function (response) {
         console.log('FormResponse: ',response.data)
+        var daycount = 0
+        var responsecount = 0
+        var array=[...rowdatas.date]
+        for (var d = new Date(response.data[0].datetime_start); d <= new Date(response.data[response.data.length-1].datetime_start); d.setDate(d.getDate() + 1)){
+          for (var f=0;f < (rowdatas.date[daycount].trips.length);f++){
+            if (response.data[responsecount].poi!==""){
+            console.log ("daycount",daycount)
+            console.log ("f",f)
+            console.log ("rescount",responsecount)
+            console.log ("poi",response.data[responsecount].poi)
+            console.log ("Input",placeOptions.find(el => el.poi === response.data[responsecount].poi).id)
+            console.log ("InitialOutput:",array[daycount].trips[f].place)
+            // console.log (
+            //   "daycount",daycount,
+            //   "f",f,"rescount",responsecount,
+            //   "poi",response.data[responsecount].poi,
+            //   "Input",placeOptions.find(el => el.poi === response.data[responsecount].poi).id,
+            //   "InitialOutput:",array[daycount].trips[f].place
+            // )
+            // if (daycount==2)
+            array[daycount].trips[f].place = placeOptions.find(el => el.poi === response.data[responsecount].poi).id
+            responsecount+=1
+            }
+           // console.log(response.data[responsecount].poi,placeOptions.find(el => el.poi === response.data[responsecount].poi).id)
+          }
+          // console.log("X:",daycount,array[daycount])
+          daycount+=1
+        }
+        rowdatas.date = array
+        // console.log(rowdatas,array)
+        alert("Trip Calculated")
+        setMarker(rowdatas)
       })
       .catch(function (error) {
         console.log('FormError: ',error);
+        // alert(error)
       });
     };
     return(
@@ -493,22 +502,23 @@ export function CreateAccordion({datainterval}){
   
   function RatingAllClick({data,rowdata}) {
     const [show, setShow] = React.useState(false);
-    const [tripdatas,setTripdatas] = React.useState([]);
     const container = React.useRef(null);
     const handleClick = () => {
-      let count = 0
+      let daycount = 0
+      const tripdatas = []
       for (var d = new Date(data.start); d <= new Date(data.end); d.setDate(d.getDate() + 1)){
         // console.log(d)
         var format = new Date(d).getFullYear() +"-"+ ("0"+(new Date(d).getMonth()+1)).slice(-2) +"-"+ ("0"+new Date(d).getDate()).slice(-2)
-        for (var j = 0; j< rowdata.date[count].trips.length; j++){
-        // console.log(format+" "+rowdata.date[count].trips[j].start)
-          if(rowdata.date[count].trips[j].place !== ""){ 
-            console.log(rowdata.date[count].trips[j].place) 
+        for (var j = 0; j< rowdata.date[daycount].trips.length; j++){
+        // console.log(format+" "+rowdata.date[daycount].trips[j].start)
+          if(rowdata.date[daycount].trips[j].place !== ""){ 
             tripdatas.push({
-            datetime_start:format+" "+rowdata.date[count].trips[j].start+":00",
-            datetime_end:format+" "+rowdata.date[count].trips[j].end+":00",
+            datetime_start:format+" "+rowdata.date[daycount].trips[j].start+":00",
+            datetime_end:format+" "+rowdata.date[daycount].trips[j].end+":00",
             trip_type:"",
-            poi:placeOptions.find(el => el.id === rowdata.date[count].trips[j].place).poi,
+            poi:placeOptions.find(el => el.id === rowdata.date[daycount].trips[j].place).poi,
+            // lat:placeOptions.find(el => el.id === rowdata.date[daycount].trips[j].place).lat.toFixed(3),
+            // lon:placeOptions.find(el => el.id === rowdata.date[daycount].trips[j].place).lon.toFixed(3),
             lat:0,
             lon:0,
             locked:true
@@ -516,8 +526,8 @@ export function CreateAccordion({datainterval}){
           }
           else{
             tripdatas.push({
-            datetime_start:format+" "+rowdata.date[count].trips[j].start+":00",
-            datetime_end:format+" "+rowdata.date[count].trips[j].end+":00",
+            datetime_start:format+" "+rowdata.date[daycount].trips[j].start+":00",
+            datetime_end:format+" "+rowdata.date[daycount].trips[j].end+":00",
             trip_type:"",
             poi:"",
             lat:0,
@@ -526,7 +536,7 @@ export function CreateAccordion({datainterval}){
             })
           }
         }
-        count+=1
+        daycount+=1
       }
       setShow(true);
       console.log("\ntrip_type:",data.trip_type,
@@ -548,14 +558,34 @@ export function CreateAccordion({datainterval}){
       }})
       .then(function (response) {
         console.log('FormResponse: ',response.data)
-        for (var i = 0;i < tripdatas.length;i++){
-          setTripdatas(tripdatas[i].poi = response.data[i].poi)
+        var daycount = 0
+        var responsecount = 0
+        var array=[...rowdatas.date]
+        for (var d = new Date(response.data[0].datetime_start); d <= new Date(response.data[response.data.length-1].datetime_start); d.setDate(d.getDate() + 1)){
+          for (var f=0;f < (rowdatas.date[daycount].trips.length);f++){
+            console.log (
+              "daycount",daycount,
+              "f",f,"rescount",responsecount,
+              "poi",response.data[responsecount].poi,
+              "Input",placeOptions.find(el => el.poi === response.data[responsecount].poi).id,
+              "InitialOutput:",array[daycount].trips[f].place
+            )
+            // if (daycount==2)
+            array[daycount].trips[f].place = placeOptions.find(el => el.poi === response.data[responsecount].poi).id
+            responsecount+=1
+           // console.log(response.data[responsecount].poi,placeOptions.find(el => el.poi === response.data[responsecount].poi).id)
+          }
+          // console.log("X:",daycount,array[daycount])
+          daycount+=1
         }
-        console.log(tripdatas)
-        console.log(rowdatas)
+        rowdatas.date = array
+        // console.log(rowdatas,array)
+        alert("Trip Calculated")
+        setMarker(rowdatas)
       })
       .catch(function (error) {
         console.log('FormError: ',error);
+        alert(error)
       });
     };
     return(
@@ -590,6 +620,7 @@ export function CreateAccordion({datainterval}){
     );
   }
   
+  //บันทึก
   function submitForm(data,rowdata) {
     const tripdatas = []
       let daycount = 0
@@ -656,6 +687,7 @@ export function CreateAccordion({datainterval}){
 
 
     axios.post("http://104.248.7.194:8000/api/trip_title_api/",{
+      id: data.id,
       user_id:localStorage.getItem('user_id'),
       trip_name:data.trip_name,
       city_code: data.city_code,
@@ -668,26 +700,33 @@ export function CreateAccordion({datainterval}){
         'Content-Type': 'application/json'
     }})
     .then(function (response) {
-      console.log('FormResponse: ',response.data)
+      console.log('FormResponse: ',response.data);
+      setRedirect(response.data.id);
     })
     .catch(function (error) {
-      alert(error)
+      alert(error);
       console.log('FormError: ',error);
     });
   }
 
-  const handleToggle= (selected,id) => {
+  const [test,setTest] = useState(false)
+  const handleToggle= (selected) => {
+  setTest(!test)
     console.log("dateID",rowdatas.date[selected].id,"AddID:",Math.max.apply(Math,rowdatas.date[selected].trips.map(o => o.id))+1)
-    rowdatas.date[selected].trips.push({
+    var array=[...rowdatas.date[selected].trips]
+    array.push({
       id: Math.max.apply(Math,rowdatas.date[selected].trips.map(o => o.id))+1,
       start: "",
       end: "",
       place: ""
     })
+    rowdatas.date[selected].trips = array
   console.log("addData:",rowdatas)
+  // setRowdatas(rowdatas)
   }
 
   const handleDelete= (selected,id) => {
+    setTest(!test)
     if(id!==0){
       var array=[...rowdatas.date[selected].trips]
       if(array.length > 1)
@@ -703,6 +742,7 @@ export function CreateAccordion({datainterval}){
         } 
     }
   }
+  const [accordion_data,setAccordion_data] = useState([]);
 
   useEffect(() => {
     const fetch = () => {
@@ -715,42 +755,77 @@ export function CreateAccordion({datainterval}){
           city_code: datainterval.city_code,
           rating_point: datainterval.rating_point}) 
         console.log("submit:",submitvalues)
-      }} 
-      setRowdatas({...initialArray})
+      }
+      pushday(datainterval.start,datainterval.end)
+      // console.log(accordion_data)
+    } 
+      // setRowdatas({...initialArray})
     fetch()
   },[datainterval])
-  const start = submitvalues.start
-  const end = submitvalues.end
+
+  // useEffect(()=> {
+  //   const fectchMarker = () => {
+  //     console.log("123")
+  //   }
+  //   fectchMarker()
+  // },[rowdatas])
+  // const start = submitvalues.start
+  // const end = submitvalues.end                                                        
 
   var daysOfYear = [];
   var daysOfYearOld = [];
-  for (var d = new Date(start); d <= new Date(end); d.setDate(d.getDate() + 1)) {
-    var format = ("0"+new Date(d).getDate()).slice(-2) +"/"+ ("0"+(new Date(d).getMonth()+1)).slice(-2) +"/"+ new Date(d).getFullYear()
-    var formatOld = new Date(d).getFullYear() +"-"+ ("0"+(new Date(d).getMonth()+1)).slice(-2) +"-" + ("0"+new Date(d).getDate()).slice(-2)
-    daysOfYear.push(format);
-    daysOfYearOld.push(formatOld);
-  }
-  const diffDate = (new Date(end) - new Date(start))/ (1000 * 60 * 60 * 24)
+  
 
-  const accordion_data = [];
-  for(var i=0;i<diffDate+1;i++){
-    accordion_data.push(
-      {id: i,
-      heading: daysOfYear[i],
-      // date: daysOfYear[i].replaceAll("/","-")}
-      date: daysOfYearOld[i]}
-    )
-    //console.log("i:",i,"rowdatas:",rowdatas)
-    if (rowdatas.date.find(o => o.id === i)=== undefined )
-    {
-      rowdatas.date.push(
-        {
-          id: i,
-          trips: defaultdatas.trips
-        }
+  function pushday(start,end){
+    const diffDate = (new Date(end) - new Date(start))/ (1000 * 60 * 60 * 24)
+    // var temprowdatas = rowdatas;
+    var tempaccordion_data = []
+    for (var d = new Date(start); d <= new Date(end); d.setDate(d.getDate() + 1)) {
+      var format = ("0"+new Date(d).getDate()).slice(-2) +"/"+ ("0"+(new Date(d).getMonth()+1)).slice(-2) +"/"+ new Date(d).getFullYear()
+      var formatOld = new Date(d).getFullYear() +"-"+ ("0"+(new Date(d).getMonth()+1)).slice(-2) +"-" + ("0"+new Date(d).getDate()).slice(-2)
+      daysOfYear.push(format);
+      daysOfYearOld.push(formatOld);
+    }           
+    for(var i=0;i<=diffDate;i++){
+      // console.log("temp",rowdatas,"\nrow",rowdatas)
+      tempaccordion_data.push(
+        {id: i,
+        heading: daysOfYear[i],
+        // date: daysOfYear[i].replaceAll("/","-")}
+        date: daysOfYearOld[i]}
       )
+      //console.log("i:",i,"rowdatas:",rowdatas)
+      if (rowdatas.date.find(o => o.id === i)=== undefined )
+      {
+        rowdatas.date.push(
+          {
+            id: i,
+            trips:[{
+              id:0,
+              start: "09:00",
+              end: "12:00",
+              place: ""
+            },
+            {
+              id:1,
+              start: "12:00",
+              end: "15:00",
+              place: ""
+            },
+            {
+              id:2,
+              start: "15:00",
+              end: "18:00",
+              place: ""
+            }]
+          }
+        )
+      }
     }
+    setAccordion_data(tempaccordion_data)
+    // setRowdatas({rowdatas})
   }
+  
 
   function addCattype(p){
     setSubmitvalues({...submitvalues, trip_type: p})  
@@ -763,6 +838,7 @@ export function CreateAccordion({datainterval}){
   }
   
   function PlaceName({index,id}) {
+    //setMarker(rowdatas)
     const defaultProps = {
       options: placeOptions,
       getOptionLabel: (option) => option.pname,
@@ -772,7 +848,6 @@ export function CreateAccordion({datainterval}){
       <div style={{ width: '100%',marginTop:-22}}>
         <Autocomplete
           {...defaultProps}
-          id="placeName"
           autoComplete
           includeInputInList
           renderInput={(params) => <TextField  {...params} label="ชื่อสถานที่ท่องเที่ยว" />}
@@ -785,9 +860,13 @@ export function CreateAccordion({datainterval}){
             }
             else 
             {
-              console.log("value:","")
-              addPlace(index,id,"")
+              console.log("value:","","index",index,"id",id)
+              rowdatas.date[index].trips[id].place = ""
+              console.log("addPlace:","")
             }
+            setTest(!test)
+            
+            setMarker(rowdatas)
           }}
         />
       </div>
@@ -795,34 +874,35 @@ export function CreateAccordion({datainterval}){
   }
   function generateRows(index){
     return rowdatas.date[index].trips.map((d,i) => {
+      // console.log("rowdatasIndex&D",index,d,i)
       return(
-        <ListItem key={i} data-id={d.id}>
+        <ListItem >
           <Grid item xs={4}>
           <InputGroup>
             <SetTime
-            time={rowdatas.date[index].trips[d.id].start}
+            time={rowdatas.date[index].trips[i].start}
             index = {index}
-            id = {d.id}
+            id = {i}
             type = "start"/>
             <Typography style={{marginTop:2,fontSize:20,marginLeft:5,marginRight:5}}>
               -
             </Typography>
             <SetTime 
-            time={rowdatas.date[index].trips[d.id].end} 
+            time={rowdatas.date[index].trips[i].end} 
             index = {index}
-            id = {d.id}
+            id = {i}
             type = "end"/>
           </InputGroup>
           </Grid>
           <Grid item xs={7}>   
               <PlaceName 
               index = {index}
-              id = {d.id}/>
+              id = {i}/>
           </Grid>
           <Grid item xs={1}>
             <ListItemIcon>
-              <IconButton size="small"><AddBoxIcon style={{ color: green[500]}} onClick={()=>handleToggle(index,d.id)}/></IconButton>
-              <IconButton size="small"><DeleteIcon onClick={()=>handleDelete(index,d.id)}/></IconButton>
+              <IconButton size="small"><AddBoxIcon style={{ color: green[500]}} onClick={()=>handleToggle(index)}/></IconButton>
+              <IconButton size="small"><DeleteIcon onClick={()=>handleDelete(index,i)}/></IconButton>
             </ListItemIcon>
           </Grid>
         </ListItem>
@@ -830,6 +910,7 @@ export function CreateAccordion({datainterval}){
     })
   }
   // console.log("rowdatasinGenerate:",rowdatas)
+  // console.log(accordion_data)
   return (
     <div>
       <Paper elevation={0}>
@@ -852,7 +933,8 @@ export function CreateAccordion({datainterval}){
         <Scrollbars style={{height:415}}>
         {accordion_data.map((accordion,index) => {
         const { id, heading,date} = accordion;
-        return (
+        // console.log("Accordian:",accordion)
+        return ( 
           <Accordion
           expanded={expanded === id}
           key={id}
@@ -861,7 +943,7 @@ export function CreateAccordion({datainterval}){
           <AccordionSummary
               expandIcon={<ExpandMoreIcon />}
               aria-controls="panel1bh-content"
-              id="panel1bh-header"
+              id={"panel1bh-header"}
               style={{backgroundColor:'#3C6E71',color:'white'}}
             >
               <Typography style={{fontFamily:'csPrajad'}}>วันที่ {heading}</Typography>
@@ -935,8 +1017,9 @@ const plannerUseStyles = makeStyles((theme) => ({
 
 }));
 
-export function PlannerForm({setPlaces,setDateIntervals}) {
+export function PlannerForm({setPlaces,setDateIntervals,setRedirect}) {
   const [submitvalues,setSubmitvalues] = useState({
+    id: 0,
     user_id: localStorage.getItem('user_id'),
     trip_name: '',
     city_code: '',
@@ -949,6 +1032,9 @@ export function PlannerForm({setPlaces,setDateIntervals}) {
     lng:0,
   })
   const classes = plannerUseStyles();
+  function setId(p){
+    setSubmitvalues({...submitvalues, id: p})  
+  }
   function setTripname(p){
     setSubmitvalues({...submitvalues, trip_name: p})  
   }
@@ -964,12 +1050,13 @@ export function PlannerForm({setPlaces,setDateIntervals}) {
   function addDateend(p){
     setSubmitvalues({...submitvalues, end_trip_date: p})
   }
+  // ยืนยัน
   function submitForm(data) {
     setPlaces(data.lat,data.lng)
-    setDateIntervals(data)
     console.log('submitform: ',data)
     if(data.hotel_id !== '' && data.trip_name !== '')
     {   
+      setDateIntervals(data)
       console.log("DataSent",
       "\nuser_id:", data.user_id,
       "\ntrip_name:", data.trip_name,
@@ -979,31 +1066,34 @@ export function PlannerForm({setPlaces,setDateIntervals}) {
       "\nhotel_id:", data.hotel_id,
       "\nrating_point:", data.rating_point,
       "\ntrip_data:", data.trip_data,)
-      // axios.post("http://104.248.7.194:8000/api/trip_title_api/",
-      // {
-      //   user_id: data.user_id,
-      //   trip_name: data.trip_name,
-      //   city_code: data.city_code,
-      //   start_trip_date: data.start_trip_date,
-      //   end_trip_date: data.end_trip_date,
-      //   hotel_id: data.hotel_id,
-      //   rating_point: data.rating_point,
-      //   trip_data: data.trip_data,
-      // },{
-      //   headers: {
-      //     'Content-Type': 'application/json'
-      // }})
-      //   .then(function (response) {
-      //   console.log('TripResponse:',response.data);
-      // })
-      //   .catch(function (error) {
-      //   console.log('TripError:',error);
-      // });
+    //   axios.post("http://104.248.7.194:8000/api/trip_title_api/",
+    //   {
+    //     id: data.id,
+    //     user_id: data.user_id,
+    //     trip_name: data.trip_name,
+    //     city_code: data.city_code,
+    //     start_trip_date: data.start_trip_date,
+    //     end_trip_date: data.end_trip_date,
+    //     hotel_id: data.hotel_id,
+    //     rating_point: data.rating_point,
+    //     trip_data: data.trip_data,
+    //   },{
+    //     headers: {
+    //       'Content-Type': 'application/json'
+    //   }})
+    //     .then(function (response) {
+    //       console.log('TripResponse:',response.data);
+    //       setRedirect(response.data.id)
+    //     })
+    //     .catch(function (error) {
+    //     console.log('TripError:',error);
+    //   });
     }
     else{
       alert("กรุณากรอบข้อมูลให้ครบถ้วน")
     }
   }
+  
   return(
     <Container fluid noGutters={true}>
     <div className={classes.paper}>
@@ -1031,6 +1121,7 @@ export function PlannerForm({setPlaces,setDateIntervals}) {
             <Typography style={{fontFamily:"csPrajad" ,fontSize:16}}>วันที่ไป :</Typography>
           </Grid>
           <Grid item xs={9}>
+            
             <DateStart
             addDatestart = {addDatestart}
             />
@@ -1074,6 +1165,9 @@ export class MapContainer extends Component {
   constructor(props){
     super(props);
     this.state = {
+    showingInfoWindow: false,
+    activeMarker: {},
+    selectedPlace: {},
       places:{
         lat: 0,
         lng: 0,
@@ -1085,10 +1179,62 @@ export class MapContainer extends Component {
         trip_name: '',
         city_code: '',
         rating_point: ''
-      }
+      },
+      markerdata:{
+        date:[{
+          id:0,
+                trips:[{
+                id:0,
+                start: "09:00",
+                end: "12:00",
+                place: ""
+                },
+                {
+                id:1,
+                start: "12:00",
+                end: "15:00",
+                place: ""
+                },
+                {
+                id:2,
+                start: "15:00",
+                end: "18:00",
+                place: ""
+                }]
+        }]
+      },
+      redirect: 0
     }
-
   }
+
+  /*change to edit planner*/
+  setRedirect = (id) => {
+    console.log("setRedirect:",id)
+    this.setState({
+      redirect: id
+    })
+  }
+  renderRedirect = () => {
+    if (this.state.redirect) {
+      return <Redirect to={"/pages/Trip/"} />
+    }
+  }
+
+  onMarkerClick = (props, marker, e) =>
+    this.setState({
+      selectedPlace: props,
+      activeMarker: marker,
+      showingInfoWindow: true
+    });
+
+  onMapClicked = (props) => {
+    if (this.state.showingInfoWindow) {
+      this.setState({
+        showingInfoWindow: false,
+        activeMarker: null
+      })
+    }
+  };
   setPlace(p,q){
     console.log("PQ:",p,q)
     this.setState({places:{lat:p ,lng:q+0.0022141 }})
@@ -1104,6 +1250,10 @@ export class MapContainer extends Component {
       rating_point:p.rating_point
     }})
   }
+  setMarker(data){
+    this.setState({markerdata:data})
+    // console.log(data,this.state.rowdatas)
+  }
   componentDidMount(){ 
     let data; 
     axios 
@@ -1118,6 +1268,7 @@ export class MapContainer extends Component {
   render() {
     this.setPlace = this.setPlace.bind(this);
     this.setDateInterval = this.setDateInterval.bind(this);
+    this.setMarker = this.setMarker.bind(this);
     return (
       <div className="Trip">
       <link
@@ -1128,6 +1279,10 @@ export class MapContainer extends Component {
       />
       <header className="App-header">
       </header>
+
+      <div>
+        {this.renderRedirect()}
+      </div>
 
       <section className="App-section">
       <Container fluid noGutters={true}>
@@ -1149,6 +1304,7 @@ export class MapContainer extends Component {
             <PlannerForm 
               setPlaces={this.setPlace}
               setDateIntervals={this.setDateInterval}
+              setRedirect={this.setRedirect}
             >
             </PlannerForm>
             <InputGroup style={{width:'100%',height:180}}>
@@ -1176,6 +1332,20 @@ export class MapContainer extends Component {
                 // onClick={this.onMarkerClick}
                 //name = {s.pname_th}
                 position={{ lat:this.state.places.lat, lng: this.state.places.lng}}
+                icon=
+                // "https://developers.google.com/maps/documentation/javascript/examples/full/images/beachflag.png"
+              
+                {{
+                  path:
+                  "M18.121,9.88l-7.832-7.836c-0.155-0.158-0.428-0.155-0.584,0L1.842,9.913c-0.262,0.263-0.073,0.705,0.292,0.705h2.069v7.042c0,0.227,0.187,0.414,0.414,0.414h3.725c0.228,0,0.414-0.188,0.414-0.414v-3.313h2.483v3.313c0,0.227,0.187,0.414,0.413,0.414h3.726c0.229,0,0.414-0.188,0.414-0.414v-7.042h2.068h0.004C18.331,10.617,18.389,10.146,18.121,9.88 M14.963,17.245h-2.896v-3.313c0-0.229-0.186-0.415-0.414-0.415H8.342c-0.228,0-0.414,0.187-0.414,0.415v3.313H5.032v-6.628h9.931V17.245z M3.133,9.79l6.864-6.868l6.867,6.868H3.133z",                  fillColor: "blue",
+                  fillColor: "blue",
+                  fillOpacity: 1,
+                  strokeWeight: 1,
+                  strokeOpacity: 1,
+                  rotation: 0,
+                  scale: 2,
+                  anchor: new this.props.google.maps.Point(11.5, 20),
+                }}
               />
               </Map>     
             </InputGroup>
@@ -1183,21 +1353,24 @@ export class MapContainer extends Component {
 
       <Paper elevation={5} style={{width:'40%',height:'auto',marginTop:'5%',marginLeft:'5%'}}>   
         <Card style={{backgroundColor:'#284B63',width:'auto'}}>
-                <CardContent style={{color:'white'}}>
-                <Grid
-                  container
-                  spacing={0}
-                  direction="column"
-                  alignItems="center"
-                  justify="center"
-                >
-                <Typography style={{margin:10, fontFamily:"csPrajad" ,fontSize:20,fontWeight:'bold'}}>จัดการทริป</Typography>
-                </Grid>
-                </CardContent>
-              </Card>
-              <CreateAccordion 
-              datainterval={this.state.dateinterval}
-              />
+          <CardContent style={{color:'white'}}>
+          <Grid
+            container
+            spacing={0}
+            direction="column"
+            alignItems="center"
+            justify="center"
+          >
+          <Typography style={{margin:10, fontFamily:"csPrajad" ,fontSize:20,fontWeight:'bold'}}>จัดการทริป</Typography>
+          </Grid>
+          </CardContent>
+        </Card>
+        <CreateAccordion 
+        
+          setRedirect={this.setRedirect}
+          datainterval={this.state.dateinterval}
+          setMarker={this.setMarker}
+        />
       </Paper>
       </Row>   
 
@@ -1219,15 +1392,17 @@ export class MapContainer extends Component {
               </CardContent>
             </Card>
             <InputGroup style={{width:'100%',minHeight:547}}>
-              {/*    Hotel Map    */}
+              {/*    แผนที่ทริป */}
                 <Map
                 google={this.props.google}
                 zoom={10}
                 style={{width:'100%',height:'auto'}}
+                // streetViewControl= {false}
                 //disableDefaultUI ={true}
-                scrollwheel={false}
-                disableDoubleClickZoom = {true}
-                draggable={false}
+                // scrollwheel={false}
+                // disableDoubleClickZoom = {true}
+                onClick={this.onMapClicked}
+                // draggable={false}
                 zoomControl={false}
                 onReady={this.handleMapReady}
                 onBounds_changed={this.handleMapMount}
@@ -1237,7 +1412,39 @@ export class MapContainer extends Component {
                     lng:  101.20
                   }
                 }
-              />     
+                >     
+                {this.state.markerdata.date.map((date,dateindex) => { 
+                  return(
+                  date.trips.map((trips,tripsindex) => {
+                    // console.log("Test2:",trips)
+                    // console.log(placeOptions.find(el => el.id === trips.place))
+                    if(trips.place!== ""){
+                      return(
+                        <Marker
+                        onClick={this.onMarkerClick}
+                        // onClick={trips[tripsindex].onMarkerClick}
+                        date = {trips.id+1}
+                        start = {trips.start}
+                        end = {trips.end}
+                        name = {placeOptions.find(el => el.id === trips.place).pname}
+                        position={{ lat:placeOptions.find(el => el.id === trips.place).lat, lng: placeOptions.find(el => el.id === trips.place).lon}}
+                        />
+                      )
+                    }
+                  }))
+                })}
+                <InfoWindow
+                  marker={this.state.activeMarker}
+                  visible={this.state.showingInfoWindow}
+                  onClose={this.onInfoWindowClose}>
+                    <div>
+                      <p>วันที่{this.state.selectedPlace.date}</p>
+                      <p>เวลา: {this.state.selectedPlace.start} - {this.state.selectedPlace.end}</p>
+                      <p>ชื่อสถานที่: {this.state.selectedPlace.name}</p>
+                    </div>
+                </InfoWindow>
+
+                </Map>
             </InputGroup>
             </Col>
         </Row>

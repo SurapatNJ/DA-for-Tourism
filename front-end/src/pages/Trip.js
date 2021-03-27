@@ -269,8 +269,8 @@ function CustomizedTables() {
     var k = getIndex(myid,groups,'id')
     setmyGroups(myGroups.filter((row, j) => j !== i))
     setGroups(groups.filter((row, j) => j !== k))
-    /*axios.delete("http://104.248.7.194:8000/api/trip_title_api/" + myid).catch((err)=> {
-    });*/
+    axios.delete("http://104.248.7.194:8000/api/trip_title_api/" + myid).catch((err)=> {
+    });
 
   }
   
@@ -316,9 +316,13 @@ function CustomizedTables() {
       <Table className={classes.table} aria-label="customized table">
         <TableHead>
           <TableRow>
-            <StyledTableCell>ชื่อทริป</StyledTableCell>
+            <StyledTableCell align="center">ชื่อทริป</StyledTableCell>
             <StyledTableCell align="center">วัน/เวลาที่สร้าง</StyledTableCell>
+            {myTrip==true? 
             <StyledTableCell align="center">แก้ไข/ลบ</StyledTableCell>
+            :
+            <StyledTableCell align="center">ดู</StyledTableCell>
+            }
           </TableRow>
         </TableHead>
        
@@ -334,10 +338,10 @@ function CustomizedTables() {
                <StyledTableCell align="center">{row.created.replace('T'," ").split("",19)}</StyledTableCell>
                <StyledTableCell align="center">
                  <IconButton aria-label="edit" size="small" 
-                  componen t={Link}
+                  component={Link}
                   to={"/pages/EditPlanner/"+row.id}
                  ><EditRoundedIcon/></IconButton>  
-                 <IconButton aria-label="delete" size="small" onClick={() => handleDelete(myGroups[index].id,index)}><DeleteForeverRoundedIcon/></IconButton>
+                 <IconButton aria-label="delete" size="small" onClick={() => { if (window.confirm('Are you sure you wish to delete this item?')) handleDelete(myGroups[index].id,index) } }><DeleteForeverRoundedIcon/></IconButton>
                </StyledTableCell>
              </StyledTableRow>
            ))}
