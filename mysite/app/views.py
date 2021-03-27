@@ -210,7 +210,14 @@ class trip_title_apiViewSet(viewsets.ModelViewSet):
         tta.trip_data = str(trip_data)
         tta.save()
 
-        return Response(tta)
+        resp = []
+        _data = {'id':tta.id, 'user_id':tta.user_id, 'city_code':tta.city_code, 
+        'start_trip_date':tta.start_trip_date, 'end_trip_date':tta.end_trip_date, 
+        'hotel_id':tta.hotel_id, 'trip_data':tta.trip_data,
+        'last_updated':tta.last_updated, 'created':tta.created}
+        resp.append(_data)
+
+        return Response(resp)
 
     def update(self, request, pk):
         searchData = request.data
@@ -238,7 +245,14 @@ class trip_title_apiViewSet(viewsets.ModelViewSet):
         tta.trip_data = str(trip_data)
         tta.save()
 
-        return Response(tta)
+        resp = []
+        _data = {'id':tta.id, 'user_id':tta.user_id, 'city_code':tta.city_code, 
+        'start_trip_date':tta.start_trip_date, 'end_trip_date':tta.end_trip_date, 
+        'hotel_id':tta.hotel_id, 'trip_data':tta.trip_data,
+        'last_updated':tta.last_updated, 'created':tta.created}
+        resp.append(_data)
+
+        return Response(resp)
 
 
 
