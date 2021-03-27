@@ -274,7 +274,7 @@ export function CreateAccordion({datainterval}){
       locked:true
     }],
     start:"2020-11-29",
-    end:"2020-12-03",
+    end:"2020-12-01",
     hotel_id:"",
     trip_name:"",
     city_code: '',
@@ -592,25 +592,45 @@ export function CreateAccordion({datainterval}){
   
   function submitForm(data,rowdata) {
     const tripdatas = []
-      let count = 0
+      let daycount = 0
       for (var d = new Date(data.start); d <= new Date(data.end); d.setDate(d.getDate() + 1)){
         // console.log(d)
         var format = new Date(d).getFullYear() +"-"+ ("0"+(new Date(d).getMonth()+1)).slice(-2) +"-"+ ("0"+new Date(d).getDate()).slice(-2)
-        for (var j = 0; j< rowdata.date[count].trips.length; j++){
+        for (var j = 0; j< rowdata.date[daycount].trips.length; j++){
         // console.log(format+" "+rowdata.date[count].trips[j].start)
-          if(rowdata.date[count].trips[j].place !== ""){ 
-            console.log(rowdata.date[count].trips[j].place) 
-            tripdatas.push({
-            datetime_start:format+" "+rowdata.date[count].trips[j].start+":00",
-            datetime_end:format+" "+rowdata.date[count].trips[j].end+":00",
-            trip_type:"",
-            poi:placeOptions.find(el => el.id === rowdata.date[count].trips[j].place).poi,
-            lat:0,
-            lon:0,
-            locked:true
-            })
+          if(rowdata.date[daycount].trips[j].place !== ""){ 
+            if (typeof rowdata.date[daycount].trips[j].place=="string"){
+              tripdatas.push({
+                datetime_start:format+" "+rowdata.date[daycount].trips[j].start+":00",
+                datetime_end:format+" "+rowdata.date[daycount].trips[j].end+":00",
+                trip_type:placeOptions.find(el => el.trip_type === rowdata.date[daycount].trips[j].place).trip_type,
+                //poi:placeOptions.find(el => el.id === rowdata.date[daycount].trips[j].place).poi,
+                locked:true
+                })
+            }
+            else if (typeof rowdata.date[daycount].trips[j].place=="number"){
+              tripdatas.push({
+                datetime_start:format+" "+rowdata.date[daycount].trips[j].start+":00",
+                datetime_end:format+" "+rowdata.date[daycount].trips[j].end+":00",
+                //trip_type:"",
+                poi:placeOptions.find(el => el.id === rowdata.date[daycount].trips[j].place).poi,
+                lat:placeOptions.find(el => el.id === rowdata.date[daycount].trips[j].place).lat,
+                lon:placeOptions.find(el => el.id === rowdata.date[daycount].trips[j].place).lon,
+                locked:true
+                })
+            }
           }
           else{
+            tripdatas.push({
+              datetime_start:format+" "+rowdata.date[daycount].trips[j].start+":00",
+              datetime_end:format+" "+rowdata.date[daycount].trips[j].end+":00",
+              //trip_type:"",
+              poi:"",
+              lat:0,
+              lon:0,
+              locked:false
+              })
+            /*
             tripdatas.push({
             datetime_start:format+" "+rowdata.date[count].trips[j].start+":00",
             datetime_end:format+" "+rowdata.date[count].trips[j].end+":00",
@@ -619,11 +639,12 @@ export function CreateAccordion({datainterval}){
             lat:0,
             lon:0,
             locked:false
-            })
+            })*/
           }
         }
-        count+=1
+        daycount+=1
       }
+      
     console.log("DataSaved",
       "\nuser_id:",localStorage.getItem('user_id'),
       "\ntrip_name:",data.trip_name,
@@ -632,6 +653,8 @@ export function CreateAccordion({datainterval}){
       "\nend_trip_date:",data.end,
       "\nhotel_id:",data.hotel_id,
       "\ntrip_data:",JSON.stringify(tripdatas))
+
+
     axios.post("http://104.248.7.194:8000/api/trip_title_api/",{
       user_id:localStorage.getItem('user_id'),
       trip_name:data.trip_name,
@@ -736,6 +759,7 @@ export function CreateAccordion({datainterval}){
   function addPlace(index,id,p){
     rowdatas.date[index].trips[id].place = p
     console.log(rowdatas.date[index])
+
   }
   
   function PlaceName({index,id}) {
@@ -756,7 +780,8 @@ export function CreateAccordion({datainterval}){
           onChange={(event, value)=>{
             if (value){
               console.log("value:",value)
-              addPlace(index,id,value.id)
+              {value.trip_type==null? addPlace(index,id,value.id):addPlace(index,id,value.trip_type)}
+              //addPlace(index,id,value.id)
             }
             else 
             {
