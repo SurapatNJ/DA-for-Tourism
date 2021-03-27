@@ -619,41 +619,42 @@ export function CreateAccordion({datainterval,setMarker,setRedirect}){
   
     );
   }
+  
   //บันทึก
   function submitForm(data,rowdata) {
     const tripdatas = []
-      let daycount = 0
-      for (var d = new Date(data.start); d <= new Date(data.end); d.setDate(d.getDate() + 1)){
-        // console.log(d)
-        var format = new Date(d).getFullYear() +"-"+ ("0"+(new Date(d).getMonth()+1)).slice(-2) +"-"+ ("0"+new Date(d).getDate()).slice(-2)
-        for (var j = 0; j< rowdata.date[daycount].trips.length; j++){
-        // console.log(format+" "+rowdata.date[daycount].trips[j].start)
-          if(rowdata.date[daycount].trips[j].place !== ""){ 
-            console.log(rowdata.date[daycount].trips[j].place) 
-            tripdatas.push({
-            datetime_start:format+" "+rowdata.date[daycount].trips[j].start+":00",
-            datetime_end:format+" "+rowdata.date[daycount].trips[j].end+":00",
-            //trip_type:"",
-            poi:placeOptions.find(el => el.id === rowdata.date[daycount].trips[j].place).poi,
-            lat:placeOptions.find(el => el.id === rowdata.date[daycount].trips[j].place).lat,
-            lon:placeOptions.find(el => el.id === rowdata.date[daycount].trips[j].place).lng,
-            locked:true
-            })
-          }
-          else{
-            tripdatas.push({
-            datetime_start:format+" "+rowdata.date[daycount].trips[j].start+":00",
-            datetime_end:format+" "+rowdata.date[daycount].trips[j].end+":00",
-            //trip_type:"",
-            poi:"",
-            lat:0,
-            lon:0,
-            locked:false
-            })
-          }
+    let daycount = 0
+    for (var d = new Date(data.start); d <= new Date(data.end); d.setDate(d.getDate() + 1)){
+      // console.log(d)
+      var format = new Date(d).getFullYear() +"-"+ ("0"+(new Date(d).getMonth()+1)).slice(-2) +"-"+ ("0"+new Date(d).getDate()).slice(-2)
+      for (var j = 0; j< rowdata.date[daycount].trips.length; j++){
+      // console.log(format+" "+rowdata.date[daycount].trips[j].start)
+        if(rowdata.date[daycount].trips[j].place !== ""){ 
+          console.log(rowdata.date[daycount].trips[j].place) 
+          tripdatas.push({
+          datetime_start:format+" "+rowdata.date[daycount].trips[j].start+":00",
+          datetime_end:format+" "+rowdata.date[daycount].trips[j].end+":00",
+          //trip_type:"",
+          poi:placeOptions.find(el => el.id === rowdata.date[daycount].trips[j].place).poi,
+          lat:placeOptions.find(el => el.id === rowdata.date[daycount].trips[j].place).lat,
+          lon:placeOptions.find(el => el.id === rowdata.date[daycount].trips[j].place).lng,
+          locked:true
+          })
         }
-        daycount+=1
+        else{
+          tripdatas.push({
+          datetime_start:format+" "+rowdata.date[daycount].trips[j].start+":00",
+          datetime_end:format+" "+rowdata.date[daycount].trips[j].end+":00",
+          //trip_type:"",
+          poi:"",
+          lat:0,
+          lon:0,
+          locked:false
+          })
+        }
       }
+      daycount+=1
+    }
     console.log("DataSaved",
       "\nuser_id:",localStorage.getItem('user_id'),
       "\ntrip_name:",data.trip_name,
@@ -663,6 +664,7 @@ export function CreateAccordion({datainterval,setMarker,setRedirect}){
       "\nhotel_id:",data.hotel_id,
       "\ntrip_data:",JSON.stringify(tripdatas))
     axios.post("http://104.248.7.194:8000/api/trip_title_api/",{
+      id: data.id,
       user_id:localStorage.getItem('user_id'),
       trip_name:data.trip_name,
       city_code: data.city_code,
@@ -675,14 +677,15 @@ export function CreateAccordion({datainterval,setMarker,setRedirect}){
         'Content-Type': 'application/json'
     }})
     .then(function (response) {
-      console.log('FormResponse: ',response.data)
-      setRedirect(response.data.id)
+      console.log('FormResponse: ',response.data);
+      setRedirect(response.data[0].id);
     })
     .catch(function (error) {
-      alert(error)
+      alert(error);
       console.log('FormError: ',error);
     });
   }
+
   const [test,setTest] = useState(false)
   const handleToggle= (selected) => {
   setTest(!test)
@@ -1177,13 +1180,14 @@ export class MapContainer extends Component {
 
   /*change to edit planner*/
   setRedirect = (id) => {
+    console.log("setRedirect:",id)
     this.setState({
       redirect: id
     })
   }
   renderRedirect = () => {
     if (this.state.redirect) {
-      return <Redirect to={"/pages/EditPlanner/"+ this.state.redirect} />
+      return <Redirect to={"/pages/Trip/"} />
     }
   }
 
@@ -1247,7 +1251,6 @@ export class MapContainer extends Component {
       <header className="App-header">
       </header>
 
-      
       <div>
         {this.renderRedirect()}
       </div>
@@ -1321,24 +1324,24 @@ export class MapContainer extends Component {
 
       <Paper elevation={5} style={{width:'40%',height:'auto',marginTop:'5%',marginLeft:'5%'}}>   
         <Card style={{backgroundColor:'#284B63',width:'auto'}}>
-                <CardContent style={{color:'white'}}>
-                <Grid
-                  container
-                  spacing={0}
-                  direction="column"
-                  alignItems="center"
-                  justify="center"
-                >
-                <Typography style={{margin:10, fontFamily:"csPrajad" ,fontSize:20,fontWeight:'bold'}}>จัดการทริป</Typography>
-                </Grid>
-                </CardContent>
-              </Card>
-              <CreateAccordion 
-              
-              setRedirect={this.setRedirect}
-              datainterval={this.state.dateinterval}
-              setMarker={this.setMarker}
-              />
+          <CardContent style={{color:'white'}}>
+          <Grid
+            container
+            spacing={0}
+            direction="column"
+            alignItems="center"
+            justify="center"
+          >
+          <Typography style={{margin:10, fontFamily:"csPrajad" ,fontSize:20,fontWeight:'bold'}}>จัดการทริป</Typography>
+          </Grid>
+          </CardContent>
+        </Card>
+        <CreateAccordion 
+        
+          setRedirect={this.setRedirect}
+          datainterval={this.state.dateinterval}
+          setMarker={this.setMarker}
+        />
       </Paper>
       </Row>   
 

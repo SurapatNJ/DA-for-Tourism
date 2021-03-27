@@ -186,6 +186,55 @@ class trip_title_apiViewSet(viewsets.ModelViewSet):
     filter_backends = [DjangoFilterBackend]
     filterset_fields = ['user_id']
 
+    #Get All Data
+    def list(self, request):
+        user_id = ""
+        try:
+            user_id = request.query_params['user_id']
+        except:
+            user_id = ""
+
+        tta_all = trip_title_api.objects.all()
+        if user_id != "":
+            tta_all = trip_title_api.objects.filter(user_id=user_id)
+
+        resp = []
+        for tta in tta_all:
+            trip_data = tta.trip_data
+            try:
+                trip_data = json.loads(tta.trip_data)
+            except:
+                trip_data = tta.trip_data
+            
+            _data = {'id':tta.id, 'user_id':tta.user_id, 'city_code':tta.city_code, 
+            'start_trip_date':tta.start_trip_date, 'end_trip_date':tta.end_trip_date, 
+            'hotel_id':tta.hotel_id, 'trip_data':trip_data,
+            'last_updated':tta.last_updated, 'created':tta.created}
+            resp.append(_data)
+
+        return Response(resp)
+
+    #Get 1 Data
+    def retrieve(self, request, pk):
+        tta_all = trip_title_api.objects.filter(id = pk)
+        if list(tta_all) == []:
+            return Response("not found this trip", status=status.HTTP_404_NOT_FOUND)
+
+        resp = []
+        for tta in tta_all:
+            trip_data = tta.trip_data
+            try:
+                trip_data = json.loads(tta.trip_data)
+            except:
+                trip_data = tta.trip_data
+            _data = {'id':tta.id, 'user_id':tta.user_id, 'city_code':tta.city_code, 
+            'start_trip_date':tta.start_trip_date, 'end_trip_date':tta.end_trip_date, 
+            'hotel_id':tta.hotel_id, 'trip_data':trip_data,
+            'last_updated':tta.last_updated, 'created':tta.created}
+            resp.append(_data)
+        return Response(resp)
+
+
     #Post tourist_place data
     def create(self, request):
         #Get input
@@ -211,9 +260,14 @@ class trip_title_apiViewSet(viewsets.ModelViewSet):
         tta.save()
 
         resp = []
+        trip_data = tta.trip_data
+        try:
+            trip_data = json.loads(tta.trip_data)
+        except:
+            trip_data = tta.trip_data
         _data = {'id':tta.id, 'user_id':tta.user_id, 'city_code':tta.city_code, 
         'start_trip_date':tta.start_trip_date, 'end_trip_date':tta.end_trip_date, 
-        'hotel_id':tta.hotel_id, 'trip_data':tta.trip_data,
+        'hotel_id':tta.hotel_id, 'trip_data':trip_data,
         'last_updated':tta.last_updated, 'created':tta.created}
         resp.append(_data)
 
@@ -233,7 +287,7 @@ class trip_title_apiViewSet(viewsets.ModelViewSet):
             return Response("not found this user", status=status.HTTP_404_NOT_FOUND)
 
         tta = trip_title_api.objects.filter(id = pk)
-        if tta != []:
+        if list(tta) != []:
             tta = tta[0]
         else:
             return Response("not found this trip", status=status.HTTP_404_NOT_FOUND)
@@ -246,9 +300,14 @@ class trip_title_apiViewSet(viewsets.ModelViewSet):
         tta.save()
 
         resp = []
+        trip_data = tta.trip_data
+        try:
+            trip_data = json.loads(tta.trip_data)
+        except:
+            trip_data = tta.trip_data
         _data = {'id':tta.id, 'user_id':tta.user_id, 'city_code':tta.city_code, 
         'start_trip_date':tta.start_trip_date, 'end_trip_date':tta.end_trip_date, 
-        'hotel_id':tta.hotel_id, 'trip_data':tta.trip_data,
+        'hotel_id':tta.hotel_id, 'trip_data':trip_data,
         'last_updated':tta.last_updated, 'created':tta.created}
         resp.append(_data)
 
