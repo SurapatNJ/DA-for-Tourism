@@ -220,6 +220,31 @@ class trip_title_apiViewSet(viewsets.ModelViewSet):
         if list(tta_all) == []:
             return Response("not found this trip", status=status.HTTP_404_NOT_FOUND)
 
+        tta = tta_all[0]
+        trip_data = json.loads(tta.trip_data)
+
+        df = pd.DataFrame(columns=('date', 'start', 'end', 'poi'))
+        for t in trip_data:
+            _date = t['datetime_start'][:10]
+            _data = {'date':_date, 'start':t['datetime_start'][11:16], 'end':t['datetime_end'][11:16], 'poi':t['poi']}
+            df = df.append(_data, ignore_index=True)
+
+        date_state = 0
+        set_date = df.date.unique()
+        count_trip = 0
+
+        useState = []
+        for d in set_date:
+            date_trip = df[df.date == d]
+            trips = []
+            for index, row in date_trip.iterrows():
+                _t = {'id':index - count_trip, 'start':row.start,  'end':row.end,  'place':row.poi}
+                trips.append(_t)
+            _tripInDate = {'id':date_state, 'trips':trips}
+            useState.append(_tripInDate)
+            date_state = date_state + 1
+            count_trip = count_trip + date_trip.poi.count()
+            
         resp = []
         for tta in tta_all:
             trip_data = tta.trip_data
@@ -229,9 +254,10 @@ class trip_title_apiViewSet(viewsets.ModelViewSet):
                 trip_data = tta.trip_data
             _data = {'id':tta.id, 'user_id':tta.user_id, 'trip_name':tta.trip_name, 'city_code':tta.city_code, 
                     'start_trip_date':tta.start_trip_date, 'end_trip_date':tta.end_trip_date, 
-                    'hotel_id':tta.hotel_id, 'trip_data':trip_data,
+                    'hotel_id':tta.hotel_id, 'trip_data':useState,
                     'last_updated':tta.last_updated, 'created':tta.created}
             resp.append(_data)
+
         return Response(resp[0])
 
 
