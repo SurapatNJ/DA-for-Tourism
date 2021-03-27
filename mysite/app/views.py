@@ -238,7 +238,7 @@ class trip_title_apiViewSet(viewsets.ModelViewSet):
             date_trip = df[df.date == d]
             trips = []
             for index, row in date_trip.iterrows():
-                _t = {'id':index - count_trip, 'start':row.start,  'end':row.end,  'poi':row.poi}
+                _t = {'id':index - count_trip, 'start':row.start,  'end':row.end,  'place':row.poi}
                 trips.append(_t)
             _tripInDate = {'id':date_state, 'trips':trips}
             useState.append(_tripInDate)
