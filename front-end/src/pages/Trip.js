@@ -362,7 +362,10 @@ function CustomizedTables() {
               </StyledTableCell>
               <StyledTableCell align="center">{row.created.replace('T'," ").split("",19)}</StyledTableCell>
               <StyledTableCell align="center">
-                <IconButton size="small"><SearchIcon/></IconButton>  
+                <IconButton size="small"
+                 component={Link}
+                 to={"/pages/ViewPlanner/"+row.id}
+                 ><SearchIcon/></IconButton>  
               </StyledTableCell>
             </StyledTableRow>
           ))}
