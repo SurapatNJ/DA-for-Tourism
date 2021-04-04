@@ -168,10 +168,9 @@ export class LogIn extends React.Component{
           }
         }); 
     };
-  
+   
   render(){
     const { classes } = this.props;
-
       return (
         <div className="login">
         <link

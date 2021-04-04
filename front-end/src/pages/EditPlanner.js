@@ -1137,7 +1137,7 @@ export function PlannerForm({setPlaces,setDateIntervals,setData,showMarker}) {
           trip_data: setData.trip_data
         }) 
         // console.log(hotelOptions.find(el => el.id === setData.hotel_Id).lat)
-        setPlaces(hotelOptions.find(el => el.id === setData.hotel_Id).lat,hotelOptions.find(el => el.id === setData.hotel_Id).lng)
+        // setPlaces(hotelOptions.find(el => el.Id === setData.hotel_id).lat,hotelOptions.find(el => el.Id === setData.hotel_id).lng)
       }
       // console.log("UseEffect(setData):",submitvalues)
     }
@@ -1164,9 +1164,10 @@ export function PlannerForm({setPlaces,setDateIntervals,setData,showMarker}) {
   }
   // ยืนยัน
   function submitForm(data) {
+    console.log("TEST:",data.start_trip_date,data.end_trip_date,new Date(data.start_trip_date))
     showMarker = !showMarker
-    console.log(showMarker)
-    setPlaces(data.lat,data.lng)
+    // console.log(showMarker)
+    // setPlaces(data.lat,data.lng)
     console.log('submitform: ',data)
     if(data.hotel_id !== '' && data.trip_name !== '')
     {   
@@ -1180,6 +1181,7 @@ export function PlannerForm({setPlaces,setDateIntervals,setData,showMarker}) {
       "\nhotel_id:", data.hotel_id,
       "\nrating_point:", data.rating_point,
       "\ntrip_data:", data.trip_data,)
+      setPlaces(parseFloat(hotelOptions.find(el => el.Id == data.hotel_id).lat),hotelOptions.find(el => el.Id == data.hotel_id).lng)
     //   axios.post("http://104.248.7.194:8000/api/trip_title_api/",
     //   {
     //     id: data.id,
@@ -1379,7 +1381,7 @@ export class MapContainer extends Component {
   setPlace(p,q){
     console.log("PQ:",p,q)
     this.setState({places:{lat:p ,lng:q+0.0022141 }})
-  }
+  } 
   setDateInterval(p){
     console.log("DI:",p)
     this.setState({dateinterval:{
