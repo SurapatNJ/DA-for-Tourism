@@ -82,6 +82,7 @@ export function CityName({setCitycode,valuedefault}) {
         id="cityName"
         autoComplete
         includeInputInList
+        disabled
         renderInput={(params) => <TextField {...params} label="ชื่อจังหวัด"   required id="standard-required" style={{marginTop:-18}}/>}
         onChange={(event, value) => {       
           setCitycode(value.city_code)
@@ -104,6 +105,7 @@ export function ModeName() {
         {...defaultProps}
         id="modeName"
         autoComplete
+        disabled
         includeInputInList
         renderInput={(params) => <TextField {...params} label="โหมดสถานที่"  required id="standard-required"  style={{marginLeft:10,marginTop:5}}/>}
         onChange={(event, value) => {
@@ -149,6 +151,7 @@ export function HotelName({setHotelname,valuedefault}) {
         {...defaultProps}
         id="hotelName"
         autoComplete
+        disabled
         includeInputInList
         renderInput={(params) => <TextField {...params} label="ชื่อโรงแรม/ที่พัก"  required id="standard-required"/>}
         onChange={(event, value) => {
@@ -173,6 +176,7 @@ export function DateStart({addDatestart,valuedefault}) {
         id="dateStart"
         label="วันที่เริ่มต้น"
         type="date"
+        disabled
         required id="standard-required" 
         style={{width:'100%',marginTop:-18}}
         InputLabelProps={{
@@ -195,6 +199,7 @@ export function DateEnd({addDateend,valuedefault}) {
         id="dateEnd"
         label="วันที่สิ้นสุด"
         type="date"
+        disabled
         required id="standard-required" 
         style={{width:'100%',marginTop:-18}}
         InputLabelProps={{
@@ -259,7 +264,6 @@ const useStyles1 = makeStyles((theme) => ({
     marginLeft: theme.spacing(2.5),
   },
   alert: {
-
     margin: theme.spacing(1, 3),
   },
 }));
@@ -401,6 +405,7 @@ export function CreateAccordion({datainterval,setMarker,setRedirect,setData,show
             id="selectStartTime"
             onChange={handleChangeSetTime}
             value={starttime}
+            disabled
           >
             <MenuItem value={"00:00"}>00:00</MenuItem>
             <MenuItem value={"01:00"}>01:00</MenuItem>
@@ -542,6 +547,7 @@ export function CreateAccordion({datainterval,setMarker,setRedirect,setData,show
     return(
       <div>
         <Grid container spacing={2}>
+          {/*
           <Grid item xs={3}>
           <Button
           variant="outlined"
@@ -549,7 +555,7 @@ export function CreateAccordion({datainterval,setMarker,setRedirect,setData,show
           style={{width:80,height:30}}
           onClick={handleClick}
         >สุ่มทริป</Button>
-        </Grid>
+        </Grid>*/}
         <Grid item xs={9}>
           {show ? (
             <Portal container={container.current}>     
@@ -915,6 +921,7 @@ export function CreateAccordion({datainterval,setMarker,setRedirect,setData,show
           {...defaultProps}
           autoComplete
           includeInputInList
+          disabled
           renderInput={(params) => <TextField  {...params} label="ชื่อสถานที่ท่องเที่ยว" />}
           value = {nameplace}
           onChange={(event, value)=>{
@@ -964,6 +971,7 @@ export function CreateAccordion({datainterval,setMarker,setRedirect,setData,show
               index = {index}
               id = {i}/>
           </Grid>
+          {/*
           <Grid item xs={1}>
             {(Math.max.apply(Math,rowdatas.date[index].trips.map(o => o.id)) == d.id)? (
               <ListItemIcon>
@@ -984,7 +992,7 @@ export function CreateAccordion({datainterval,setMarker,setRedirect,setData,show
                 <ListItemIcon> </ListItemIcon>
               )
             }
-          </Grid>
+          </Grid> */}
         </ListItem>
       )
     })
@@ -1000,7 +1008,7 @@ export function CreateAccordion({datainterval,setMarker,setRedirect,setData,show
             <Grid item xs={12}>
               <InputGroup style={{marginLeft:'5%'}}>
                 <AssistantOutlinedIcon/>
-                <Typography style={{fontFamily:"csPrajad" ,fontSize:20}}>รายละเอียดแผนการเดินทาง</Typography>
+                <Typography style={{fontFamily:"csPrajad" ,fontSize:20}}>รายละเอียดแผนการเดินทางในแต่ละวัน</Typography>
               </InputGroup>
             </Grid>
             {/*
@@ -1223,7 +1231,7 @@ export function PlannerForm({setPlaces,setDateIntervals,setData,showMarker}) {
             <Typography style={{fontFamily:"csPrajad" ,fontSize:16}}>ชื่อทริป :</Typography>
           </Grid>
           <Grid item xs={9}>
-            <TextField required id="standard-required" label="ชื่อทริป" style={{width:'100%',marginTop:-18}}
+            <TextField required id="standard-required" disabled label="ชื่อทริป" style={{width:'100%',marginTop:-18}}
             onChange={e => {
               setTripname(e.target.value)
               // console.log(setData)
@@ -1280,12 +1288,12 @@ export function PlannerForm({setPlaces,setDateIntervals,setData,showMarker}) {
               <Button
                     variant="contained"
                     color="primary"
-                    style={{width:'30%',height:'8%',margin:'5%',marginLeft:'45%',marginTop:'7%'}}
+                    style={{height:'8%',margin:'5%',marginLeft:'45%',marginTop:'7%'}}
                     onClick={() => {
                       submitForm(submitvalues) 
                       console.log(submitvalues)
                     }}
-                >ยืนยัน</Button>
+                >ดูแผนการเดินทาง</Button>
             </InputGroup>
       </form>
     </div>
@@ -1454,7 +1462,7 @@ export class MapContainer extends Component {
                   alignItems="center"
                   justify="center"
                 >
-                <Typography style={{margin:10, fontFamily:"csPrajad" ,fontSize:20,fontWeight:'bold'}}>ข้อมูลทริป และเลือกที่พัก</Typography>
+                <Typography style={{margin:10, fontFamily:"csPrajad" ,fontSize:20,fontWeight:'bold'}}>ข้อมูลทริปและที่พัก</Typography>
               </Grid>
               </CardContent>
             </Card>
@@ -1521,7 +1529,7 @@ export class MapContainer extends Component {
                   alignItems="center"
                   justify="center"
                 >
-                <Typography style={{margin:10, fontFamily:"csPrajad" ,fontSize:20,fontWeight:'bold'}}>จัดการทริป</Typography>
+                <Typography style={{margin:10, fontFamily:"csPrajad" ,fontSize:20,fontWeight:'bold'}}>รายละเอียดทริป</Typography>
                 </Grid>
                 </CardContent>
               </Card>
@@ -1564,7 +1572,7 @@ export class MapContainer extends Component {
                 // disableDoubleClickZoom = {true}
                 onClick={this.onMapClicked}
                 // draggable={false}
-                zoomControl={false}
+                zoomControl={true}
                 onReady={this.handleMapReady}
                 onBounds_changed={this.handleMapMount}
                 initialCenter={
