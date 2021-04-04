@@ -1057,14 +1057,14 @@ export function CreateAccordion({datainterval,setMarker,setRedirect,setData,show
         <Grid container>
         <Grid item xs={10}><RatingAllClick data={submitvalues} rowdata={rowdatas}/></Grid>
         <Grid item xs={2}>
-        <Button
+        {/* <Button
               variant="contained"
               color="Secondary"
               style={{height:30}}
               onClick={() => {
                 submitForm(submitvalues,rowdatas) 
               }}
-          >บันทึก</Button>
+          >บันทึก</Button> */}
           </Grid>
           </Grid>
         </form>
