@@ -724,16 +724,26 @@ export function CreateAccordion({datainterval,setMarker,setRedirect,setData,show
         for (var j = 0; j< rowdata.date[daycount].trips.length; j++){
         // console.log(format+" "+rowdata.date[daycount].trips[j].start)
           if(rowdata.date[daycount].trips[j].place !== ""){ 
-            console.log(rowdata.date[daycount].trips[j].place) 
-            tripdatas.push({
-            datetime_start:format+" "+rowdata.date[daycount].trips[j].start+":00",
-            datetime_end:format+" "+rowdata.date[daycount].trips[j].end+":00",
-            //trip_type:"",
-            poi:placeOptions.find(el => el.id === rowdata.date[daycount].trips[j].place).poi,
-            lat:placeOptions.find(el => el.id === rowdata.date[daycount].trips[j].place).lat,
-            lon:placeOptions.find(el => el.id === rowdata.date[daycount].trips[j].place).lng,
-            locked:true
-            })
+            if (typeof rowdata.date[daycount].trips[j].place=="string"){
+              tripdatas.push({
+                datetime_start:format+" "+rowdata.date[daycount].trips[j].start+":00",
+                datetime_end:format+" "+rowdata.date[daycount].trips[j].end+":00",
+                trip_type:placeOptions.find(el => el.trip_type === rowdata.date[daycount].trips[j].place).trip_type,
+                //poi:placeOptions.find(el => el.id === rowdata.date[daycount].trips[j].place).poi,
+                locked:true
+                })
+            }
+            else if (typeof rowdata.date[daycount].trips[j].place=="number"){
+              tripdatas.push({
+                datetime_start:format+" "+rowdata.date[daycount].trips[j].start+":00",
+                datetime_end:format+" "+rowdata.date[daycount].trips[j].end+":00",
+                //trip_type:"",
+                poi:placeOptions.find(el => el.id === rowdata.date[daycount].trips[j].place).poi,
+                lat:placeOptions.find(el => el.id === rowdata.date[daycount].trips[j].place).lat,
+                lon:placeOptions.find(el => el.id === rowdata.date[daycount].trips[j].place).lon,
+                locked:true
+                })
+            }
           }
           else{
             tripdatas.push({
@@ -1012,17 +1022,18 @@ export function CreateAccordion({datainterval,setMarker,setRedirect,setData,show
             <Grid item xs={12}>
               <InputGroup style={{marginLeft:'5%'}}>
                 <AssistantOutlinedIcon/>
-                <Typography style={{fontFamily:"csPrajad" ,fontSize:20}}>แนะนำทริป</Typography>
+                <Typography style={{fontFamily:"csPrajad" ,fontSize:20}}>แก้ไขทริป</Typography>
               </InputGroup>
               <Typography style={{marginLeft:'5%',fontFamily:"csPrajad" ,fontSize:16,color:'#3C6E71'}}>เลือกประเภทเพื่อให้ระบบสุ่มทริปหรือเลือกสถานที่ที่ต้องการ</Typography>
             </Grid>
+            {/*
             <Grid item xs={4}>
               <Typography style={{marginLeft:'5%',fontFamily:"csPrajad" ,fontSize:16,marginLeft:'16%'}}>ประเภทของสถานที่ :</Typography>
            </Grid>
            <Grid item xs={8}>
             <Place_cat
             addCattype = {addCattype}/>
-           </Grid>
+           </Grid> */}
           </Grid>
         </form>
         </div>
@@ -1073,7 +1084,10 @@ export function CreateAccordion({datainterval,setMarker,setRedirect,setData,show
         <div className={classes2.paper}>
         <form className={classes2.form} noValidate>
         <Grid container>
+          {/*
         <Grid item xs={10}><RatingAllClick data={submitvalues} rowdata={rowdatas}/></Grid>
+        */}
+        <Grid item xs={10}/>
         <Grid item xs={2}>
         <Button
               variant="contained"
