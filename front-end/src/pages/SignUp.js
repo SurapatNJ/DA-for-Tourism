@@ -42,7 +42,6 @@ const style = (theme) => ({
       alignItems: 'center',
       width:'80%',
       margin:'5%'
-
       },
     cardcontent: {
         display: 'flex',
@@ -58,7 +57,6 @@ const style = (theme) => ({
       marginTop: theme.spacing(2),
       marginBottom: theme.spacing(3),
     },
-
   });
   
 export class SignUp extends React.Component {
@@ -75,9 +73,7 @@ export class SignUp extends React.Component {
     };
   }
 
- 
   componentDidMount() { 
-
     axios 
         .get("http://104.248.7.194:8000/api/login/") 
         .then((res) => { 

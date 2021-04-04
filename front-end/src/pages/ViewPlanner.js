@@ -1169,7 +1169,6 @@ export function PlannerForm({setPlaces,setDateIntervals,setData,showMarker}) {
   function submitForm(data) {
     showMarker = !showMarker
     console.log(showMarker)
-    setPlaces(data.lat,data.lng)
     console.log('submitform: ',data)
     if(data.hotel_id !== '' && data.trip_name !== '')
     {   
@@ -1183,6 +1182,8 @@ export function PlannerForm({setPlaces,setDateIntervals,setData,showMarker}) {
       "\nhotel_id:", data.hotel_id,
       "\nrating_point:", data.rating_point,
       "\ntrip_data:", data.trip_data,)
+      setPlaces(parseFloat(hotelOptions.find(el => el.Id == data.hotel_id).lat),hotelOptions.find(el => el.Id == data.hotel_id).lng)
+      // console.log("TEST",hotelOptions.find(el => el.Id == data.hotel_id))
     //   axios.post("http://104.248.7.194:8000/api/trip_title_api/",
     //   {
     //     id: data.id,
