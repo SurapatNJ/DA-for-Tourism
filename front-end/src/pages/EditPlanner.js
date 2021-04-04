@@ -1396,7 +1396,7 @@ export class MapContainer extends Component {
   }
   renderRedirect = () => {
     if (this.state.redirect) {
-      return <Redirect to={"/pages/EditPlanner/"+ this.state.redirect} />
+      return <Redirect to={"/pages/Trip"} />
     }
   }
 
