@@ -29,6 +29,7 @@ import KeyboardArrowLeft from '@material-ui/icons/KeyboardArrowLeft';
 import KeyboardArrowRight from '@material-ui/icons/KeyboardArrowRight';
 import LastPageIcon from '@material-ui/icons/LastPage';
 import SearchIcon from '@material-ui/icons/Search';
+import PersonIcon from '@material-ui/icons/Person';
 import axios from 'axios';
 
 //Google Map
@@ -448,7 +449,7 @@ export class MapContainer extends Component {
             <Card style={{backgroundColor:'#3C6E71',width:'90%',height:'auto'}}>
               <CardContent style={{color:'white'}}>
               <Row>
-                <Avatar alt={localStorage.getItem('username')} src="/" style={{maxWidth:'100%' , marginLeft:10,backgroundColor:'#284B63'}}/>
+                <Avatar style={{marginLeft:10,backgroundColor:'#284B63'}}><PersonIcon/></Avatar>
                 <Typography style={{fontFamily:"csPrajad" ,padding:5,fontSize:24,fontWeight:'bold'}}>Profile</Typography>
               </Row>
               <Divider style={{margin:10}}/>
