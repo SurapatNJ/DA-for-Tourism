@@ -1478,7 +1478,7 @@ export class MapContainer extends Component {
                 // disableDoubleClickZoom = {true}
                 onClick={this.onMapClicked}
                 // draggable={false}
-                zoomControl={false}
+                zoomControl={true}
                 onReady={this.handleMapReady}
                 onBounds_changed={this.handleMapMount}
                 initialCenter={
