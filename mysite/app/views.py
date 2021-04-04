@@ -223,10 +223,22 @@ class trip_title_apiViewSet(viewsets.ModelViewSet):
         tta = tta_all[0]
         trip_data = json.loads(tta.trip_data)
 
-        df = pd.DataFrame(columns=('date', 'start', 'end', 'poi'))
+        df = pd.DataFrame(columns=('date', 'start', 'end', 'trip_type','poi'))
         for t in trip_data:
             _date = t['datetime_start'][:10]
-            _data = {'date':_date, 'start':t['datetime_start'][11:16], 'end':t['datetime_end'][11:16], 'poi':t['poi']}
+            _poi = ""
+            try:
+                _poi = t['poi']
+            except:
+                _poi = ""
+
+            _trip_type = ""
+            try:
+                _trip_type = t['trip_type']
+            except:
+                _trip_type = ""
+            
+            _data = {'date':_date, 'start':t['datetime_start'][11:16], 'end':t['datetime_end'][11:16], 'trip_type':_trip_type, 'poi':_poi}
             df = df.append(_data, ignore_index=True)
 
         date_state = 0
@@ -238,7 +250,7 @@ class trip_title_apiViewSet(viewsets.ModelViewSet):
             date_trip = df[df.date == d]
             trips = []
             for index, row in date_trip.iterrows():
-                _t = {'id':index - count_trip, 'start':row.start,  'end':row.end,  'place':row.poi}
+                _t = {'id':index - count_trip, 'start':row.start,  'end':row.end,  'trip_type':row.trip_type ,'place':row.poi}
                 trips.append(_t)
             _tripInDate = {'id':date_state, 'trips':trips}
             useState.append(_tripInDate)
