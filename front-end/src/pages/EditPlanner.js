@@ -235,14 +235,15 @@ export function Place_cat({addCattype}) {
     getOptionLabel: (option) => option.pcat,
   }
   return (
-    <div style={{ width: '100%',marginLeft:'3%',marginTop:'-2%'}}>
+    <div style={{ width: '100%',marginTop:-18}}>
       <Autocomplete
         {...defaultProps}
         multiple
         id="placeCat"
+        limitTags={2}
         autoComplete
         includeInputInList
-        renderInput={(params) => <TextField {...params} label="ประเภทของสถานที่ท่องเที่ยว"  required id="standard-required"  style={{marginLeft:10,marginBottom:10,marginTop:-5}}/>}
+        renderInput={(params) => <TextField {...params} label="ประเภทของสถานที่ท่องเที่ยว"  required id="standard-required"  style={{marginBottom:10,marginTop:-5}}/>}
         onChange={(event, value) => {
           console.log("value:",value)
           addCattype(value)
@@ -994,15 +995,19 @@ export function CreateAccordion({datainterval,setMarker,setRedirect,setData,show
     <div>
       <Paper elevation={0}>
       <div ClassName={classes2.paper}>
-        <form className={classes2.form} noValidate>
+        <form className={classes2.form3} noValidate>
           <Grid container spacing={2}>
             <Grid item xs={12}>
               <InputGroup style={{marginLeft:'5%'}}>
                 <AssistantOutlinedIcon/>
                 <Typography style={{fontFamily:"csPrajad" ,fontSize:20}}>แนะนำทริป</Typography>
               </InputGroup>
+              <Typography style={{marginLeft:'5%',fontFamily:"csPrajad" ,fontSize:16,color:'#3C6E71'}}>เลือกประเภทเพื่อให้ระบบสุ่มทริปหรือเลือกสถานที่ที่ต้องการ</Typography>
             </Grid>
-           <Grid item xs={12}>
+            <Grid item xs={4}>
+              <Typography style={{marginLeft:'5%',fontFamily:"csPrajad" ,fontSize:16,marginLeft:'16%'}}>ประเภทของสถานที่ :</Typography>
+           </Grid>
+           <Grid item xs={8}>
             <Place_cat
             addCattype = {addCattype}/>
            </Grid>
@@ -1038,6 +1043,7 @@ export function CreateAccordion({datainterval,setMarker,setRedirect,setData,show
                         data={submitvalues} 
                         rowdata={rowdatas}/>
                     </Grid>
+                    <Typography style={{marginTop:'2%',fontFamily:"csPrajad" ,fontSize:16,color:'#3C6E71'}}>เลือกประเภทเพื่อให้ระบบสุ่มทริปหรือเลือกสถานที่ที่ต้องการ</Typography>
                       <Divider style={{marginTop:5}}/>
                     <List style={{width:'100%',marginLeft:'-1%'}}>
                       {generateRows(index)}
@@ -1093,7 +1099,11 @@ const plannerUseStyles = makeStyles((theme) => ({
     marginTop: theme.spacing(3),
     marginBottom: theme.spacing(2),
   },
-
+  form3: {
+    width: '90%', // Fix IE 11 issue.
+    marginTop: theme.spacing(3),
+    marginBottom: theme.spacing(2),
+  },
 }));
 
 export function PlannerForm({setPlaces,setDateIntervals,setData,showMarker}) {
