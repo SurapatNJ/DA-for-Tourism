@@ -744,10 +744,11 @@ class signupViewSet(viewsets.ModelViewSet):
 
         #check email
         regex = '^[a-z0-9]+[\._]?[a-z0-9]+[@]\w+[.]\w{2,3}$'
+        regex2 = '^[_a-z0-9-]+(\.[_a-z0-9-]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,4})$'
         if email in list(user_all.email):
             resp = {'status':'Error' ,'text': "This email (" + email + ") is already in the system."} 
             return Response(resp)
-        if not re.search(regex,email):  
+        if not re.search(regex2,email):
             resp = {'status':'Error' ,'text': email + " is Invalid Email."} 
             return Response(resp)  
 
