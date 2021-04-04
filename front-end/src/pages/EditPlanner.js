@@ -83,7 +83,8 @@ export function CityName({setCitycode,valuedefault}) {
         autoComplete
         includeInputInList
         renderInput={(params) => <TextField {...params} label="ชื่อจังหวัด"   required id="standard-required" style={{marginTop:-18}}/>}
-        onChange={(event, value) => {       
+        onChange={(event, value) => {     
+          if(value)  
           setCitycode(value.city_code)
           console.log("value:",value)
         }}
@@ -130,7 +131,7 @@ export function HotelName({setHotelname,valuedefault}) {
       lng: 0,
       Attitude:"",
     }]
-  if (valuedefault !== "")
+  if (valuedefault !== "" && valuedefault !== 0 )
   {
     format = 
     [{
@@ -159,6 +160,7 @@ export function HotelName({setHotelname,valuedefault}) {
           else {
             setHotelname(0,0,0)
           }
+          console.log(valuedefault)
         }}
         value = {format[0]}
       />
@@ -577,103 +579,107 @@ export function CreateAccordion({datainterval,setMarker,setRedirect,setData,show
     const [show, setShow] = React.useState(false);
     const container = React.useRef(null);
     const handleClick = () => {
-      let daycount = 0
-      const tripdatas = []
-      for (var d = new Date(data.start); d <= new Date(data.end); d.setDate(d.getDate() + 1)){
-        // console.log(d)
-        var format = new Date(d).getFullYear() +"-"+ ("0"+(new Date(d).getMonth()+1)).slice(-2) +"-"+ ("0"+new Date(d).getDate()).slice(-2)
-        for (var j = 0; j< rowdata.date[daycount].trips.length; j++){
-        // console.log(format+" "+rowdata.date[daycount].trips[j].start)
-          if(rowdata.date[daycount].trips[j].place !== "" && placeOptions.find(x => x.id === rowdata.date[daycount].trips[j].place) !== undefined){ 
-            tripdatas.push({
-            datetime_start:format+" "+rowdata.date[daycount].trips[j].start+":00",
-            datetime_end:format+" "+rowdata.date[daycount].trips[j].end+":00",
-            trip_type:"",
-            poi:placeOptions.find(el => el.id === rowdata.date[daycount].trips[j].place).poi,
-            // lat:placeOptions.find(el => el.id === rowdata.date[daycount].trips[j].place).lat.toFixed(3),
-            // lon:placeOptions.find(el => el.id === rowdata.date[daycount].trips[j].place).lon.toFixed(3),
-            lat:0,
-            lon:0,
-            locked:true
-            })
-          }
-          else if(rowdata.date[daycount].trips[j].place !== "" && placeOptions.find(x => x.trip_type === rowdata.date[daycount].trips[j].place) !== undefined){ 
-            tripdatas.push({
+      if (data.hotel_id !== "")
+      {
+        let daycount = 0
+        const tripdatas = []
+        for (var d = new Date(data.start); d <= new Date(data.end); d.setDate(d.getDate() + 1)){
+          // console.log(d)
+          var format = new Date(d).getFullYear() +"-"+ ("0"+(new Date(d).getMonth()+1)).slice(-2) +"-"+ ("0"+new Date(d).getDate()).slice(-2)
+          for (var j = 0; j< rowdata.date[daycount].trips.length; j++){
+          // console.log(format+" "+rowdata.date[daycount].trips[j].start)
+            if(rowdata.date[daycount].trips[j].place !== "" && placeOptions.find(x => x.id === rowdata.date[daycount].trips[j].place) !== undefined){ 
+              tripdatas.push({
               datetime_start:format+" "+rowdata.date[daycount].trips[j].start+":00",
               datetime_end:format+" "+rowdata.date[daycount].trips[j].end+":00",
-              trip_type:placeOptions.find(el => el.trip_type === rowdata.date[daycount].trips[j].place).trip_type,
-              poi:"",
+              trip_type:"",
+              poi:placeOptions.find(el => el.id === rowdata.date[daycount].trips[j].place).poi,
               // lat:placeOptions.find(el => el.id === rowdata.date[daycount].trips[j].place).lat.toFixed(3),
               // lon:placeOptions.find(el => el.id === rowdata.date[daycount].trips[j].place).lon.toFixed(3),
               lat:0,
               lon:0,
+              locked:true
+              })
+            }
+            else if(rowdata.date[daycount].trips[j].place !== "" && placeOptions.find(x => x.trip_type === rowdata.date[daycount].trips[j].place) !== undefined){ 
+              tripdatas.push({
+                datetime_start:format+" "+rowdata.date[daycount].trips[j].start+":00",
+                datetime_end:format+" "+rowdata.date[daycount].trips[j].end+":00",
+                trip_type:placeOptions.find(el => el.trip_type === rowdata.date[daycount].trips[j].place).trip_type,
+                poi:"",
+                // lat:placeOptions.find(el => el.id === rowdata.date[daycount].trips[j].place).lat.toFixed(3),
+                // lon:placeOptions.find(el => el.id === rowdata.date[daycount].trips[j].place).lon.toFixed(3),
+                lat:0,
+                lon:0,
+                locked:false
+                })
+            }
+            else{
+              tripdatas.push({
+              datetime_start:format+" "+rowdata.date[daycount].trips[j].start+":00",
+              datetime_end:format+" "+rowdata.date[daycount].trips[j].end+":00",
+              trip_type:"",
+              poi:"",
+              lat:0,
+              lon:0,
               locked:false
               })
+            }
           }
-          else{
-            tripdatas.push({
-            datetime_start:format+" "+rowdata.date[daycount].trips[j].start+":00",
-            datetime_end:format+" "+rowdata.date[daycount].trips[j].end+":00",
-            trip_type:"",
-            poi:"",
-            lat:0,
-            lon:0,
-            locked:false
-            })
-          }
-        }
-        daycount+=1
-      }
-      setShow(true);
-      console.log("\ntrip_type:",data.trip_type,
-        "\ndate_start:",data.start,
-        "\ndate_end:",data.end,
-        "\nhotel_id:",data.hotel_id,
-        "\ntrip_data:",tripdatas,
-        "\ndate_analysis:","")
-      axios.post("http://104.248.7.194:8000/api/trip_detail_analysis/",{
-        trip_type:data.trip_type,
-        date_start:data.start,
-        date_end:data.end,
-        hotel_id:data.hotel_id,
-        trip_data:tripdatas,
-        date_analysis:""
-      },{
-        headers: {
-          'Content-Type': 'application/json'
-      }})
-      .then(function (response) {
-        console.log('FormResponse: ',response.data)
-        var daycount = 0
-        var responsecount = 0
-        var array=[...rowdatas.date]
-        for (var d = new Date(response.data[0].datetime_start); d <= new Date(response.data[response.data.length-1].datetime_start); d.setDate(d.getDate() + 1)){
-          for (var f=0;f < (rowdatas.date[daycount].trips.length);f++){
-            console.log (
-              "daycount",daycount,
-              "f",f,"rescount",responsecount,
-              "poi",response.data[responsecount].poi,
-              "Input",placeOptions.find(el => el.poi === response.data[responsecount].poi).id,
-              "InitialOutput:",array[daycount].trips[f].place
-            )
-            // if (daycount==2)
-            array[daycount].trips[f].place = placeOptions.find(el => el.poi === response.data[responsecount].poi).id
-            responsecount+=1
-           // console.log(response.data[responsecount].poi,placeOptions.find(el => el.poi === response.data[responsecount].poi).id)
-          }
-          // console.log("X:",daycount,array[daycount])
           daycount+=1
         }
-        rowdatas.date = array
-        // console.log(rowdatas,array)
-        alert("Trip Calculated")
-        setMarker(rowdatas)
-      })
-      .catch(function (error) {
-        console.log('FormError: ',error);
-        alert(error)
-      });
-    };
+        setShow(true);
+        console.log("\ntrip_type:",data.trip_type,
+          "\ndate_start:",data.start,
+          "\ndate_end:",data.end,
+          "\nhotel_id:",data.hotel_id,
+          "\ntrip_data:",tripdatas,
+          "\ndate_analysis:","")
+        axios.post("http://104.248.7.194:8000/api/trip_detail_analysis/",{
+          trip_type:data.trip_type,
+          date_start:data.start,
+          date_end:data.end,
+          hotel_id:data.hotel_id,
+          trip_data:tripdatas,
+          date_analysis:""
+        },{
+          headers: {
+            'Content-Type': 'application/json'
+        }})
+        .then(function (response) {
+          console.log('FormResponse: ',response.data)
+          var daycount = 0
+          var responsecount = 0
+          var array=[...rowdatas.date]
+          for (var d = new Date(response.data[0].datetime_start); d <= new Date(response.data[response.data.length-1].datetime_start); d.setDate(d.getDate() + 1)){
+            for (var f=0;f < (rowdatas.date[daycount].trips.length);f++){
+              console.log (
+                "daycount",daycount,
+                "f",f,"rescount",responsecount,
+                "poi",response.data[responsecount].poi,
+                "Input",placeOptions.find(el => el.poi === response.data[responsecount].poi).id,
+                "InitialOutput:",array[daycount].trips[f].place
+              )
+              // if (daycount==2)
+              array[daycount].trips[f].place = placeOptions.find(el => el.poi === response.data[responsecount].poi).id
+              responsecount+=1
+            // console.log(response.data[responsecount].poi,placeOptions.find(el => el.poi === response.data[responsecount].poi).id)
+            }
+            // console.log("X:",daycount,array[daycount])
+            daycount+=1
+          }
+          rowdatas.date = array
+          // console.log(rowdatas,array)
+          alert("Trip Calculated")
+          setMarker(rowdatas)
+        })
+        .catch(function (error) {
+          console.log('FormError: ',error);
+          alert(error)
+        });
+      }
+      else alert("กรุณายืนยันข้อมูลทริป")
+    }
     return(
       <div>
         <Grid container spacing={2}>
@@ -710,7 +716,9 @@ export function CreateAccordion({datainterval,setMarker,setRedirect,setData,show
   function submitForm(data,rowdata) {
     const tripdatas = []
       let daycount = 0
-      for (var d = new Date(data.start); d <= new Date(data.end); d.setDate(d.getDate() + 1)){
+      if (data.hotel_id !== "")
+      {
+        for (var d = new Date(data.start); d <= new Date(data.end); d.setDate(d.getDate() + 1)){
         // console.log(d)
         var format = new Date(d).getFullYear() +"-"+ ("0"+(new Date(d).getMonth()+1)).slice(-2) +"-"+ ("0"+new Date(d).getDate()).slice(-2)
         for (var j = 0; j< rowdata.date[daycount].trips.length; j++){
@@ -770,6 +778,8 @@ export function CreateAccordion({datainterval,setMarker,setRedirect,setData,show
       alert(error)
       console.log('FormError: ',error);
     });
+      }
+    else alert("กรุณายืนยันข้อมูลทริป")
   }
   const [test,setTest] = useState(false)
   const handleToggle= (selected) => {
@@ -1176,53 +1186,55 @@ export function PlannerForm({setPlaces,setDateIntervals,setData,showMarker}) {
   }
   // ยืนยัน
   function submitForm(data) {
-    console.log("TEST:",data.start_trip_date,data.end_trip_date,new Date(data.start_trip_date))
-    showMarker = !showMarker
-    // console.log(showMarker)
-    // setPlaces(data.lat,data.lng)
-    console.log('submitform: ',data)
-    if(data.hotel_id !== '' && data.trip_name !== '')
-    {   
-      setDateIntervals(data)
-      console.log("DataSent",
-      "\nuser_id:", data.user_id,
-      "\ntrip_name:", data.trip_name,
-      "\ncity_code:", data.city_code,
-      "\nstart_trip_date:", data.start_trip_date,
-      "\nend_trip_date:", data.end_trip_date,
-      "\nhotel_id:", data.hotel_id,
-      "\nrating_point:", data.rating_point,
-      "\ntrip_data:", data.trip_data,)
-      setPlaces(parseFloat(hotelOptions.find(el => el.Id == data.hotel_id).lat),hotelOptions.find(el => el.Id == data.hotel_id).lng)
-    //   axios.post("http://104.248.7.194:8000/api/trip_title_api/",
-    //   {
-    //     id: data.id,
-    //     user_id: data.user_id,
-    //     trip_name: data.trip_name,
-    //     city_code: data.city_code,
-    //     start_trip_date: data.start_trip_date,
-    //     end_trip_date: data.end_trip_date,
-    //     hotel_id: data.hotel_id,
-    //     rating_point: data.rating_point,
-    //     trip_data: data.trip_data,
-    //   },{
-    //     headers: {
-    //       'Content-Type': 'application/json'
-    //   }})
-    //     .then(function (response) {
-    //       console.log('TripResponse:',response.data);
-    //       setRedirect(response.data.id)
-    //     })
-    //     .catch(function (error) {
-    //     console.log('TripError:',error);
-    //   });
+    if (new Date(data.end_trip_date)-new Date(data.start_trip_date)<=518400000){
+      console.log("TEST:",data.start_trip_date,data.end_trip_date,new Date(data.start_trip_date))
+      showMarker = !showMarker
+      // console.log(showMarker)
+      // setPlaces(data.lat,data.lng)
+      console.log('submitform: ',data)
+      if(data.hotel_id !== '' && data.trip_name !== ''){   
+        setDateIntervals(data)
+        console.log("DataSent",
+        "\nuser_id:", data.user_id,
+        "\ntrip_name:", data.trip_name,
+        "\ncity_code:", data.city_code,
+        "\nstart_trip_date:", data.start_trip_date,
+        "\nend_trip_date:", data.end_trip_date,
+        "\nhotel_id:", data.hotel_id,
+        "\nrating_point:", data.rating_point,
+        "\ntrip_data:", data.trip_data,)
+        setPlaces(parseFloat(hotelOptions.find(el => el.Id == data.hotel_id).lat),hotelOptions.find(el => el.Id == data.hotel_id).lng)
+      //   axios.post("http://104.248.7.194:8000/api/trip_title_api/",
+      //   {
+      //     id: data.id,
+      //     user_id: data.user_id,
+      //     trip_name: data.trip_name,
+      //     city_code: data.city_code,
+      //     start_trip_date: data.start_trip_date,
+      //     end_trip_date: data.end_trip_date,
+      //     hotel_id: data.hotel_id,
+      //     rating_point: data.rating_point,
+      //     trip_data: data.trip_data,
+      //   },{
+      //     headers: {
+      //       'Content-Type': 'application/json'
+      //   }})
+      //     .then(function (response) {
+      //       console.log('TripResponse:',response.data);
+      //       setRedirect(response.data.id)
+      //     })
+      //     .catch(function (error) {
+      //     console.log('TripError:',error);
+      //   });
+        }
+        else{
+          alert("กรุณากรอบข้อมูลให้ครบถ้วน")
+        }
+        // console.log("rowdatamarker",rowdatas)
+      // setMarker(rowdatas)
     }
-    else{
-      alert("กรุณากรอบข้อมูลให้ครบถ้วน")
+    else alert("วันที่เดินทางไม่เกิน 7 วัน")
     }
-      // console.log("rowdatamarker",rowdatas)
-    // setMarker(rowdatas)
-  }
   
   return(
     <Container fluid noGutters={true}>
