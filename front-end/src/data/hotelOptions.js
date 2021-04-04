@@ -168,14 +168,6 @@ export default[
     "Attitude": "17z"
   },
   {
-    "Id": 22,
-    "Hotel_name": "Thai Garden Resort",
-    "Coordinate": "13.3864936,100.4872376,10z",
-    "lat": "13.3864936",
-    "lng": 100.4872376,
-    "Attitude": "10z"
-  },
-  {
     "Id": 23,
     "Hotel_name": "BALCONY SEASIDE SRIRACHA Hotel & Serviced Apartments",
     "Coordinate": "13.1741801,100.9269102,15z",

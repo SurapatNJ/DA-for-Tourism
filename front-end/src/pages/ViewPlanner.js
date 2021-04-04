@@ -1178,7 +1178,7 @@ export function PlannerForm({setPlaces,setDateIntervals,setData,showMarker}) {
     showMarker = !showMarker
     console.log(showMarker)
     console.log('submitform: ',data)
-    if(data.hotel_id !== '' && data.trip_name !== '')
+    if(data.hotel_id !== '' && data.trip_name !== ''&& data.hotel_id)
     {   
       setDateIntervals(data)
       console.log("DataSent",

@@ -716,7 +716,7 @@ export function CreateAccordion({datainterval,setMarker,setRedirect,setData,show
   function submitForm(data,rowdata) {
     const tripdatas = []
       let daycount = 0
-      if (data.hotel_id !== "")
+      if (data.start !== "")
       {
         for (var d = new Date(data.start); d <= new Date(data.end); d.setDate(d.getDate() + 1)){
         // console.log(d)
@@ -1192,7 +1192,7 @@ export function PlannerForm({setPlaces,setDateIntervals,setData,showMarker}) {
       // console.log(showMarker)
       // setPlaces(data.lat,data.lng)
       console.log('submitform: ',data)
-      if(data.hotel_id !== '' && data.trip_name !== ''){   
+      if(data.hotel_id !== '' && data.trip_name !== '' && data.hotel_id){   
         setDateIntervals(data)
         console.log("DataSent",
         "\nuser_id:", data.user_id,
@@ -1586,7 +1586,7 @@ export class MapContainer extends Component {
                 // disableDoubleClickZoom = {true}
                 onClick={this.onMapClicked}
                 // draggable={false}
-                zoomControl={true}
+                zoomControl={false}
                 onReady={this.handleMapReady}
                 onBounds_changed={this.handleMapMount}
                 initialCenter={
