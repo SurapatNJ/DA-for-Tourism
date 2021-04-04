@@ -676,12 +676,13 @@ export function CreateAccordion({datainterval,setMarker,setRedirect,setData,show
       <div>
         <Grid container spacing={2}>
           <Grid item xs={3}>
+          {/*
           <Button
           variant="outlined"
           color="primary"
           style={{width:95,height:30}}
           onClick={handleClick}
-        >สุ่มทั้งหมด</Button>
+        >สุ่มทั้งหมด</Button>*/}
         </Grid>
         <Grid item xs={9}>
           {show ? (
@@ -999,13 +1000,15 @@ export function CreateAccordion({datainterval,setMarker,setRedirect,setData,show
             <Grid item xs={12}>
               <InputGroup style={{marginLeft:'5%'}}>
                 <AssistantOutlinedIcon/>
-                <Typography style={{fontFamily:"csPrajad" ,fontSize:20}}>แนะนำทริป</Typography>
+                <Typography style={{fontFamily:"csPrajad" ,fontSize:20}}>รายละเอียดแผนการเดินทาง</Typography>
               </InputGroup>
             </Grid>
+            {/*
            <Grid item xs={12}>
             <Place_cat
             addCattype = {addCattype}/>
            </Grid>
+           */}
           </Grid>
         </form>
         </div>
