@@ -493,6 +493,7 @@ export function CreateAccordion({datainterval,setMarker,setRedirect}){
           onClick={handleClick}
         >สุ่มทริป</Button>
         </Grid>
+        {/*
         <Grid item xs={9}>
           {show ? (
             <Portal container={container.current}>     
@@ -507,7 +508,7 @@ export function CreateAccordion({datainterval,setMarker,setRedirect}){
             </Portal>
             ) : null}
           <div ref={container} />
-          </Grid>
+          </Grid>*/}
           </Grid>
       </div>
   
@@ -626,6 +627,7 @@ export function CreateAccordion({datainterval,setMarker,setRedirect}){
           onClick={handleClick}
         >สุ่มทั้งหมด</Button>
         </Grid>
+        {/*
         <Grid item xs={9}>
           {show ? (
             <Portal container={container.current}>     
@@ -640,7 +642,7 @@ export function CreateAccordion({datainterval,setMarker,setRedirect}){
             </Portal>
             ) : null}
           <div ref={container} />
-          </Grid>
+          </Grid>*/}
           </Grid>
       </div>
   
