@@ -709,7 +709,6 @@ export function CreateAccordion({datainterval,setMarker,setRedirect,setData,show
           </Grid>*/}
           </Grid>
       </div>
-  
     );
   }
   //บันทึก
@@ -1387,12 +1386,15 @@ export class MapContainer extends Component {
     }
   }
 
-  onMarkerClick = (props, marker, e) =>
+  onMarkerClick = (props, marker, e) =>{
+    console.log("Showing",props);
     this.setState({
       selectedPlace: props,
       activeMarker: marker,
       showingInfoWindow: true
     });
+  }
+    
 
   onMapClicked = (props) => {
     if (this.state.showingInfoWindow) {
@@ -1402,6 +1404,7 @@ export class MapContainer extends Component {
       })
     }
   };
+
   setPlace(p,q){
     console.log("PQ:",p,q)
     this.setState({places:{lat:p ,lng:q+0.0022141 }})
@@ -1606,7 +1609,7 @@ export class MapContainer extends Component {
                         <Marker
                         onClick={this.onMarkerClick}
                         // onClick={trips[tripsindex].onMarkerClick}
-                        date = {trips.id+1}
+                        date = {date.id+1}
                         start = {trips.start}
                         end = {trips.end}
                         name = {placeOptions.find(el => el.id === trips.place).pname}

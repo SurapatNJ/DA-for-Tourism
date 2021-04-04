@@ -1592,7 +1592,7 @@ export class MapContainer extends Component {
                         <Marker
                         onClick={this.onMarkerClick}
                         // onClick={trips[tripsindex].onMarkerClick}
-                        date = {trips.id+1}
+                        date = {date.id+1}
                         start = {trips.start}
                         end = {trips.end}
                         name = {placeOptions.find(el => el.id === trips.place).pname}
