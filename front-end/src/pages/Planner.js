@@ -432,7 +432,7 @@ export function CreateAccordion({datainterval,setMarker,setRedirect}){
         "\nhotel_id:",data.hotel_id,
         "\ntrip_data:",tripdatas,
         "\ndate_analysis:",heading)
-      axios.post("http://104.248.7.194:8000/api/trip_detail_analysis/",{
+      axios.post("http://127.0.0.1:8000/api/trip_detail_analysis/",{
         trip_type:data.trip_type,
         date_start:data.start,
         date_end:data.end,
@@ -576,7 +576,7 @@ export function CreateAccordion({datainterval,setMarker,setRedirect}){
           "\nhotel_id:",data.hotel_id,
           "\ntrip_data:",tripdatas,
           "\ndate_analysis:","")
-        axios.post("http://104.248.7.194:8000/api/trip_detail_analysis/",{
+        axios.post("http://127.0.0.1:8000/api/trip_detail_analysis/",{
           trip_type:data.trip_type,
           date_start:data.start,
           date_end:data.end,
@@ -722,7 +722,7 @@ export function CreateAccordion({datainterval,setMarker,setRedirect}){
       "\ntrip_data:",JSON.stringify(tripdatas))
 
 
-    axios.post("http://104.248.7.194:8000/api/trip_title_api/",{
+    axios.post("http://127.0.0.1:8000/api/trip_title_api/",{
       id: data.id,
       user_id:localStorage.getItem('user_id'),
       trip_name:data.trip_name,
@@ -1137,7 +1137,7 @@ export function PlannerForm({setPlaces,setDateIntervals,setRedirect}) {
         "\nhotel_id:", data.hotel_id,
         "\nrating_point:", data.rating_point,
         "\ntrip_data:", data.trip_data,)
-      //   axios.post("http://104.248.7.194:8000/api/trip_title_api/",
+      //   axios.post("http://127.0.0.1:8000/api/trip_title_api/",
       //   {
       //     id: data.id,
       //     user_id: data.user_id,
@@ -1334,7 +1334,7 @@ export class MapContainer extends Component {
   componentDidMount(){ 
     let data; 
     axios 
-        .get("http://104.248.7.194:8000/api/login/") 
+        .get("http://127.0.0.1:8000/api/login/") 
         .then((res) => { 
             if(localStorage.getItem('username')==null){
               this.props.history.push('/pages/Login')

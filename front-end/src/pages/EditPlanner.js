@@ -491,7 +491,7 @@ export function CreateAccordion({datainterval,setMarker,setRedirect,setData,show
         "\nhotel_id:",data.hotel_id,
         "\ntrip_data:",tripdatas,
         "\ndate_analysis:",heading)
-      axios.post("http://104.248.7.194:8000/api/trip_detail_analysis/",{
+      axios.post("http://127.0.0.1:8000/api/trip_detail_analysis/",{
         trip_type:data.trip_type,
         date_start:data.start,
         date_end:data.end,
@@ -635,7 +635,7 @@ export function CreateAccordion({datainterval,setMarker,setRedirect,setData,show
           "\nhotel_id:",data.hotel_id,
           "\ntrip_data:",tripdatas,
           "\ndate_analysis:","")
-        axios.post("http://104.248.7.194:8000/api/trip_detail_analysis/",{
+        axios.post("http://127.0.0.1:8000/api/trip_detail_analysis/",{
           trip_type:data.trip_type,
           date_start:data.start,
           date_end:data.end,
@@ -767,7 +767,7 @@ export function CreateAccordion({datainterval,setMarker,setRedirect,setData,show
       "\nend_trip_date:",data.end,
       "\nhotel_id:",data.hotel_id,
       "\ntrip_data:",JSON.stringify(tripdatas))
-    axios.put("http://104.248.7.194:8000/api/trip_title_api/"+setData.id+"/",{
+    axios.put("http://127.0.0.1:8000/api/trip_title_api/"+setData.id+"/",{
       user_id:localStorage.getItem('user_id'),
       trip_name:data.trip_name,
       city_code: data.city_code,
@@ -1217,7 +1217,7 @@ export function PlannerForm({setPlaces,setDateIntervals,setData,showMarker}) {
         "\nrating_point:", data.rating_point,
         "\ntrip_data:", data.trip_data,)
         setPlaces(parseFloat(hotelOptions.find(el => el.Id == data.hotel_id).lat),hotelOptions.find(el => el.Id == data.hotel_id).lng)
-      //   axios.post("http://104.248.7.194:8000/api/trip_title_api/",
+      //   axios.post("http://127.0.0.1:8000/api/trip_title_api/",
       //   {
       //     id: data.id,
       //     user_id: data.user_id,
@@ -1440,7 +1440,7 @@ export class MapContainer extends Component {
   }
   async componentDidMount(){ 
     await axios 
-        .get("http://104.248.7.194:8000/api/login/") 
+        .get("http://127.0.0.1:8000/api/login/") 
         .then((res) => { 
             if(localStorage.getItem('username')==null){
               this.props.history.push('/pages/Login')
@@ -1448,7 +1448,7 @@ export class MapContainer extends Component {
         }) 
         .catch((err) => {}); 
     await axios 
-        .get("http://104.248.7.194:8000/api/trip_title_api/"+this.id) 
+        .get("http://127.0.0.1:8000/api/trip_title_api/"+this.id) 
         .then((res) => { 
             console.log("response data: ",res.data)
             this.setState({editdata:res.data})

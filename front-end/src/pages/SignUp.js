@@ -75,7 +75,7 @@ export class SignUp extends React.Component {
 
   componentDidMount() { 
     axios 
-        .get("http://104.248.7.194:8000/api/login/") 
+        .get("http://127.0.0.1:8000/api/login/") 
         .then((res) => { 
             if(localStorage.getItem('username')!=null){
               this.props.history.push('/pages/Poi')
@@ -111,7 +111,7 @@ export class SignUp extends React.Component {
   handleSubmit = (e) => { 
       e.preventDefault(); 
       axios 
-          .post("http://104.248.7.194:8000/api/signup/", { 
+          .post("http://127.0.0.1:8000/api/signup/", { 
             username: this.state.username,
             email: this.state.email, 
             password: this.state.password ,

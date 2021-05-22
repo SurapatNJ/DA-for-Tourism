@@ -91,7 +91,7 @@ export class LogIn extends React.Component{
   componentDidMount() { 
 
     axios 
-        .get("http://104.248.7.194:8000/api/login/") 
+        .get("http://127.0.0.1:8000/api/login/") 
         .then((res) => { 
             if(localStorage.getItem('username')!=null){
               window.location.href = '/pages/Poi';
@@ -118,7 +118,7 @@ export class LogIn extends React.Component{
     e.preventDefault(); 
     console.log("submitted");
     axios 
-        .post("http://104.248.7.194:8000/api/login/", { 
+        .post("http://127.0.0.1:8000/api/login/", { 
           username: this.state.username,
           email: this.state.email, 
           password: this.state.password ,

@@ -97,7 +97,7 @@ export class App extends Component {
   componentDidMount() { 
     let data; 
     axios 
-        .get("http://104.248.7.194:8000/api/login/") 
+        .get("http://127.0.0.1:8000/api/login/") 
         .then((res) => { 
             if(localStorage.getItem('username')!=null){
               const items = { ...localStorage };

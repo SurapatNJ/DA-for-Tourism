@@ -270,7 +270,7 @@ function CustomizedTables() {
     var k = getIndex(myid,groups,'id')
     setmyGroups(myGroups.filter((row, j) => j !== i))
     setGroups(groups.filter((row, j) => j !== k))
-    axios.delete("http://104.248.7.194:8000/api/trip_title_api/" + myid).catch((err)=> {
+    axios.delete("http://127.0.0.1:8000/api/trip_title_api/" + myid).catch((err)=> {
     });
 
   }
@@ -286,7 +286,7 @@ function CustomizedTables() {
 
   useEffect(() => {
     const fetchData = async () => {
-      await axios.get('http://104.248.7.194:8000/api/trip_title_api/')
+      await axios.get('http://127.0.0.1:8000/api/trip_title_api/')
       .then((res) => {
         setGroups(res.data.sort((a, b) => (a.created < b.created) ? 1 : -1))
         setmyGroups(res.data.filter(item=>item.user_id==localStorage.getItem('user_id')).sort((a, b) => (a.created < b.created) ? 1 : -1))
@@ -417,7 +417,7 @@ export class MapContainer extends Component {
   componentDidMount() { 
     let data; 
     axios 
-        .get("http://104.248.7.194:8000/api/login/") 
+        .get("http://127.0.0.1:8000/api/login/") 
         .then((res) => { 
             if(localStorage.getItem('username')==null){
               this.props.history.push('/pages/Login')

@@ -195,7 +195,7 @@ export function PoiForm({setStatistics,setPlaces,setHeatmaps}) {
   function callHeatmap(data) {
     console.log('HeatmapInput:',data)
     axios
-      .post("http://104.248.7.194:8000/api/heatMap/",{
+      .post("http://127.0.0.1:8000/api/heatMap/",{
         lat_en: (data.lat+0.02).toString(),
         lng_en: (data.lon+0.02).toString(),
         lat_ws: (data.lat-0.02).toString(),
@@ -219,7 +219,7 @@ export function PoiForm({setStatistics,setPlaces,setHeatmaps}) {
     setPlaces(data)
     callHeatmap(data)
     if(new Date(data.datestart) > new Date(data.dateend))alert("วันที่สิ้นสุดต้องมีค่ามากกว่าวันที่เริ่มต้น")
-    axios.post("http://104.248.7.194:8000/api/tourist_place/",{
+    axios.post("http://127.0.0.1:8000/api/tourist_place/",{
       lat_en: (data.lat+0.02).toString(),
       lng_en: (data.lon+0.02).toString(),
       lat_ws: (data.lat-0.02).toString(),
